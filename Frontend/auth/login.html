@@ -1,0 +1,460 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"></noscript>
+<style>
+  :root{
+    --ink:#121820;
+    --ink-soft:#1b2430;
+    --paper:#f3f5f7;
+    --surface:#ffffff;
+    --accent:#1f6f5c;
+    --accent-soft:#e5f2ee;
+    --warn:#c2410c;
+    --warn-soft:#fdece3;
+    --text:#1a1f26;
+    --text-muted:#6b7280;
+    --text-on-ink:#c9d2dc;
+    --text-on-ink-dim:#7c8797;
+    --border:#e4e7eb;
+  }
+  *{box-sizing:border-box; border-radius:0 !important;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    opacity:0;
+    animation:page-in .25s ease forwards;
+  }
+  @keyframes page-in{
+    from{opacity:0;}
+    to{opacity:1;}
+  }
+  a{text-decoration:none;color:inherit;}
+
+  .screen{display:flex; min-height:100vh;}
+
+  /* ---------- Branding panel ---------- */
+  .brand-panel{
+    width:44%;
+    min-width:340px;
+    background:var(--ink);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:44px;
+  }
+  .brand-mark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand-mark img{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+  }
+  .brand-mark span{
+    font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:0.02em;
+    color:#fff;
+  }
+  .brand-copy h1{
+    font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:32px;
+    font-weight:600;
+    line-height:1.25;
+    color:#fff;
+    margin:0 0 14px;
+    max-width:380px;
+  }
+  .brand-copy p{
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--text-on-ink-dim);
+    max-width:360px;
+    margin:0;
+  }
+  .brand-foot{
+    font-size:12.5px;
+    color:var(--text-on-ink-dim);
+  }
+
+  /* ---------- Form panel ---------- */
+  .form-panel{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 28px;
+  }
+  .form-card{
+    width:100%;
+    max-width:380px;
+  }
+  .form-card h2{
+    font-size:22px;
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  .form-card .sub{
+    font-size:13.5px;
+    color:var(--text-muted);
+    margin:0 0 32px;
+  }
+
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+    margin-bottom:6px;
+  }
+  .field input[type="email"],
+  .field input[type="password"]{
+    width:100%;
+    padding:11px 13px;
+    font-size:14px;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--text);
+    background:var(--surface);
+    border:1px solid var(--border);
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  .field input:focus{border-color:var(--accent);}
+  .field input.field-error{border-color:var(--warn);}
+
+  .field-error-msg{
+    font-size:12px;
+    color:var(--warn);
+    margin-top:5px;
+    display:none;
+  }
+  .field-error-msg.show{display:block;}
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:26px;
+  }
+  .remember{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13.5px;
+    color:var(--text-muted);
+    cursor:pointer;
+    user-select:none;
+  }
+  .remember input{
+    width:16px;
+    height:16px;
+    accent-color:var(--accent);
+    cursor:pointer;
+  }
+  .forgot{
+    font-size:13.5px;
+    color:var(--accent);
+    font-weight:500;
+  }
+  .forgot:hover{text-decoration:underline;}
+
+  /* ---------- Submit button with spinner ---------- */
+  .btn-login{
+    width:100%;
+    padding:12px 0;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    color:#fff;
+    background:var(--accent);
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:background .15s ease, opacity .15s ease;
+  }
+  .btn-login:hover{background:#195a4a;}
+  .btn-login:disabled{opacity:.75; cursor:not-allowed;}
+
+  .spinner{
+    width:16px;
+    height:16px;
+    border:2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff;
+    border-radius:50% !important;
+    display:none;
+    animation:spin .7s linear infinite;
+  }
+  .btn-login.loading .spinner{display:inline-block;}
+  .btn-login.loading .btn-label{opacity:.85;}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Toast ---------- */
+  .toast-stack{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:50;
+    width:100%;
+    max-width:380px;
+    padding:0 16px;
+  }
+  .toast{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    box-shadow:0 8px 24px rgba(18,24,32,0.12);
+    padding:13px 16px 15px;
+    font-size:13.5px;
+    color:var(--text);
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .toast.show{opacity:1; transform:translateY(0);}
+  .toast .toast-title{
+    font-weight:600;
+    margin-bottom:2px;
+    display:block;
+  }
+  .toast.success .toast-title{color:var(--accent);}
+  .toast.error .toast-title{color:var(--warn);}
+  .toast .toast-msg{color:var(--text-muted);}
+
+  /* animated underline that drains as the toast's lifetime runs out */
+  .toast .toast-underline{
+    position:absolute;
+    left:0;
+    bottom:0;
+    height:2.5px;
+    width:100%;
+    background:var(--border);
+  }
+  .toast .toast-underline::after{
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:100%;
+    transform-origin:left;
+    transform:scaleX(1);
+  }
+  .toast.success .toast-underline::after{background:var(--accent);}
+  .toast.error .toast-underline::after{background:var(--warn);}
+  .toast.run .toast-underline::after{
+    animation:drain 3.2s linear forwards;
+  }
+  @keyframes drain{
+    from{transform:scaleX(1);}
+    to{transform:scaleX(0);}
+  }
+
+  @media (max-width:860px){
+    .brand-panel{display:none;}
+    .form-panel{padding:32px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <!-- BRANDING PANEL -->
+  <aside class="brand-panel">
+    <div class="brand-mark">
+      <img src="{% static 'Images/Holistic Logo.png' %}" alt="Logo">
+      <span>HOLISTIC</span>
+    </div>
+    <div class="brand-copy">
+      <h1>Orders, inventory and revenue, all in one place.</h1>
+      <p>Sign in to manage products, track invoices and keep an eye on how the business is doing today.</p>
+    </div>
+    <div class="brand-foot">&copy; 2026 Holistic. All rights reserved.</div>
+  </aside>
+
+  <!-- FORM PANEL -->
+  <main class="form-panel">
+    <div class="form-card">
+      <h2>Welcome back</h2>
+      <p class="sub">Enter your details to access your dashboard.</p>
+
+      <form id="loginForm" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required>
+          <div class="field-error-msg" id="emailError">Enter a valid email address.</div>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+          <div class="field-error-msg" id="passwordError">Password is required.</div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox" id="remember" name="remember">
+            Remember me
+          </label>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          <span class="spinner"></span>
+          <span class="btn-label">Log in</span>
+        </button>
+      </form>
+    </div>
+  </main>
+
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+  var DEMO_MODE = false;
+
+  var form = document.getElementById('loginForm');
+  var loginBtn = document.getElementById('loginBtn');
+  var emailInput = document.getElementById('email');
+  var passwordInput = document.getElementById('password');
+  var emailError = document.getElementById('emailError');
+  var passwordError = document.getElementById('passwordError');
+  var toastStack = document.getElementById('toastStack');
+
+  function showToast(type, title, message){
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.innerHTML =
+      '<span class="toast-title">' + title + '</span>' +
+      '<span class="toast-msg">' + message + '</span>' +
+      '<span class="toast-underline"></span>';
+    toastStack.appendChild(toast);
+
+    requestAnimationFrame(function(){
+      toast.classList.add('show');
+      toast.classList.add('run');
+    });
+
+    var lifetime = 3200;
+    setTimeout(function(){
+      toast.classList.remove('show');
+      setTimeout(function(){ toast.remove(); }, 200);
+    }, lifetime);
+  }
+
+  function setFieldError(input, errorEl, hasError){
+    input.classList.toggle('field-error', hasError);
+    errorEl.classList.toggle('show', hasError);
+  }
+
+  function isValidEmail(value){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function setLoading(isLoading){
+    loginBtn.classList.toggle('loading', isLoading);
+    loginBtn.disabled = isLoading;
+    emailInput.disabled = isLoading;
+    passwordInput.disabled = isLoading;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var emailValid = isValidEmail(emailInput.value.trim());
+    var passwordValid = passwordInput.value.length > 0;
+
+    setFieldError(emailInput, emailError, !emailValid);
+    setFieldError(passwordInput, passwordError, !passwordValid);
+
+    if (!emailValid || !passwordValid){
+      showToast('error', 'Check the form', 'Fix the highlighted fields and try again.');
+      return;
+    }
+
+    setLoading(true);
+
+    if (DEMO_MODE){
+      setTimeout(function(){
+        setLoading(false);
+        if (passwordInput.value === 'wrong'){
+          showToast('error', 'Login failed', 'Incorrect email or password.');
+        } else {
+          showToast('success', 'Welcome back', 'You are being signed in…');
+        }
+      }, 1400);
+      return;
+    }
+
+    var payload = {
+      email: emailInput.value.trim(),
+      password: passwordInput.value
+    };
+
+    var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]') ? form.querySelector('[name=csrfmiddlewaretoken]').value : '';
+
+    fetch("{% url 'login' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(function(res){ return res.json().then(function(data){ return {ok: res.ok, status: res.status, data: data}; }); })
+      .then(function(result){
+        setLoading(false);
+        if (result.ok){
+          if (result.data.message === 'i am public' || result.data.role === 'PUBLIC_USER'){
+            showToast('success', 'Public User', result.data.message);
+          } else {
+            showToast('success', 'Welcome back', result.data.message || 'You are being signed in…');
+            if (result.data.redirect_url){
+              setTimeout(function(){
+                window.location.href = result.data.redirect_url;
+              }, 600);
+            }
+          }
+        } else {
+          showToast('error', 'Login failed', result.data.message || 'Incorrect email or password.');
+        }
+      })
+      .catch(function(){
+        setLoading(false);
+        showToast('error', 'Something went wrong', 'Could not reach the server. Try again.');
+      });
+  });
+</script>
+
+</body>
+</html>

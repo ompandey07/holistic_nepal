@@ -1,4 +1,4 @@
-from users.models import EmployeeSetup
+from users.models import EmployeeSetup , PublicUserProfile
 from django.utils import timezone
 from django.db import models
 
@@ -83,7 +83,6 @@ class ProductSetup(models.Model):
     PRODUCT_UNIT = models.ForeignKey(UnitSetup, on_delete=models.PROTECT, related_name="PRODUCT_UNIT")
     PRODUCT_CATEGORY = models.ForeignKey(ProductCategory, on_delete=models.PROTECT, related_name="PRODUCT_CATEGORY")
     PRODUCT_PRICE = models.DecimalField(max_digits=15, decimal_places=2)
-    PRODUCT_RATING = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     PRODUCT_DESCRIPTION = models.TextField()
     PRODUCT_IMAGE = models.ImageField(upload_to="Uploads/Product Images/")
     PRODUCT_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="PRODUCT_CREATED_BY")
@@ -96,6 +95,22 @@ class ProductSetup(models.Model):
 
     def __str__(self):
         return self.PRODUCT_NAME
+
+
+# !--- PRODUCT RATING MODEL -------
+class ProductRating(models.Model):
+    PRODUCT_RATING_PRODUCT = models.ForeignKey(ProductSetup, on_delete=models.CASCADE, related_name="PRODUCT_RATINGS")
+    PRODUCT_RATING_USER = models.ForeignKey(PublicUserProfile, on_delete=models.CASCADE, related_name="PRODUCT_RATINGS")
+    PRODUCT_RATING_VALUE = models.DecimalField(max_digits=2, decimal_places=1, default=0)
+    PRODUCT_RATING_COMMENT = models.TextField(null=True, blank=True)
+    PRODUCT_RATING_CREATED_AT = models.DateTimeField(default=timezone.now)
+    PRODUCT_RATING_MODIFIED_AT = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "PRODUCT RATING"
+
+    def __str__(self):
+        return f"{self.PRODUCT_RATING_PRODUCT.PRODUCT_NAME} - {self.PRODUCT_RATING_VALUE}"
 
 
 #!--- PRODUCT ORDER MODEL -------

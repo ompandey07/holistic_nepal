@@ -200,10 +200,28 @@
       </div>
       <div class="topbar-user">
         <div class="user-meta">
-          <div class="name">Om Pandey</div>
-          <div class="role">Administrator</div>
+          <div class="name">
+            {% if request.session.employee_name %}
+              {{ request.session.employee_name }}
+            {% elif request.user.is_authenticated %}
+              {% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username }}{% endif %}
+            {% else %}
+              Administrator
+            {% endif %}
+          </div>
+          <div class="role">
+            {% if request.session.employee_role %}
+              {{ request.session.employee_role }}
+            {% elif request.session.user_role %}
+              {{ request.session.user_role }}
+            {% elif request.user.is_superuser %}
+              Administrator
+            {% else %}
+              Staff
+            {% endif %}
+          </div>
         </div>
-        <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Om Pandey">
+        <img src="https://www.w3schools.com/w3images/avatar2.png" alt="User Avatar">
       </div>
     </header>
 
