@@ -11,9 +11,9 @@ urlpatterns = [
 
     #-- APP ROUTES ---
     path('', include('core.routes')),
+    path('admin-side/', include('admin_panel.routes')),
     # path('users/', include('users.routes')),
     # path('security/', include('security.routes')),
-    # path('admin-panel/', include('admin_panel.routes')),
 ]
 
 #-- STATIC AND MEDIA FILES (LOCAL DEVELOPMENT) ---

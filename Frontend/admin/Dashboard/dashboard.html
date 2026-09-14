@@ -1,0 +1,634 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121820;
+    --ink-soft:#1b2430;
+    --paper:#f3f5f7;
+    --surface:#ffffff;
+    --accent:#1f6f5c;
+    --accent-soft:#e5f2ee;
+    --warn:#c2410c;
+    --warn-soft:#fdece3;
+    --text:#1a1f26;
+    --text-muted:#6b7280;
+    --text-on-ink:#c9d2dc;
+    --text-on-ink-dim:#7c8797;
+    --border:#e4e7eb;
+  }
+  *{box-sizing:border-box; border-radius:0 !important;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--paper);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    scrollbar-width:thin;
+    scrollbar-color:#c9d2dc var(--paper);
+  }
+  body::-webkit-scrollbar{width:8px;}
+  body::-webkit-scrollbar-track{background:var(--paper);}
+  body::-webkit-scrollbar-thumb{
+    background:#c9d2dc;
+    border:2px solid var(--paper);
+    background-clip:padding-box;
+  }
+  body::-webkit-scrollbar-thumb:hover{background:#a9b3bf;}
+  a{text-decoration:none;color:inherit;}
+  ul{list-style:none;margin:0;padding:0;}
+
+  .layout{display:flex; min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:252px;
+    flex-shrink:0;
+    background:var(--ink);
+    display:flex;
+    flex-direction:column;
+    /* Sidebar now pins to the viewport and always fills it top-to-bottom,
+       independent of how tall the page content grows. */
+    height:100vh;
+    position:sticky;
+    top:0;
+    align-self:flex-start;
+    overflow:hidden;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:22px 20px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .brand img{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .brand-text{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:0.02em;
+    color:#fff;
+    line-height:1.15;
+  }
+  .brand-text span{
+    display:block;
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    font-size:11.5px;
+    color:var(--text-on-ink-dim);
+    margin-top:2px;
+  }
+
+  .nav-scroll{
+    flex:1;
+    padding:14px 12px;
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,0.18) transparent;
+  }
+  .nav-scroll::-webkit-scrollbar{width:6px;}
+  .nav-scroll::-webkit-scrollbar-track{background:transparent;}
+  .nav-scroll::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,0.18);
+    border:1px solid transparent;
+    background-clip:padding-box;
+  }
+  .nav-scroll::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.3);}
+
+  .nav-group-label{
+    font-size:11.5px;
+    color:var(--text-on-ink-dim);
+    padding:16px 12px 6px;
+    letter-spacing:0.01em;
+  }
+  .nav-group-label:first-child{padding-top:6px;}
+
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:9px 12px;
+    margin:1px 0;
+    color:var(--text-on-ink);
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    border-left:2px solid transparent;
+    transition:background .15s ease, color .15s ease;
+  }
+  .nav-item:hover{
+    background:rgba(255,255,255,0.06);
+    color:#fff;
+  }
+  .nav-item.active{
+    background:rgba(31,111,92,0.28);
+    color:#fff;
+    border-left:2px solid var(--accent);
+  }
+  .nav-item svg{
+    width:17px;
+    height:17px;
+    flex-shrink:0;
+    fill:none;
+    stroke:var(--text-on-ink-dim);
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+  .nav-item.active svg{stroke:var(--accent);}
+  .nav-item:hover svg{stroke:#fff;}
+
+  .sidebar-foot{
+    padding:14px 12px 18px;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+  .logout{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:10px 12px;
+    color:#e8b4a4;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+  }
+  .logout svg{
+    width:17px;
+    height:17px;
+    flex-shrink:0;
+    fill:none;
+    stroke:#e8b4a4;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+  .logout:hover{background:rgba(194,65,12,0.12); color:#f3c7ba;}
+  .logout:hover svg{stroke:#f3c7ba;}
+
+  /* ---------- Main ---------- */
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  .topbar-title{font-size:19px; font-weight:600;}
+  .topbar-title p{
+    margin:2px 0 0;
+    font-size:13px;
+    font-weight:400;
+    color:var(--text-muted);
+  }
+  .topbar-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .topbar-user img{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+    border:1px solid var(--border);
+  }
+  .user-meta{text-align:right;}
+  .user-meta .name{font-size:14px; font-weight:600;}
+  .user-meta .role{font-size:12px; color:var(--text-muted);}
+
+  .content{padding:28px 32px 48px; width:100%;}
+
+  .section-label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-muted);
+    margin:0 0 14px;
+  }
+
+  /* KPI cards */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:28px;
+  }
+  .kpi-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:18px 18px 16px;
+  }
+  .kpi-card .label{font-size:12.5px; color:var(--text-muted); font-weight:500;}
+  .kpi-card .value{font-size:25px; font-weight:700; margin:6px 0 4px; font-family:'Space Grotesk',sans-serif;}
+  .kpi-card .delta{font-size:12.5px; font-weight:500;}
+  .delta.up{color:var(--accent);}
+  .delta.down{color:var(--warn);}
+
+  /* Charts */
+  .chart-row{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:16px;
+    margin-bottom:28px;
+  }
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:20px 20px 12px;
+  }
+  .panel-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .panel-head h3{margin:0; font-size:14.5px; font-weight:600;}
+  .panel-head .sub{font-size:12px; color:var(--text-muted);}
+  .chart-box{position:relative; height:260px;}
+  .chart-box.small{height:230px;}
+  .chart-fallback{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+    font-size:12.5px;
+    color:var(--text-muted);
+    border:1px dashed var(--border);
+    text-align:center;
+    padding:12px;
+  }
+
+  /* Table */
+  .table-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+  }
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left;
+    font-weight:600;
+    color:var(--text-muted);
+    font-size:12px;
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  tbody td{
+    padding:13px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  .status{
+    display:inline-block;
+    padding:3px 9px;
+    font-size:11.5px;
+    font-weight:600;
+  }
+  .status.paid{background:var(--accent-soft); color:var(--accent);}
+  .status.pending{background:var(--warn-soft); color:var(--warn);}
+
+  @media (max-width: 980px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .chart-row{grid-template-columns:1fr;}
+  }
+  @media (max-width: 760px){
+    .sidebar{
+      position:fixed;
+      left:-100%;
+      top:0;
+      width:100%;
+      height:100vh;
+      z-index:20;
+      transition:left .2s ease;
+    }
+    .sidebar.open{left:0;}
+    .kpi-row{grid-template-columns:1fr;}
+    .content{padding:20px;}
+    .topbar{padding:16px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="{% static 'Images/Holistic Logo.png' %}" alt="Logo">
+      <div class="brand-text">HOLISTIC</div>
+    </div>
+
+    <nav class="nav-scroll">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+
+      <div class="nav-group-label">User roles</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        User Setup
+      </div>
+
+      <div class="nav-group-label">Inventory</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Products
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="18" r="2"/></svg>
+        Units
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M12.59 21L21 12.59a2 2 0 000-2.83L13.83 2.6A2 2 0 0012.41 2H5a2 2 0 00-2 2v7.41a2 2 0 00.59 1.41L11 21a1.6 1.6 0 001.59 0z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>
+        Category
+      </div>
+
+      <div class="nav-group-label">Uploads</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Gallery
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+        News
+      </div>
+
+      <div class="nav-group-label">Orders and invoice</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        Orders
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        Invoices
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M6 2h12v19l-3-2-3 2-3-2-3 2V2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
+        Receipt
+      </div>
+
+      <div class="nav-group-label">Reports</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+        Order Reports
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+        Sales Reports
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M9 2h6v3H9z"/><path d="M6 4h12v18H6z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        Receipt Reports
+      </div>
+
+      <div class="nav-group-label">Audit logs</div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        User Logs
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        User Activity
+      </div>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title">
+        Dashboard
+        <p>Overview of orders, inventory and revenue</p>
+      </div>
+      <div class="topbar-user">
+        <div class="user-meta">
+          <div class="name">Om Pandey</div>
+          <div class="role">Administrator</div>
+        </div>
+        <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Om Pandey">
+      </div>
+    </header>
+
+    <div class="content">
+
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="label">Total orders</div>
+          <div class="value">1,284</div>
+          <div class="delta up">▲ 8.4% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Revenue</div>
+          <div class="value">Rs 12.6L</div>
+          <div class="delta up">▲ 5.1% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Pending invoices</div>
+          <div class="value">37</div>
+          <div class="delta down">▼ 2 fewer than last week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Low stock items</div>
+          <div class="value">14</div>
+          <div class="delta down">▲ 3 new this week</div>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Sales trend</h3>
+            <span class="sub">Last 6 months</span>
+          </div>
+          <div class="chart-box" id="salesBox"><canvas id="salesChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Orders by category</h3>
+            <span class="sub">This month</span>
+          </div>
+          <div class="chart-box small" id="categoryBox"><canvas id="categoryChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:28px;">
+        <div class="panel-head">
+          <h3>Orders vs invoices</h3>
+          <span class="sub">Weekly</span>
+        </div>
+        <div class="chart-box" id="ordersBox"><canvas id="ordersChart"></canvas></div>
+      </div>
+
+      <div class="section-label">Recent orders</div>
+      <div class="table-panel">
+        <table>
+          <thead>
+            <tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ORD-1042</td><td>Sagar Traders</td><td>Steel Rod 12mm</td><td>Rs 24,500</td><td><span class="status paid">Paid</span></td></tr>
+            <tr><td>ORD-1041</td><td>Himal Hardware</td><td>GI Wire Mesh</td><td>Rs 8,200</td><td><span class="status pending">Pending</span></td></tr>
+            <tr><td>ORD-1040</td><td>Everest Supplies</td><td>Angle Bar 25mm</td><td>Rs 15,900</td><td><span class="status paid">Paid</span></td></tr>
+            <tr><td>ORD-1039</td><td>Kathmandu Builders</td><td>Cement Bag 50kg</td><td>Rs 32,000</td><td><span class="status pending">Pending</span></td></tr>
+            <tr><td>ORD-1038</td><td>Pokhara Iron Co.</td><td>Chain Link Fence</td><td>Rs 11,750</td><td><span class="status paid">Paid</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Robust Chart.js loading ----------
+  // The original bug: the page called `new Chart(...)` before the Chart.js
+  // library had actually finished loading (or the CDN request failed/was
+  // blocked), so `Chart` was undefined. Fix: don't run chart code until the
+  // library is confirmed loaded, and fall back to a second CDN if the first
+  // one fails.
+  var CHART_SOURCES = [
+    'https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.4/chart.umd.min.js',
+    'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
+    'https://unpkg.com/chart.js@4.4.4/dist/chart.umd.min.js'
+  ];
+
+  function loadChartJs(sourceIndex){
+    if (sourceIndex >= CHART_SOURCES.length){
+      showChartFailure();
+      return;
+    }
+    var script = document.createElement('script');
+    script.src = CHART_SOURCES[sourceIndex];
+    script.onload = function(){
+      if (typeof Chart !== 'undefined'){
+        initCharts();
+      } else {
+        loadChartJs(sourceIndex + 1);
+      }
+    };
+    script.onerror = function(){
+      loadChartJs(sourceIndex + 1);
+    };
+    document.head.appendChild(script);
+  }
+
+  function showChartFailure(){
+    ['salesBox','categoryBox','ordersBox'].forEach(function(id){
+      var box = document.getElementById(id);
+      if (box){
+        box.innerHTML = '<div class="chart-fallback">Charts could not load (no network access to a chart library CDN). The rest of the dashboard still works.</div>';
+      }
+    });
+  }
+
+  function initCharts(){
+    var muted = '#6b7280';
+    var accent = '#1f6f5c';
+    var gridColor = '#e4e7eb';
+
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = muted;
+
+    new Chart(document.getElementById('salesChart'), {
+      type: 'line',
+      data: {
+        labels: ['Apr','May','Jun','Jul','Aug','Sep'],
+        datasets: [{
+          label: 'Revenue (Rs thousands)',
+          data: [820, 910, 875, 1040, 980, 1260],
+          borderColor: accent,
+          backgroundColor: 'rgba(31,111,92,0.08)',
+          fill: true,
+          tension: 0.35,
+          pointRadius: 3,
+          pointBackgroundColor: accent,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: gridColor }, beginAtZero: true }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('categoryChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Construction', 'Hardware', 'Electrical', 'Plumbing'],
+        datasets: [{
+          data: [38, 26, 21, 15],
+          backgroundColor: ['#1f6f5c', '#4c9c88', '#a9d4c8', '#e4e7eb'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, font: { size: 11.5 } } } }
+      }
+    });
+
+    new Chart(document.getElementById('ordersChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [
+          {
+            label: 'Orders',
+            data: [42, 55, 38, 61, 49, 30, 22],
+            backgroundColor: accent
+          },
+          {
+            label: 'Invoices raised',
+            data: [30, 40, 33, 50, 38, 24, 18],
+            backgroundColor: '#c9d2dc'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, font: { size: 11.5 } } } },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: gridColor }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  loadChartJs(0);
+</script>
+
+</body>
+</html>
