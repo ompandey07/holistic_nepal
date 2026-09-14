@@ -1,11 +1,13 @@
 from users.models import EmployeeSetup , PublicUserProfile
 from django.utils import timezone
 from django.db import models
+from django.utils.text import slugify
 
 
 #!--- GALLERY MODEL -------
 class Gallery(models.Model):
     GALLERY_TITLE = models.CharField(max_length=500)
+    GALLERY_SLUG = models.SlugField(max_length=500, unique=True, blank=True)
     GALLERY_IMAGE = models.ImageField(upload_to="Uploads/Gallary/")
     GALLERY_DESCRIPTION = models.TextField()
     GALLERY_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="GALLERY_CREATED_BY")
@@ -15,6 +17,11 @@ class Gallery(models.Model):
 
     class Meta:
         db_table = "GALLERY"
+
+    def save(self, *args, **kwargs):
+        if not self.GALLERY_SLUG:
+            self.GALLERY_SLUG = slugify(self.GALLERY_TITLE)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.GALLERY_TITLE
@@ -32,6 +39,7 @@ class News(models.Model):
         ("PRESS_RELEASE", "Press Release"),
     ])
     NEWS_TITLE = models.CharField(max_length=500)
+    NEWS_SLUG = models.SlugField(max_length=500, unique=True, blank=True)
     NEWS_IMAGE = models.ImageField(upload_to="Uploads/News/")
     NEWS_DESCRIPTION = models.TextField()
     NEWS_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="NEWS_CREATED_BY")
@@ -41,6 +49,11 @@ class News(models.Model):
 
     class Meta:
         db_table = "NEWS"
+
+    def save(self, *args, **kwargs):
+        if not self.NEWS_SLUG:
+            self.NEWS_SLUG = slugify(self.NEWS_TITLE)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.NEWS_TITLE
