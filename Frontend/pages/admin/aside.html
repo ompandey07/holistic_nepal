@@ -20,6 +20,7 @@
     gap:12px;
     padding:22px 20px;
     border-bottom:1px solid rgba(255,255,255,0.08);
+    text-decoration:none;
   }
   .brand img{
     width:38px;
@@ -79,6 +80,7 @@
     cursor:pointer;
     border-left:2px solid transparent;
     transition:background .15s ease, color .15s ease;
+    text-decoration:none;
   }
   .nav-item:hover{
     background:rgba(255,255,255,0.06);
@@ -115,6 +117,7 @@
     font-size:14px;
     font-weight:500;
     cursor:pointer;
+    text-decoration:none;
   }
   .logout svg{
     width:17px;
@@ -144,16 +147,16 @@
 </style>
 
 <aside class="sidebar" id="sidebar">
-  <div class="brand">
+  <a href="{% url 'admin_dashboard' %}" class="brand">
     <img src="{% static 'Images/Holistic Logo.png' %}" alt="Logo">
     <div class="brand-text">HOLISTIC</div>
-  </div>
+  </a>
 
   <nav class="nav-scroll">
-    <div class="nav-item {% if active_page == 'dashboard' or not active_page %}active{% endif %}">
+    <a href="{% url 'admin_dashboard' %}" class="nav-item {% if active_page == 'dashboard' or not active_page %}active{% endif %}">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Dashboard
-    </div>
+    </a>
 
     <div class="nav-group-label">Employee roles</div>
     <div class="nav-item {% if active_page == 'employee_setup' %}active{% endif %}">

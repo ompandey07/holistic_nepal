@@ -58,6 +58,7 @@
     display:flex;
     align-items:center;
     gap:12px;
+    text-decoration:none;
   }
   .brand-mark img{
     width:38px;
@@ -286,10 +287,10 @@
 
   <!-- BRANDING PANEL -->
   <aside class="brand-panel">
-    <div class="brand-mark">
+    <a href="{% url 'home' %}" class="brand-mark">
       <img src="{% static 'Images/Holistic Logo.png' %}" alt="Logo">
       <span>HOLISTIC</span>
-    </div>
+    </a>
     <div class="brand-copy">
       <h1>Orders, inventory and revenue, all in one place.</h1>
       <p>Sign in to manage products, track invoices and keep an eye on how the business is doing today.</p>
