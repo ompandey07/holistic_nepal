@@ -99,6 +99,21 @@ USE_TZ = True
 #-- DEFAULT AUTO FIELD ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+
+
+
+#-- CACHE BACKEND ---
+#-- USING LOCMEMCACHE (IN-PROCESS, ZERO-DEPENDENCY) FOR DASHBOARD AGGREGATION CACHING.
+#-- TO SCALE TO MULTI-PROCESS OR MULTI-SERVER, SWAP BACKEND TO REDIS:
+#--   'django.core.cache.backends.redis.RedisCache' WITH LOCATION='redis://127.0.0.1:6379/1'
+CACHES = {
+    'default': {
+        'BACKEND':  'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'holistic-nepal-cache',
+    }
+}
+
 #-- STATIC FILES SETTINGS (LOCAL + PRODUCTION) ---
 STATIC_URL = '/static/'
 
