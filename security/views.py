@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib import messages
 from django.urls import reverse
+from django.core.files.storage import default_storage
 import json
+import re
 
 #!- IMPORT USERS MODELS AND SECURITY WRAPPERS
 from users.models import EmployeeSetup, PublicUserProfile
@@ -129,3 +131,122 @@ class LogoutView(View):
             })
         messages.success(request, "Logged out successfully.")
         return redirect('login')
+
+
+#!- PUBLIC USER REGISTER CLASS BASED VIEW
+class PublicRegisterView(View):
+
+    #!- STRICT EMAIL REGEX: MUST HAVE REAL-LOOKING DOMAIN (NO test123 ETC.)
+    _EMAIL_RE = re.compile(
+        r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$'
+    )
+    #!- PHONE: DIGITS ONLY, MAX 10
+    _PHONE_RE = re.compile(r'^\d{1,10}$')
+
+    def _validate_email(self, email):
+        """#! VALIDATE EMAIL FORMAT AND REJECT OBVIOUSLY FAKE DOMAINS."""
+        email = email.strip().lower()
+        if not self._EMAIL_RE.match(email):
+            return False, 'Enter a valid email address (e.g. you@gmail.com).'
+        #!- REJECT PLACEHOLDER-STYLE LOCAL PARTS (test, user123, fake, etc.)
+        local_part = email.split('@')[0]
+        fake_patterns = re.compile(
+            r'^(test|fake|demo|dummy|sample|user\d*|admin\d*|noreply|no-reply|example|abc\d*|xyz\d*)$',
+            re.IGNORECASE
+        )
+        if fake_patterns.match(local_part):
+            return False, 'Please use your real email address.'
+        #!- REJECT OBVIOUSLY FAKE TLD-LESS DOMAINS
+        domain = email.split('@')[1]
+        if '.' not in domain:
+            return False, 'Enter a valid email address with a proper domain.'
+        return True, ''
+
+    def get(self, request):
+        #!- RENDER REGISTER HTML TEMPLATE
+        return render(request, 'auth/register.html')
+
+    def post(self, request):
+        #!- EXTRACT FORM DATA
+        full_name    = (request.POST.get('full_name') or '').strip()
+        email        = (request.POST.get('email') or '').strip().lower()
+        mobile_no    = (request.POST.get('mobile_no') or '').strip()
+        address      = (request.POST.get('address') or '').strip()
+        password     = request.POST.get('password') or ''
+        confirm_pass = request.POST.get('confirm_password') or ''
+        profile_img  = request.FILES.get('profile_image')
+
+        errors = {}
+
+        #!- FULL NAME VALIDATION
+        if not full_name:
+            errors['full_name'] = 'Full name is required.'
+        elif len(full_name) < 2:
+            errors['full_name'] = 'Full name must be at least 2 characters.'
+
+        #!- EMAIL VALIDATION
+        if not email:
+            errors['email'] = 'Email address is required.'
+        else:
+            ok, msg = self._validate_email(email)
+            if not ok:
+                errors['email'] = msg
+            elif PublicUserProfile.objects.filter(PUBLIC_USER_EMAIL__iexact=email).exists():
+                errors['email'] = 'An account with this email already exists.'
+
+        #!- MOBILE NUMBER VALIDATION
+        if not mobile_no:
+            errors['mobile_no'] = 'Mobile number is required.'
+        elif not self._PHONE_RE.match(mobile_no):
+            if len(mobile_no) > 10:
+                errors['mobile_no'] = 'Mobile number must not exceed 10 digits.'
+            else:
+                errors['mobile_no'] = 'Mobile number must contain digits only (max 10 digits).'
+
+        #!- ADDRESS VALIDATION
+        if not address:
+            errors['address'] = 'Address is required.'
+
+        #!- PASSWORD VALIDATION
+        if not password:
+            errors['password'] = 'Password is required.'
+        elif len(password) < 6:
+            errors['password'] = 'Password must be at least 6 characters.'
+
+        #!- CONFIRM PASSWORD
+        if not confirm_pass:
+            errors['confirm_password'] = 'Please confirm your password.'
+        elif password and confirm_pass and password != confirm_pass:
+            errors['confirm_password'] = 'Passwords do not match.'
+
+        if errors:
+            return JsonResponse({'status': 'error', 'errors': errors, 'message': 'Please fix the highlighted fields.'}, status=400)
+
+        #!- CAPTURE CLIENT IP
+        client_ip = get_client_ip(request)
+
+        #!- HASH THE PASSWORD
+        hashed_password = make_password(password)
+
+        #!- CREATE THE PUBLIC USER PROFILE
+        try:
+            new_user = PublicUserProfile(
+                PUBLIC_USER_FULL_NAME=full_name,
+                PUBLIC_USER_EMAIL=email,
+                PUBLIC_USER_MOBILE_NO=mobile_no,
+                PUBLIC_USER_ADDRESS=address,
+                PUBLIC_USER_IP=client_ip,
+                PUBLIC_USER_PASSWORD=hashed_password,
+            )
+            #!- ATTACH PROFILE IMAGE IF PROVIDED
+            if profile_img:
+                new_user.PUBLIC_USER_PROFILE_IMAGE = profile_img
+            new_user.save()
+        except Exception as exc:
+            return JsonResponse({'status': 'error', 'message': f'Registration failed: {exc}'}, status=500)
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Registration successful! Redirecting to login…',
+            'redirect_url': reverse('login')
+        })

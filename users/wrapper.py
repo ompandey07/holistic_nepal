@@ -1,11 +1,6 @@
-from functools import wraps
-import html
-import json
-import logging
-import re
-from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
+from django.conf import settings
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
@@ -13,6 +8,11 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import redirect
+from functools import wraps
+import logging
+import json
+import html
+import re
 
 logger = logging.getLogger(__name__)
 
