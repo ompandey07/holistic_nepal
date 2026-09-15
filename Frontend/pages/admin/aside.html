@@ -159,24 +159,24 @@
     </a>
 
     <div class="nav-group-label">Employee roles</div>
-    <div class="nav-item {% if active_page == 'employee_setup' %}active{% endif %}">
+    <a href="{% url 'employee_setup' %}" class="nav-item {% if active_page == 'employee_setup' %}active{% endif %}">
       <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 21c0-3.6 3-5.6 6.5-5.6s6.5 2 6.5 5.6"/><path d="M16.5 3.5a3.2 3.2 0 010 6.2"/><path d="M19 14.7c2 .5 3.5 2 3.5 4.3"/></svg>
       Employee Setup
-    </div>
+    </a>
 
     <div class="nav-group-label">Inventory</div>
-    <div class="nav-item {% if active_page == 'products' %}active{% endif %}">
+    <a href="{% url 'product_setup' %}" class="nav-item {% if active_page == 'products' %}active{% endif %}">
       <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       Products
-    </div>
-    <div class="nav-item {% if active_page == 'units' %}active{% endif %}">
+    </a>
+    <a href="{% url 'unit_setup' %}" class="nav-item {% if active_page == 'units' %}active{% endif %}">
       <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="18" r="2"/></svg>
       Units
-    </div>
-    <div class="nav-item {% if active_page == 'category' %}active{% endif %}">
+    </a>
+    <a href="{% url 'product_category' %}" class="nav-item {% if active_page == 'category' %}active{% endif %}">
       <svg viewBox="0 0 24 24"><path d="M12.59 21L21 12.59a2 2 0 000-2.83L13.83 2.6A2 2 0 0012.41 2H5a2 2 0 00-2 2v7.41a2 2 0 00.59 1.41L11 21a1.6 1.6 0 001.59 0z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>
       Category
-    </div>
+    </a>
 
     <div class="nav-group-label">Uploads</div>
     <div class="nav-item {% if active_page == 'gallery' %}active{% endif %}">

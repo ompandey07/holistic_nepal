@@ -1,0 +1,787 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Setup</title>
+<link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121820;
+    --ink-soft:#1b2430;
+    --paper:#f3f5f7;
+    --surface:#ffffff;
+    --accent:#1f6f5c;
+    --accent-soft:#e5f2ee;
+    --warn:#c2410c;
+    --warn-soft:#fdece3;
+    --text:#1a1f26;
+    --text-muted:#6b7280;
+    --text-on-ink:#c9d2dc;
+    --text-on-ink-dim:#7c8797;
+    --border:#e4e7eb;
+  }
+  *{box-sizing:border-box; border-radius:0 !important;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--paper);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    scrollbar-width:thin;
+    scrollbar-color:#c9d2dc var(--paper);
+  }
+  body::-webkit-scrollbar{width:8px;}
+  body::-webkit-scrollbar-track{background:var(--paper);}
+  body::-webkit-scrollbar-thumb{
+    background:#c9d2dc;
+    border:2px solid var(--paper);
+    background-clip:padding-box;
+  }
+  body::-webkit-scrollbar-thumb:hover{background:#a9b3bf;}
+  a{text-decoration:none;color:inherit;}
+  ul{list-style:none;margin:0;padding:0;}
+
+  .layout{display:flex; min-height:100vh;}
+
+  /* ---------- Main ---------- */
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  .topbar-title{font-size:19px; font-weight:600;}
+  .topbar-title p{
+    margin:2px 0 0;
+    font-size:13px;
+    font-weight:400;
+    color:var(--text-muted);
+  }
+  .topbar-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .topbar-user img{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+    border:1px solid var(--border);
+  }
+  .user-meta{text-align:right;}
+  .user-meta .name{font-size:14px; font-weight:600;}
+  .user-meta .role{font-size:12px; color:var(--text-muted);}
+
+  .content{padding:28px 32px 48px; width:100%;}
+
+  /* ---------- Employee Setup Layout ---------- */
+  .employee-layout{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:24px;
+    align-items:start;
+  }
+
+  /* ---------- Form Panel ---------- */
+  .form-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:24px;
+    position:sticky;
+    top:100px;
+  }
+  .form-panel h3{
+    margin:0 0 20px;
+    font-size:16px;
+    font-weight:600;
+  }
+
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+    margin-bottom:6px;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field input[type="password"],
+  .field select,
+  .field textarea{
+    width:100%;
+    padding:11px 13px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    background:var(--surface);
+    border:1px solid var(--border);
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus{border-color:var(--accent);}
+  .field input.field-error,
+  .field select.field-error,
+  .field textarea.field-error{border-color:var(--warn);}
+
+  .field-error-msg{
+    font-size:12px;
+    color:var(--warn);
+    margin-top:5px;
+    display:none;
+  }
+  .field-error-msg.show{display:block;}
+
+  .btn-add{
+    width:100%;
+    padding:12px 0;
+    font-size:14.5px;
+    font-weight:600;
+    color:#fff;
+    background:var(--accent);
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:background .15s ease, opacity .15s ease;
+  }
+  .btn-add:hover{background:#195a4a;}
+  .btn-add:disabled{opacity:.75;cursor:not-allowed;}
+  .btn-cancel:hover{background:var(--warn-soft);border-color:var(--warn);color:var(--warn);}
+
+  .spinner{
+    width:16px;height:16px;
+    border:2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff;
+    border-radius:50% !important;
+    display:none;
+    animation:spin .7s linear infinite;
+  }
+  .btn-add.loading .spinner{display:inline-block;}
+  .btn-add.loading .btn-label{opacity:.85;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Table Panel ---------- */
+  .table-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+  }
+  .table-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  .table-header h3{
+    margin:0;
+    font-size:15px;
+    font-weight:600;
+  }
+  .table-header .count{
+    font-size:13px;
+    color:var(--text-muted);
+  }
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left;
+    font-weight:600;
+    color:var(--text-muted);
+    font-size:12px;
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    background:var(--paper);
+  }
+  tbody td{
+    padding:13px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--accent-soft);}
+
+  .role-badge{
+    display:inline-block;
+    padding:3px 9px;
+    font-size:11.5px;
+    font-weight:600;
+    background:var(--accent-soft);
+    color:var(--accent);
+  }
+
+  /* ---------- Action Buttons ---------- */
+  .btn-action{
+    padding:5px 10px;
+    font-size:12px;
+    font-weight:500;
+    border:1px solid var(--border);
+    background:var(--surface);
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease;
+    margin-right:6px;
+  }
+  .btn-action:hover{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+  }
+  .btn-edit{
+    color:var(--accent);
+  }
+  .btn-delete{
+    color:var(--warn);
+  }
+  .btn-delete:hover{
+    background:var(--warn-soft);
+    border-color:var(--warn);
+  }
+
+  /* ---------- Pagination ---------- */
+  .pagination{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 20px;
+    border-top:1px solid var(--border);
+  }
+  .pagination-info{
+    font-size:13px;
+    color:var(--text-muted);
+  }
+  .pagination-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .pagination-controls a,
+  .pagination-controls span{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:32px;
+    height:32px;
+    padding:0 10px;
+    font-size:13px;
+    color:var(--text);
+    background:var(--surface);
+    border:1px solid var(--border);
+    text-decoration:none;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .pagination-controls a:hover{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+  }
+  .pagination-controls .current{
+    background:var(--accent);
+    color:#fff;
+    border-color:var(--accent);
+  }
+  .pagination-controls .disabled{
+    color:var(--text-muted);
+    cursor:not-allowed;
+    pointer-events:none;
+  }
+
+  /* ---------- Toast ---------- */
+  .toast-stack{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:50;
+    width:100%;
+    max-width:400px;
+    padding:0 16px;
+  }
+  .toast{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    box-shadow:0 8px 24px rgba(18,24,32,0.12);
+    padding:13px 16px 15px;
+    font-size:13.5px;
+    color:var(--text);
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+  .toast .toast-title{font-weight:600;margin-bottom:2px;display:block;}
+  .toast.success .toast-title{color:var(--accent);}
+  .toast.error .toast-title{color:var(--warn);}
+  .toast .toast-msg{color:var(--text-muted);}
+  .toast .toast-underline{
+    position:absolute;
+    left:0;
+    bottom:0;
+    height:2.5px;
+    width:100%;
+    background:var(--border);
+  }
+  .toast .toast-underline::after{
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:100%;
+    transform-origin:left;
+    transform:scaleX(1);
+  }
+  .toast.success .toast-underline::after{background:var(--accent);}
+  .toast.error .toast-underline::after{background:var(--warn);}
+  .toast.run .toast-underline::after{animation:drain 3.2s linear forwards;}
+  @keyframes drain{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+
+  @media (max-width: 1200px){
+    .employee-layout{grid-template-columns:1fr;}
+    .form-panel{position:static;}
+  }
+  @media (max-width: 760px){
+    .content{padding:20px;}
+    .topbar{padding:16px 20px;}
+    .pagination{flex-direction:column;gap:12px;align-items:stretch;}
+    .pagination-controls{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  {% include 'pages/admin/aside.html' with active_page='employee_setup' %}
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title">
+        Employee Setup
+        <p>Add and manage employee accounts</p>
+      </div>
+      <div class="topbar-user">
+        <div class="user-meta">
+          <div class="name">
+            {% if request.session.employee_name %}
+              {{ request.session.employee_name }}
+            {% elif request.user.is_authenticated %}
+              {% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username }}{% endif %}
+            {% else %}
+              Administrator
+            {% endif %}
+          </div>
+          <div class="role">
+            {% if request.session.employee_role %}
+              {{ request.session.employee_role }}
+            {% elif request.session.user_role %}
+              {{ request.session.user_role }}
+            {% elif request.user.is_superuser %}
+              Administrator
+            {% else %}
+              Staff
+            {% endif %}
+          </div>
+        </div>
+        <img src="https://www.w3schools.com/w3images/avatar2.png" alt="User Avatar">
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="employee-layout">
+        
+        <!-- ADD EMPLOYEE FORM -->
+        <div class="form-panel">
+          <h3 id="formTitle">Add New Employee</h3>
+          <form id="employeeForm">
+            {% csrf_token %}
+            <input type="hidden" id="employee_id" name="employee_id" value="">
+            
+            <div class="field">
+              <label for="full_name">Full Name</label>
+              <input type="text" id="full_name" name="full_name" placeholder="e.g. Ram Bahadur Thapa">
+              <div class="field-error-msg" id="full_nameError"></div>
+            </div>
+
+            <div class="field">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="employee@example.com">
+              <div class="field-error-msg" id="emailError"></div>
+            </div>
+
+            <div class="field">
+              <label for="mobile_no">Mobile Number</label>
+              <input type="tel" id="mobile_no" name="mobile_no" placeholder="9841xxxxxx" maxlength="10" inputmode="numeric">
+              <div class="field-error-msg" id="mobile_noError"></div>
+            </div>
+
+            <div class="field">
+              <label for="address">Address</label>
+              <textarea id="address" name="address" rows="2" placeholder="Full address"></textarea>
+              <div class="field-error-msg" id="addressError"></div>
+            </div>
+
+            <div class="field">
+              <label for="role">Role</label>
+              <select id="role" name="role">
+                <option value="STAFF">Staff</option>
+                <option value="CASHIER">Cashier</option>
+                <option value="DELIVERY_MAN">Delivery Man</option>
+                <option value="MANAGER">Manager</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </div>
+
+            <div class="field" id="passwordField">
+              <label for="password">Password <span id="passwordOptional" style="font-weight:400;color:var(--text-muted);font-size:12px;">(optional for edit)</span></label>
+              <input type="password" id="password" name="password" placeholder="Min. 6 characters">
+              <div class="field-error-msg" id="passwordError"></div>
+            </div>
+
+            <button type="submit" class="btn-add" id="addBtn">
+              <span class="spinner"></span>
+              <span class="btn-label">Add Employee</span>
+            </button>
+            <button type="button" class="btn-cancel" id="cancelBtn" style="display:none; width:100%; padding:12px 0; margin-top:10px; font-size:14.5px; font-weight:600; color:var(--text); background:var(--surface); border:1px solid var(--border); cursor:pointer;">Cancel Edit</button>
+          </form>
+        </div>
+
+        <!-- EMPLOYEE TABLE -->
+        <div class="table-panel">
+          <div class="table-header">
+            <h3>Employee List</h3>
+            <span class="count">Total: {{ total_employees }}</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Role</th>
+                <th>Address</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for employee in employees %}
+              <tr data-employee-id="{{ employee.id }}">
+                <td>{{ employee.EMPLOYEE_FULL_NAME }}</td>
+                <td>{{ employee.EMPLOYEE_EMAIL }}</td>
+                <td>{{ employee.EMPLOYEE_MOBILE_NO }}</td>
+                <td><span class="role-badge">{{ employee.EMPLOYEE_ROLE }}</span></td>
+                <td>{{ employee.EMPLOYEE_ADDRESS|truncatewords:3 }}</td>
+                <td>{{ employee.EMPLOYEE_CREATED_AT|date:"Y-m-d" }}</td>
+                <td>
+                  <button class="btn-action btn-edit" data-id="{{ employee.id }}" data-full-name="{{ employee.EMPLOYEE_FULL_NAME }}" data-email="{{ employee.EMPLOYEE_EMAIL }}" data-mobile="{{ employee.EMPLOYEE_MOBILE_NO }}" data-address="{{ employee.EMPLOYEE_ADDRESS }}" data-role="{{ employee.EMPLOYEE_ROLE }}">Edit</button>
+                  <button class="btn-action btn-delete" data-id="{{ employee.id }}">Delete</button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">
+                  No employees found. Add your first employee using the form.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+          <!-- PAGINATION -->
+          {% if employees.has_other_pages %}
+          <div class="pagination">
+            <div class="pagination-info">
+              Showing {{ employees.start_index }}-{{ employees.end_index }} of {{ total_employees }}
+            </div>
+            <div class="pagination-controls">
+              {% if employees.has_previous %}
+                <a href="?page={{ employees.previous_page_number }}">Previous</a>
+              {% else %}
+                <span class="disabled">Previous</span>
+              {% endif %}
+              
+              {% for page_num in page_range %}
+                {% if page_num == employees.number %}
+                  <span class="current">{{ page_num }}</span>
+                {% elif page_num == '...' %}
+                  <span>...</span>
+                {% else %}
+                  <a href="?page={{ page_num }}">{{ page_num }}</a>
+                {% endif %}
+              {% endfor %}
+              
+              {% if employees.has_next %}
+                <a href="?page={{ employees.next_page_number }}">Next</a>
+              {% else %}
+                <span class="disabled">Next</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+  /* ============================================================
+     TOAST HELPER
+  ============================================================ */
+  var toastStack = document.getElementById('toastStack');
+
+  function showToast(type, title, message, lifetime) {
+    lifetime = lifetime || 3200;
+    var t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.innerHTML =
+      '<span class="toast-title">' + title + '</span>' +
+      '<span class="toast-msg">' + message + '</span>' +
+      '<span class="toast-underline"></span>';
+    toastStack.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); t.classList.add('run'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, lifetime);
+  }
+
+  /* ============================================================
+     FIELD ERROR HELPERS
+  ============================================================ */
+  function setFieldError(fieldId, message) {
+    var inp = document.getElementById(fieldId);
+    var err = document.getElementById(fieldId + 'Error');
+    if (!inp || !err) return;
+    inp.classList.toggle('field-error', !!message);
+    err.textContent = message || '';
+    err.classList.toggle('show', !!message);
+  }
+
+  function clearAllErrors() {
+    document.querySelectorAll('#employeeForm input, #employeeForm select, #employeeForm textarea').forEach(function (el) {
+      el.classList.remove('field-error');
+    });
+    document.querySelectorAll('.field-error-msg').forEach(function (el) {
+      el.textContent = '';
+      el.classList.remove('show');
+    });
+  }
+
+  /* ============================================================
+     MOBILE NUMBER VALIDATION - DIGITS ONLY, MAX 10
+  ============================================================ */
+  var mobileInput = document.getElementById('mobile_no');
+
+  mobileInput.addEventListener('keypress', function (e) {
+    if (!/\d/.test(e.key)) e.preventDefault();
+  });
+  mobileInput.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
+  mobileInput.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    this.value = pasted.replace(/\D/g, '').slice(0, 10);
+  });
+
+  /* ============================================================
+     FORM SUBMIT - AJAX WITH VALIDATION
+  ============================================================ */
+  var form = document.getElementById('employeeForm');
+  var addBtn = document.getElementById('addBtn');
+  var cancelBtn = document.getElementById('cancelBtn');
+  var formTitle = document.getElementById('formTitle');
+  var employeeIdField = document.getElementById('employee_id');
+  var passwordField = document.getElementById('passwordField');
+  var isEditMode = false;
+
+  function setLoading(on) {
+    addBtn.classList.toggle('loading', on);
+    addBtn.disabled = on;
+    form.querySelectorAll('input, select, textarea').forEach(function (el) { el.disabled = on; });
+  }
+
+  function resetForm() {
+    form.reset();
+    employeeIdField.value = '';
+    isEditMode = false;
+    formTitle.textContent = 'Add New Employee';
+    addBtn.querySelector('.btn-label').textContent = 'Add Employee';
+    cancelBtn.style.display = 'none';
+    passwordField.style.display = 'block';
+    document.getElementById('passwordOptional').style.display = 'none';
+    document.getElementById('password').placeholder = 'Min. 6 characters';
+    clearAllErrors();
+  }
+
+  cancelBtn.addEventListener('click', resetForm);
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearAllErrors();
+
+    var csrf = form.querySelector('[name=csrfmiddlewaretoken]');
+    var formData = new FormData(form);
+    var isEdit = employeeIdField.value !== '';
+
+    // For edit mode, don't require password if not changed
+    if (isEdit && !formData.get('password')) {
+      formData.delete('password');
+    }
+
+    setLoading(true);
+
+    fetch(window.location.href, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrf ? csrf.value : '',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: formData
+    })
+    .then(function (res) {
+      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+    })
+    .then(function (result) {
+      setLoading(false);
+
+      if (result.data.status === 'success') {
+        showToast('success', isEdit ? 'Employee updated!' : 'Employee added!',
+          result.data.message || (isEdit ? 'Employee has been updated successfully.' : 'Employee has been added successfully.'), 3200);
+        
+        // Reset form
+        resetForm();
+        
+        // Reload page to show updated employee in table
+        setTimeout(function () {
+          window.location.reload();
+        }, 1500);
+        return;
+      }
+
+      /* ---- Field-level errors from view ---- */
+      var errors = result.data.errors || {};
+      Object.keys(errors).forEach(function (field) {
+        setFieldError(field, errors[field]);
+      });
+      showToast('error', isEdit ? 'Failed to update employee' : 'Failed to add employee',
+        result.data.message || 'Please fix the highlighted fields.');
+    })
+    .catch(function () {
+      setLoading(false);
+      showToast('error', 'Something went wrong',
+        'Could not reach the server. Please try again.');
+    });
+  });
+
+  /* ============================================================
+     EDIT EMPLOYEE
+  ============================================================ */
+  document.querySelectorAll('.btn-edit').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var employeeId = this.getAttribute('data-id');
+      var fullName = this.getAttribute('data-full-name');
+      var email = this.getAttribute('data-email');
+      var mobile = this.getAttribute('data-mobile');
+      var address = this.getAttribute('data-address');
+      var role = this.getAttribute('data-role');
+
+      // Populate form
+      employeeIdField.value = employeeId;
+      document.getElementById('full_name').value = fullName;
+      document.getElementById('email').value = email;
+      document.getElementById('mobile_no').value = mobile;
+      document.getElementById('address').value = address;
+      document.getElementById('role').value = role;
+      document.getElementById('password').value = '';
+
+      // Update UI for edit mode
+      isEditMode = true;
+      formTitle.textContent = 'Edit Employee';
+      addBtn.querySelector('.btn-label').textContent = 'Update Employee';
+      cancelBtn.style.display = 'block';
+      passwordField.style.display = 'block';
+      document.getElementById('passwordOptional').style.display = 'inline';
+      document.getElementById('password').placeholder = 'Leave blank to keep current password';
+
+      // Scroll to form
+      document.querySelector('.form-panel').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  /* ============================================================
+     DELETE EMPLOYEE
+  ============================================================ */
+  document.querySelectorAll('.btn-delete').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var employeeId = this.getAttribute('data-id');
+      var row = this.closest('tr');
+
+      if (confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
+        var csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+        
+        fetch(window.location.href, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrf ? csrf.value : '',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'action=delete&employee_id=' + employeeId
+        })
+        .then(function (res) {
+          return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+        })
+        .then(function (result) {
+          if (result.data.status === 'success') {
+            showToast('success', 'Employee deleted',
+              result.data.message || 'Employee has been deleted successfully.', 3200);
+            
+            // Remove row from table
+            row.remove();
+            
+            // Update total count
+            var countEl = document.querySelector('.table-header .count');
+            var currentCount = parseInt(countEl.textContent.replace('Total: ', ''));
+            countEl.textContent = 'Total: ' + (currentCount - 1);
+          } else {
+            showToast('error', 'Failed to delete employee',
+              result.data.message || 'Could not delete employee. Please try again.');
+          }
+        })
+        .catch(function () {
+          showToast('error', 'Something went wrong',
+            'Could not reach the server. Please try again.');
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
