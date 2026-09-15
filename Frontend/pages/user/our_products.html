@@ -1,0 +1,590 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta name="theme-color" content="#131536" />
+  <meta name="description" content="Explore Holistic Herbs' complete collection of nutraceutical supplements, herbal beverages, and personal care." />
+  <title>Our Products — Holistic Herbs Nepal</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <style>
+    /* Products Page Dedicated Styles */
+    .products-page-header {
+      background-color: var(--indigo-dark);
+      padding: clamp(140px, 18vh, 180px) var(--content-padding) clamp(48px, 6vw, 68px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .products-page-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(59, 59, 142, 0.4) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .products-header-content {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .products-page-eyebrow {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--orange);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .products-page-title {
+      font-family: var(--serif);
+      font-size: clamp(38px, 4.8vw, 60px);
+      font-weight: 400;
+      line-height: 1.05;
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+
+    .products-page-desc {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.15vw, 17px);
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.65;
+    }
+
+    /* Category Filter Bar */
+    .products-filter-section {
+      background-color: #ffffff;
+      border-bottom: 1px solid #edf0f5;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .products-filter-container {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 16px var(--content-padding);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .filter-tab {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 20px;
+      border-radius: 40px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      color: #4f5574;
+      background: #f4f6fa;
+      border: 1px solid transparent;
+      text-decoration: none;
+      transition: all 220ms ease;
+    }
+
+    .filter-tab:hover {
+      color: #121435;
+      background: #e9ecf4;
+    }
+
+    .filter-tab.is-active {
+      background: #121435;
+      color: #ffffff;
+      border-color: #121435;
+      box-shadow: 0 4px 12px rgba(18, 20, 53, 0.2);
+    }
+
+    /* Products Grid Section */
+    .products-catalog-section {
+      background-color: #fbfcff;
+      padding: clamp(56px, 7vw, 88px) var(--content-padding);
+      min-height: 50vh;
+    }
+
+    .products-catalog-container {
+      max-width: 1260px;
+      margin: 0 auto;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: clamp(24px, 2.8vw, 36px);
+    }
+
+    /* Single Product Item Card */
+    .product-item-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e7ebf3;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 16px rgba(18, 20, 53, 0.05);
+      transition: transform 280ms var(--ease-out), box-shadow 280ms var(--ease-out), border-color 280ms ease;
+    }
+
+    .product-item-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 36px rgba(18, 20, 53, 0.12);
+      border-color: #ccd3e5;
+    }
+
+    .product-item-thumb {
+      height: 220px;
+      background: linear-gradient(180deg, #f8f9fc 0%, #edf0f8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .product-item-thumb img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
+      transition: transform 320ms ease;
+    }
+
+    .product-item-card:hover .product-item-thumb img {
+      transform: scale(1.06);
+    }
+
+    .product-category-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--orange);
+      padding: 4px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .product-item-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .product-item-title {
+      font-family: var(--sans);
+      font-size: 17.5px;
+      font-weight: 700;
+      color: #121435;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .product-item-desc {
+      font-family: var(--sans);
+      font-size: 13.5px;
+      color: #616787;
+      line-height: 1.55;
+      margin-bottom: 18px;
+      flex-grow: 1;
+    }
+
+    .product-item-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f0f2f7;
+      padding-top: 14px;
+      margin-top: auto;
+    }
+
+    .product-price {
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .product-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #121435;
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 200ms ease, transform 180ms ease;
+    }
+
+    .product-action-btn:hover {
+      background: var(--orange);
+      transform: translateY(-2px);
+    }
+
+    /* Back Link / Breadcrumb */
+    .catalog-back-nav {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 24px var(--content-padding) 0;
+    }
+
+    .back-home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      color: #555c7b;
+      text-decoration: none;
+      transition: color 200ms ease;
+    }
+
+    .back-home-link:hover {
+      color: var(--orange);
+    }
+
+    /* Simple Footer */
+    .products-page-footer {
+      background: #121435;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      padding: 48px var(--content-padding);
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+
+    .products-page-footer a {
+      color: var(--orange);
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation Header -->
+  <header class="site-header" style="background: rgba(18, 20, 52, 0.95); position: fixed;">
+    <div class="header-inner">
+      <!-- Brand Logo -->
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="/">Home page</a>
+        <a class="active" href="/products/?category=all">Products</a>
+        <a href="/products/?category=nutraceutical">Nutraceutical</a>
+        <a href="/products/?category=beverages">Beverages</a>
+        <a href="/products/?category=personal-care">Personal Care</a>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-toggle" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay"></div>
+  <aside class="mobile-drawer" aria-label="Mobile menu">
+    <div class="drawer-header">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+      <button class="drawer-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="drawer-menu">
+      <a href="/">Home page</a>
+      <a href="/products/?category=all">All Products</a>
+      <a href="/products/?category=nutraceutical">Nutraceutical</a>
+      <a href="/products/?category=beverages">Beverages</a>
+      <a href="/products/?category=personal-care">Personal Care</a>
+    </nav>
+  </aside>
+
+  <!-- Page Header Hero -->
+  <header class="products-page-header">
+    <div class="products-header-content">
+      <span class="products-page-eyebrow">Pristine Botanical Formulations</span>
+      <h1 class="products-page-title">Our Products Collection</h1>
+      <p class="products-page-desc">
+        Handcrafted from pure Himalayan heritage flora. From natural nutraceutical supplements to revitalizing herbal teas and traditional Ayurvedic care.
+      </p>
+    </div>
+  </header>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="catalog-back-nav">
+    <a class="back-home-link" href="/">
+      <span>← Back to Home</span>
+    </a>
+  </div>
+
+  <!-- Interactive Category Filter Navigation -->
+  <nav class="products-filter-section" aria-label="Filter products by category">
+    <div class="products-filter-container">
+      <a class="filter-tab {% if not selected_category or selected_category == 'all' %}is-active{% endif %}" href="/products/?category=all" data-category="all">All Categories</a>
+      <a class="filter-tab {% if selected_category == 'nutraceutical' %}is-active{% endif %}" href="/products/?category=nutraceutical" data-category="nutraceutical">Nutraceutical</a>
+      <a class="filter-tab {% if selected_category == 'beverages' or selected_category == 'beverage' %}is-active{% endif %}" href="/products/?category=beverages" data-category="beverages">Beverages</a>
+      <a class="filter-tab {% if selected_category == 'personal-care' %}is-active{% endif %}" href="/products/?category=personal-care" data-category="personal-care">Personal Care</a>
+    </div>
+  </nav>
+
+  <!-- Products Catalog Display Grid -->
+  <main class="products-catalog-section">
+    <div class="products-catalog-container">
+      <div class="catalog-grid" id="catalog-grid">
+        <!-- 1. Nutraceutical Product: Glucosamine Joint Care -->
+        <article class="product-item-card" data-category="nutraceutical">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Nutraceutical</span>
+            <img src="{% static 'Images/NUTRACEUTICAL.png' %}" alt="Herbs Glucosamine Joint Care">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Glucosamine Joint Care</h2>
+            <p class="product-item-desc">Premium Himalayan herbal capsules for cartilage regeneration, flexibility, and joint support.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 1,450</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. Nutraceutical Product: Moringa Antioxidant -->
+        <article class="product-item-card" data-category="nutraceutical">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Nutraceutical</span>
+            <img src="{% static 'Images/NUTRACEUTICAL.png' %}" alt="Herbs Moringa Antioxidant">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Moringa Antioxidant</h2>
+            <p class="product-item-desc">Organic Moringa oleifera extract rich in essential vitamins, amino acids, and cellular defenders.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 1,150</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. Nutraceutical Product: Liver Care Detox -->
+        <article class="product-item-card" data-category="nutraceutical">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Nutraceutical</span>
+            <img src="{% static 'Images/NUTRACEUTICAL.png' %}" alt="Herbs Liver Care Detox">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Liver Care Detox &amp; Regenerate</h2>
+            <p class="product-item-desc">Synergistic Ayurvedic botanical complex promoting natural liver purification and healthy metabolism.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 1,380</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4. Beverages Product: Chamrit Tea -->
+        <article class="product-item-card" data-category="beverages">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Beverages</span>
+            <img src="{% static 'Images/BEVEREGE.png' %}" alt="Chamrit Herbal Tea">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Chamrit Tea (25 Bags)</h2>
+            <p class="product-item-desc">Signature blend of wild Himalayan herbs formulated for mental calm, respiratory wellness, and daily vitality.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 650</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5. Beverages Product: Ayurvedic Green Tea -->
+        <article class="product-item-card" data-category="beverages">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Beverages</span>
+            <img src="{% static 'Images/BEVEREGE.png' %}" alt="Ayurvedic Green Tea">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Ginseng Herbal Green Tea</h2>
+            <p class="product-item-desc">Handpicked organic green tea leaves blended with energizing Ginseng and antioxidant botanicals.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 580</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6. Beverages Product: Silver Tips Premium White Tea -->
+        <article class="product-item-card" data-category="beverages">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Beverages</span>
+            <img src="{% static 'Images/BEVEREGE.png' %}" alt="Silver Tips Premium White Tea">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Silver Tips White Tea</h2>
+            <p class="product-item-desc">Rare high-altitude tea buds harvested in pristine Himalayan morning mist for supreme antioxidant clarity.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 950</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 7. Personal Care: Herbal Massage Oil -->
+        <article class="product-item-card" data-category="personal-care">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Personal Care</span>
+            <img src="{% static 'Images/PERSONAL CARE.png' %}" alt="Pain Reliever Herbal Massage Oil">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Pain Reliever Massage Oil (100ml)</h2>
+            <p class="product-item-desc">Traditional warm herbal extract formulation providing deep penetrating relief for muscular tension and sore joints.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 720</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 8. Personal Care: Herbs Soap Natural Care -->
+        <article class="product-item-card" data-category="personal-care">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Personal Care</span>
+            <img src="{% static 'Images/PERSONAL CARE.png' %}" alt="Herbs Natural Soap">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Natural Herbal Bath Soap</h2>
+            <p class="product-item-desc">Cold-pressed Ayurvedic vegetable oils infused with healing wild herbs for gentle cleansing and skin radiance.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 220</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 9. Personal Care: Herbal Ice Health Toothpaste -->
+        <article class="product-item-card" data-category="personal-care">
+          <div class="product-item-thumb">
+            <span class="product-category-tag">Personal Care</span>
+            <img src="{% static 'Images/PERSONAL CARE.png' %}" alt="Herbal Toothpaste">
+          </div>
+          <div class="product-item-body">
+            <h2 class="product-item-title">Herbal Ice Health Toothpaste</h2>
+            <p class="product-item-desc">Natural clove, mint, and mineral formula for long-lasting fresh breath and gum strengthening.</p>
+            <div class="product-item-footer">
+              <span class="product-price">Rs. 190</span>
+              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <!-- Page Footer -->
+  <footer class="products-page-footer">
+    <p>&copy; 2026 Holistic Herbs Nepal. Nature’s Wisdom, Nepal’s Heritage. <a href="/">Return to Home</a></p>
+  </footer>
+
+  <!-- Script for client-side instant filtering -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mobile Drawer Toggle
+      const drawer = document.querySelector(".mobile-drawer");
+      const overlay = document.querySelector(".drawer-overlay");
+      const toggleBtn = document.querySelector(".mobile-toggle");
+      const closeBtn = document.querySelector(".drawer-close");
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          drawer.classList.add("is-open");
+          overlay.classList.add("is-open");
+        });
+      }
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          drawer.classList.remove("is-open");
+          overlay.classList.remove("is-open");
+        });
+      }
+      if (overlay) {
+        overlay.addEventListener("click", () => {
+          drawer.classList.remove("is-open");
+          overlay.classList.remove("is-open");
+        });
+      }
+
+      // Filter Logic
+      const filterTabs = document.querySelectorAll(".filter-tab");
+      const productCards = document.querySelectorAll(".product-item-card");
+
+      const applyCategoryFilter = (category) => {
+        productCards.forEach((card) => {
+          const cardCat = card.getAttribute("data-category");
+          if (category === "all" || cardCat === category || (category === "beverages" && cardCat === "beverage")) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      };
+
+      // Check current URL param
+      const urlParams = new URLSearchParams(window.location.search);
+      const activeParam = urlParams.get("category") || "all";
+      applyCategoryFilter(activeParam.toLowerCase());
+    });
+  </script>
+</body>
+
+</html>
