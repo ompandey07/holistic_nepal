@@ -203,6 +203,73 @@
   tbody tr:last-child td{border-bottom:none;}
   tbody tr:hover{background:var(--accent-soft);}
 
+  /* ---------- Square Upload Box Styling ---------- */
+  .image-upload-box{
+    width:120px;
+    height:120px;
+    border:2px dashed var(--border);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .15s ease, background .15s ease;
+    background:var(--surface);
+    margin-top:8px;
+  }
+  .image-upload-box:hover{border-color:var(--accent);background:var(--accent-soft);}
+  .upload-icon{
+    width:32px;height:32px;
+    color:var(--text-muted);
+    pointer-events:none;
+    transition:color .15s ease;
+  }
+  .image-upload-box:hover .upload-icon{color:var(--accent);}
+  .upload-label{
+    font-size:11px;color:var(--text-muted);margin-top:6px;
+    pointer-events:none;transition:color .15s ease;
+    text-align:center;line-height:1.3;font-weight:500;
+  }
+  .image-upload-box:hover .upload-label{color:var(--accent);}
+  .image-preview-square{
+    position:absolute;inset:0;
+    object-fit:cover;
+    width:100%;height:100%;
+    display:none;
+  }
+  .img-remove-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: rgba(194, 65, 12, 0.9);
+    color: #fff;
+    border: none;
+    border-radius: 50% !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+    z-index: 10;
+    line-height: 1;
+  }
+  .img-remove-badge:hover {
+    background: var(--warn);
+    transform: scale(1.1);
+  }
+  .category-image-thumb{
+    width:45px;
+    height:45px;
+    object-fit:cover;
+    border:1px solid var(--border);
+  }
+
   .btn-action{
     padding:5px 10px;
     font-size:12px;
@@ -380,7 +447,7 @@
         
         <div class="form-panel">
           <h3 id="formTitle">Add New Category</h3>
-          <form id="categoryForm">
+          <form id="categoryForm" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" id="category_id" name="category_id" value="">
             
@@ -388,6 +455,26 @@
               <label for="category_name">Category Name</label>
               <input type="text" id="category_name" name="category_name" placeholder="e.g. Construction Materials">
               <div class="field-error-msg" id="category_nameError"></div>
+            </div>
+
+            <div class="field">
+              <label for="category_image">Category Image <span style="font-weight:400;color:var(--text-muted);font-size:12px;">(optional)</span></label>
+              
+              <div class="image-upload-box" id="imageUploadBox" title="Click to upload category image">
+                <input type="file" id="category_image" name="category_image" accept="image/*" style="display:none;">
+                <svg class="upload-icon" id="uploadIcon" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span class="upload-label" id="uploadLabel">Upload<br>Image</span>
+                <img class="image-preview-square" id="imagePreviewSquare" alt="Category preview">
+                <button type="button" class="img-remove-badge" id="removeImgBtn" title="Remove image">&times;</button>
+              </div>
+              <input type="hidden" id="remove_image" name="remove_image" value="false">
+              <div class="field-error-msg" id="category_imageError"></div>
             </div>
 
             <button type="submit" class="btn-add" id="addBtn">
@@ -406,6 +493,7 @@
           <table>
             <thead>
               <tr>
+                <th>Image</th>
                 <th>Category Name</th>
                 <th>Created</th>
                 <th>Actions</th>
@@ -414,22 +502,33 @@
             <tbody>
               {% for category in categories %}
               <tr data-category-id="{{ category.id }}">
+                <td>
+                  {% if category.CATEGORY_IMAGE %}
+                    <img src="{{ category.CATEGORY_IMAGE.url }}" alt="{{ category.CATEGORY_NAME }}" class="category-image-thumb">
+                  {% else %}
+                    <div class="category-image-thumb" style="display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--text-muted);font-size:10px;">No Img</div>
+                  {% endif %}
+                </td>
                 <td>{{ category.CATEGORY_NAME }}</td>
                 <td>{{ category.CATEGORY_CREATED_AT|date:"Y-m-d" }}</td>
                 <td>
-                  <button class="btn-action btn-edit" data-id="{{ category.id }}" data-name="{{ category.CATEGORY_NAME }}">Edit</button>
+                  <button class="btn-action btn-edit" 
+                          data-id="{{ category.id }}" 
+                          data-name="{{ category.CATEGORY_NAME }}"
+                          data-image="{% if category.CATEGORY_IMAGE %}{{ category.CATEGORY_IMAGE.url }}{% endif %}">Edit</button>
                   <button class="btn-action btn-delete" data-id="{{ category.id }}">Delete</button>
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="3" style="text-align:center;color:var(--text-muted);padding:40px;">
+                <td colspan="4" style="text-align:center;color:var(--text-muted);padding:40px;">
                   No categories found. Add your first category using the form.
                 </td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
+
           
           {% if categories.has_other_pages %}
           <div class="pagination">
@@ -513,7 +612,15 @@
   var cancelBtn = document.getElementById('cancelBtn');
   var formTitle = document.getElementById('formTitle');
   var categoryIdField = document.getElementById('category_id');
+  var imageInput = document.getElementById('category_image');
+  var imageUploadBox = document.getElementById('imageUploadBox');
+  var uploadIcon = document.getElementById('uploadIcon');
+  var uploadLabel = document.getElementById('uploadLabel');
+  var imagePreviewSquare = document.getElementById('imagePreviewSquare');
+  var removeImgBtn = document.getElementById('removeImgBtn');
+  var removeImageInput = document.getElementById('remove_image');
   var isEditMode = false;
+  var currentImage = null;
 
   function setLoading(on) {
     addBtn.classList.toggle('loading', on);
@@ -524,12 +631,59 @@
   function resetForm() {
     form.reset();
     categoryIdField.value = '';
+    removeImageInput.value = 'false';
     isEditMode = false;
+    currentImage = null;
     formTitle.textContent = 'Add New Category';
     addBtn.querySelector('.btn-label').textContent = 'Add Category';
     cancelBtn.style.display = 'none';
+    imagePreviewSquare.style.display = 'none';
+    imagePreviewSquare.src = '';
+    removeImgBtn.style.display = 'none';
+    uploadIcon.style.display = 'block';
+    uploadLabel.style.display = 'block';
     clearAllErrors();
   }
+
+  function setImagePreview(url) {
+    if (url) {
+      imagePreviewSquare.src = url;
+      imagePreviewSquare.style.display = 'block';
+      removeImgBtn.style.display = 'flex';
+      uploadIcon.style.display = 'none';
+      uploadLabel.style.display = 'none';
+    } else {
+      imagePreviewSquare.style.display = 'none';
+      imagePreviewSquare.src = '';
+      removeImgBtn.style.display = 'none';
+      uploadIcon.style.display = 'block';
+      uploadLabel.style.display = 'block';
+    }
+  }
+
+  imageUploadBox.addEventListener('click', function(e) {
+    if (e.target === removeImgBtn || removeImgBtn.contains(e.target)) return;
+    imageInput.click();
+  });
+
+  imageInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        setImagePreview(e.target.result);
+        removeImageInput.value = 'false';
+      };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+
+  removeImgBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    imageInput.value = '';
+    removeImageInput.value = 'true';
+    currentImage = null;
+    setImagePreview(null);
+  });
 
   cancelBtn.addEventListener('click', resetForm);
 
@@ -586,9 +740,14 @@
     btn.addEventListener('click', function () {
       var categoryId = this.getAttribute('data-id');
       var categoryName = this.getAttribute('data-name');
+      var categoryImage = this.getAttribute('data-image');
 
       categoryIdField.value = categoryId;
       document.getElementById('category_name').value = categoryName;
+      removeImageInput.value = 'false';
+
+      currentImage = categoryImage || null;
+      setImagePreview(currentImage);
 
       isEditMode = true;
       formTitle.textContent = 'Edit Category';
@@ -598,6 +757,7 @@
       document.querySelector('.form-panel').scrollIntoView({ behavior: 'smooth' });
     });
   });
+
 
   document.querySelectorAll('.btn-delete').forEach(function (btn) {
     btn.addEventListener('click', function () {

@@ -78,6 +78,7 @@ class UnitSetup(models.Model):
 #!--- PRODUCT CATEGORY MODEL -------
 class ProductCategory(models.Model):
     CATEGORY_NAME = models.CharField(max_length=200)
+    CATEGORY_IMAGE = models.ImageField(upload_to="Uploads/Category Images/", null=True, blank=True)
     CATEGORY_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="CATEGORY_CREATED_BY")
     CATEGORY_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="CATEGORY_MODIFIED_BY")
     CATEGORY_CREATED_AT = models.DateTimeField(default=timezone.now)
@@ -93,11 +94,15 @@ class ProductCategory(models.Model):
 # !--- PRODUCT SETUP MODEL -------
 class ProductSetup(models.Model):
     PRODUCT_NAME = models.CharField(max_length=300)
+    PRODUCT_SLUG = models.SlugField(max_length=500, unique=True, blank=True)
     PRODUCT_UNIT = models.ForeignKey(UnitSetup, on_delete=models.PROTECT, related_name="PRODUCT_UNIT")
     PRODUCT_CATEGORY = models.ForeignKey(ProductCategory, on_delete=models.PROTECT, related_name="PRODUCT_CATEGORY")
     PRODUCT_PRICE = models.DecimalField(max_digits=15, decimal_places=2)
+    PRODUCT_SIZE = models.CharField(max_length=200, null=True, blank=True)
+    PRODUCT_WEIGHT = models.CharField(max_length=100, null=True, blank=True)
     PRODUCT_DESCRIPTION = models.TextField()
-    PRODUCT_IMAGE = models.ImageField(upload_to="Uploads/Product Images/")
+    PRODUCT_KEY_FEATURES = models.TextField(null=True, blank=True)
+    PRODUCT_IMAGE = models.ImageField(upload_to="Uploads/Product Images/", null=True, blank=True)
     PRODUCT_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="PRODUCT_CREATED_BY")
     PRODUCT_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="PRODUCT_MODIFIED_BY")
     PRODUCT_CREATED_AT = models.DateTimeField(default=timezone.now)
@@ -106,12 +111,37 @@ class ProductSetup(models.Model):
     class Meta:
         db_table = "PRODUCT SETUP"
 
+    def save(self, *args, **kwargs):
+        if not self.PRODUCT_SLUG:
+            orig_slug = slugify(self.PRODUCT_NAME)
+            slug = orig_slug
+            counter = 1
+            while ProductSetup.objects.filter(PRODUCT_SLUG=slug).exclude(id=self.id).exists():
+                slug = f"{orig_slug}-{counter}"
+                counter += 1
+            self.PRODUCT_SLUG = slug
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.PRODUCT_NAME
 
     @property
     def slug(self):
-        return slugify(self.PRODUCT_NAME)
+        return self.PRODUCT_SLUG or slugify(self.PRODUCT_NAME)
+
+
+
+# !--- PRODUCT MULTIPLE IMAGES MODEL -------
+class ProductImage(models.Model):
+    PRODUCT = models.ForeignKey(ProductSetup, on_delete=models.CASCADE, related_name="PRODUCT_IMAGES")
+    IMAGE = models.ImageField(upload_to="Uploads/Product Images/")
+    CREATED_AT = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "PRODUCT IMAGE"
+
+    def __str__(self):
+        return f"Image for {self.PRODUCT.PRODUCT_NAME}"
 
 
 # !--- PRODUCT RATING MODEL -------

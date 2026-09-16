@@ -1,12 +1,12 @@
-from .models import UnitSetup, ProductCategory, ProductSetup, ProductOrder
+from .models import UnitSetup, ProductCategory, ProductSetup, ProductImage, ProductOrder
 from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper
 from django.utils.decorators import method_decorator
 from users.wrapper import advance_security_wrapper
 from django.db.models.functions import TruncMonth
 from django.core.paginator import Paginator
-from django.core.cache import cache
 from users.models import EmployeeSetup
 from django.http import JsonResponse
+from django.core.cache import cache
 from django.shortcuts import render
 from django.utils import timezone
 from datetime import timedelta
@@ -466,7 +466,7 @@ class ProductCategoryView(View):
         page       = request.GET.get('page', 1)
         categories = (
             ProductCategory.objects
-            .only('id', 'CATEGORY_NAME', 'CATEGORY_CREATED_AT')
+            .only('id', 'CATEGORY_NAME', 'CATEGORY_IMAGE', 'CATEGORY_CREATED_AT')
             .order_by('-CATEGORY_CREATED_AT')
         )
         paginator       = Paginator(categories, 50)
@@ -497,8 +497,10 @@ class ProductCategoryView(View):
                 except ProductCategory.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Category not found'})
 
-            category_id   = request.POST.get('category_id', '').strip()
-            category_name = request.POST.get('category_name', '').strip()
+            category_id    = request.POST.get('category_id', '').strip()
+            category_name  = request.POST.get('category_name', '').strip()
+            category_image = request.FILES.get('category_image')
+            remove_image   = request.POST.get('remove_image') == 'true'
 
             errors = {}
 
@@ -525,13 +527,21 @@ class ProductCategoryView(View):
                     category = ProductCategory.objects.get(id=category_id)
                     category.CATEGORY_NAME        = category_name
                     category.CATEGORY_MODIFIED_BY = created_by
-                    category.save(update_fields=['CATEGORY_NAME', 'CATEGORY_MODIFIED_BY'])  #!- PARTIAL SAVE
+                    update_fields = ['CATEGORY_NAME', 'CATEGORY_MODIFIED_BY']
+                    if remove_image:
+                        category.CATEGORY_IMAGE = None
+                        update_fields.append('CATEGORY_IMAGE')
+                    elif category_image:
+                        category.CATEGORY_IMAGE = category_image
+                        update_fields.append('CATEGORY_IMAGE')
+                    category.save(update_fields=update_fields)  #!- PARTIAL SAVE
                     return JsonResponse({'status': 'success', 'message': 'Category updated successfully'})
                 except ProductCategory.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Category not found'})
             else:
                 ProductCategory.objects.create(
                     CATEGORY_NAME       = category_name,
+                    CATEGORY_IMAGE      = category_image if not remove_image else None,
                     CATEGORY_CREATED_BY = created_by
                 )
                 #!- INVALIDATE DASHBOARD CACHE SO CATEGORY COUNT REFRESHES
@@ -553,10 +563,16 @@ class ProductSetupView(View):
         products = (
             ProductSetup.objects
             .select_related('PRODUCT_UNIT', 'PRODUCT_CATEGORY')
+            .prefetch_related('PRODUCT_IMAGES')
             .only(
                 'id',
                 'PRODUCT_NAME',
+                'PRODUCT_SLUG',
                 'PRODUCT_PRICE',
+                'PRODUCT_SIZE',
+                'PRODUCT_WEIGHT',
+                'PRODUCT_DESCRIPTION',
+                'PRODUCT_KEY_FEATURES',
                 'PRODUCT_IMAGE',
                 'PRODUCT_CREATED_AT',
                 'PRODUCT_UNIT__UNIT_NAME',
@@ -609,13 +625,37 @@ class ProductSetupView(View):
                 except ProductSetup.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Product not found'})
 
-            product_id          = request.POST.get('product_id', '').strip()
-            product_name        = request.POST.get('product_name', '').strip()
-            product_unit        = request.POST.get('product_unit', '').strip()
-            product_category    = request.POST.get('product_category', '').strip()
-            product_price       = request.POST.get('product_price', '').strip()
-            product_description = request.POST.get('product_description', '').strip()
-            product_image       = request.FILES.get('product_image')
+            if action == 'delete_single_image':
+                image_id = request.POST.get('image_id')
+                if not image_id:
+                    return JsonResponse({'status': 'error', 'message': 'Image ID is required'})
+                try:
+                    img = ProductImage.objects.get(id=image_id)
+                    product = img.PRODUCT
+                    img.delete()
+                    if product.PRODUCT_IMAGE and img.IMAGE and product.PRODUCT_IMAGE.name == img.IMAGE.name:
+                        next_img = product.PRODUCT_IMAGES.first()
+                        product.PRODUCT_IMAGE = next_img.IMAGE if next_img else None
+                        product.save(update_fields=['PRODUCT_IMAGE'])
+                    return JsonResponse({'status': 'success', 'message': 'Image deleted successfully'})
+                except ProductImage.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Image not found'})
+
+            product_id           = request.POST.get('product_id', '').strip()
+            product_name         = request.POST.get('product_name', '').strip()
+            product_unit         = request.POST.get('product_unit', '').strip()
+            product_category     = request.POST.get('product_category', '').strip()
+            product_price        = request.POST.get('product_price', '').strip()
+            product_size         = request.POST.get('product_size', '').strip()
+            product_weight       = request.POST.get('product_weight', '').strip()
+            product_description  = request.POST.get('product_description', '').strip()
+            product_key_features = request.POST.get('product_key_features', '').strip()
+            deleted_image_ids    = request.POST.get('deleted_image_ids', '').strip()
+
+            #!- MULTIPLE IMAGES UPLOAD HANDLER
+            uploaded_images = request.FILES.getlist('product_images')
+            if not uploaded_images and request.FILES.get('product_image'):
+                uploaded_images = [request.FILES.get('product_image')]
 
             errors = {}
 
@@ -658,35 +698,57 @@ class ProductSetupView(View):
             if product_id:
                 try:
                     product = ProductSetup.objects.get(id=product_id)
-                    product.PRODUCT_NAME        = product_name
-                    product.PRODUCT_UNIT        = unit
-                    product.PRODUCT_CATEGORY    = category
-                    product.PRODUCT_PRICE       = product_price
-                    product.PRODUCT_DESCRIPTION = product_description
-                    if product_image:
-                        product.PRODUCT_IMAGE = product_image
-                    product.PRODUCT_MODIFIED_BY = created_by
-                    update_fields = [
-                        'PRODUCT_NAME', 'PRODUCT_UNIT', 'PRODUCT_CATEGORY',
-                        'PRODUCT_PRICE', 'PRODUCT_DESCRIPTION', 'PRODUCT_MODIFIED_BY',
-                        *(['PRODUCT_IMAGE'] if product_image else [])
-                    ]
-                    product.save(update_fields=update_fields)  #!- PARTIAL SAVE - ONLY CHANGED COLUMNS
+                    product.PRODUCT_NAME         = product_name
+                    product.PRODUCT_UNIT         = unit
+                    product.PRODUCT_CATEGORY     = category
+                    product.PRODUCT_PRICE        = product_price
+                    product.PRODUCT_SIZE         = product_size
+                    product.PRODUCT_WEIGHT       = product_weight
+                    product.PRODUCT_DESCRIPTION  = product_description
+                    product.PRODUCT_KEY_FEATURES = product_key_features
+                    product.PRODUCT_MODIFIED_BY  = created_by
+
+                    #!- PROCESS DELETED EXISTING IMAGES IF ANY
+                    if deleted_image_ids:
+                        del_ids = [int(i.strip()) for i in deleted_image_ids.split(',') if i.strip().isdigit()]
+                        if del_ids:
+                            ProductImage.objects.filter(id__in=del_ids, PRODUCT=product).delete()
+
+                    #!- SAVE NEW MULTIPLE IMAGES
+                    for img_file in uploaded_images:
+                        ProductImage.objects.create(PRODUCT=product, IMAGE=img_file)
+
+                    #!- UPDATE MAIN COVER IMAGE IF NEEDED
+                    first_gallery_img = product.PRODUCT_IMAGES.first()
+                    if uploaded_images and (not product.PRODUCT_IMAGE or not product.PRODUCT_IMAGE.name):
+                        product.PRODUCT_IMAGE = uploaded_images[0]
+                    elif first_gallery_img and (not product.PRODUCT_IMAGE or not product.PRODUCT_IMAGE.name):
+                        product.PRODUCT_IMAGE = first_gallery_img.IMAGE
+
+                    product.save()
                     #!- INVALIDATE DASHBOARD CACHE ON PRODUCT CHANGE
                     cache.delete('admin_dashboard_stats')
                     return JsonResponse({'status': 'success', 'message': 'Product updated successfully'})
                 except ProductSetup.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Product not found'})
             else:
-                ProductSetup.objects.create(
-                    PRODUCT_NAME        = product_name,
-                    PRODUCT_UNIT        = unit,
-                    PRODUCT_CATEGORY    = category,
-                    PRODUCT_PRICE       = product_price,
-                    PRODUCT_DESCRIPTION = product_description,
-                    PRODUCT_IMAGE       = product_image,
-                    PRODUCT_CREATED_BY  = created_by
+                cover_img = uploaded_images[0] if uploaded_images else None
+                product = ProductSetup.objects.create(
+                    PRODUCT_NAME         = product_name,
+                    PRODUCT_UNIT         = unit,
+                    PRODUCT_CATEGORY     = category,
+                    PRODUCT_PRICE        = product_price,
+                    PRODUCT_SIZE         = product_size,
+                    PRODUCT_WEIGHT       = product_weight,
+                    PRODUCT_DESCRIPTION  = product_description,
+                    PRODUCT_KEY_FEATURES = product_key_features,
+                    PRODUCT_IMAGE        = cover_img,
+                    PRODUCT_CREATED_BY   = created_by
                 )
+                #!- SAVE ALL MULTIPLE IMAGES FOR NEW PRODUCT
+                for img_file in uploaded_images:
+                    ProductImage.objects.create(PRODUCT=product, IMAGE=img_file)
+
                 #!- INVALIDATE DASHBOARD CACHE SO PRODUCT COUNT REFRESHES
                 cache.delete('admin_dashboard_stats')
                 return JsonResponse({'status': 'success', 'message': 'Product added successfully'})

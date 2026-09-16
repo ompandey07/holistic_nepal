@@ -7,6 +7,7 @@ from .models import (
     UnitSetup,
     ProductCategory,
     ProductSetup,
+    ProductImage,
     ProductRating,
     ProductOrder,
 )
@@ -144,6 +145,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'CATEGORY_NAME',
+        'category_image_preview',
         'CATEGORY_CREATED_BY',
         'CATEGORY_CREATED_AT',
     )
@@ -158,15 +160,31 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     ordering = ('CATEGORY_NAME',)
     
     #!- READONLY FIELDS
-    readonly_fields = ('CATEGORY_CREATED_AT', 'CATEGORY_MODIFIED_AT')
+    readonly_fields = ('CATEGORY_CREATED_AT', 'CATEGORY_MODIFIED_AT', 'category_image_preview')
     
     #!- ITEMS PER PAGE
     list_per_page = 25
 
+    #!- CUSTOM CATEGORY IMAGE PREVIEW
+    @admin.display(description='IMAGE')
+    def category_image_preview(self, obj):
+        if obj and getattr(obj, 'CATEGORY_IMAGE', None) and obj.CATEGORY_IMAGE:
+            return format_html(
+                '<img src="{}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;" />',
+                obj.CATEGORY_IMAGE.url
+            )
+        return format_html('<span style="color: #999; font-style: italic;">No Image</span>')
+
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
 
 #!- --- PRODUCT SETUP ADMIN CONFIGURATION ---
 @admin.register(ProductSetup)
 class ProductSetupAdmin(admin.ModelAdmin):
+    inlines = [ProductImageInline]
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'PRODUCT_NAME',
@@ -174,6 +192,7 @@ class ProductSetupAdmin(admin.ModelAdmin):
         'PRODUCT_PRICE',
         'PRODUCT_UNIT',
         'product_image_preview',
+        'PRODUCT_CREATED_BY',
         'PRODUCT_CREATED_AT',
     )
     
@@ -181,7 +200,10 @@ class ProductSetupAdmin(admin.ModelAdmin):
     list_filter = ('PRODUCT_CATEGORY', 'PRODUCT_UNIT', 'PRODUCT_CREATED_AT')
     
     #!- SEARCHABLE FIELDS
-    search_fields = ('PRODUCT_NAME', 'PRODUCT_DESCRIPTION')
+    search_fields = ('PRODUCT_NAME', 'PRODUCT_SLUG', 'PRODUCT_DESCRIPTION')
+
+    #!- PREPOPULATED FIELDS
+    prepopulated_fields = {'PRODUCT_SLUG': ('PRODUCT_NAME',)}
     
     #!- SORTING ORDER
     ordering = ('-PRODUCT_CREATED_AT',)
@@ -260,6 +282,7 @@ class ProductOrderAdmin(admin.ModelAdmin):
         'PRODUCT_ORDER_PRODUCT',
         'PRODUCT_ORDER_QTY',
         'status_badge',
+        'PRODUCT_ORDER_CREATED_BY',
         'PRODUCT_ORDER_CREATED_AT',
     )
     
