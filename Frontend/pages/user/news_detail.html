@@ -1,0 +1,211 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ news.NEWS_TITLE }} · Company Announcements | Holistic Herbs Nepal</title>
+  <meta name="description" content="{{ news.NEWS_DESCRIPTION|truncatewords:25 }}">
+  <link rel="icon" type="image/x-icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}">
+
+  <!-- Google Fonts: Inter & Newsreader/Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=news2.0">
+</head>
+
+<body class="product-detail-body">
+  <!-- Top Banner -->
+  <div class="top-banner" role="region" aria-label="Announcement">
+    <div class="banner-content">
+      <span class="banner-icon" aria-hidden="true">🌿</span>
+      <p class="banner-text">Certified Himalayan Ayurvedic Remedies · DFTQC & GMP Approved Formulations</p>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header class="main-header" role="banner">
+    <div class="header-container">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="/">Home page</a>
+        <a href="/#all-products">All Products</a>
+        <a href="/#news">News</a>
+        <a href="/#hospital">Holistic Hospital</a>
+        <a href="/#gallery">Gallery</a>
+        <a href="#account">My Account</a>
+      </nav>
+
+      <!-- Right Side Actions: Language Switcher & Cart Button -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="news-lang-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="news-lang-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="#cart" aria-label="View shopping cart">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" aria-live="polite">0</span>
+        </a>
+      </div>
+
+      <button class="mobile-toggle" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay"></div>
+  <aside class="mobile-drawer" aria-label="Mobile menu">
+    <div class="drawer-header">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+      <button class="drawer-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="drawer-menu">
+      <a href="/">Home page</a>
+      <a href="/#all-products">All Products</a>
+      <a href="/#news">News</a>
+      <a href="/#hospital">Holistic Hospital</a>
+      <a href="/#gallery">Gallery</a>
+      <a href="#account">My Account</a>
+    </nav>
+  </aside>
+
+  <main class="pdp-main-wrapper" id="main-content">
+    <!-- Breadcrumb -->
+    <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+      <div class="pdp-container">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="breadcrumb-sep">/</li>
+          <li>
+            <a href="/#news">News</a>
+          </li>
+          <li class="breadcrumb-sep">/</li>
+          <li class="breadcrumb-current" aria-current="page">{{ news.NEWS_TITLE|truncatechars:45 }}</li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- News Article Content -->
+    <article class="news-article-wrap">
+      <div class="pdp-container">
+        <div class="news-article-inner">
+          <div class="news-article-meta">
+            <span class="news-category-label">{{ news.NEWS_TYPE }}</span>
+            <span class="news-meta-divider">·</span>
+            <time class="news-article-date" datetime="{{ news.NEWS_CREATED_AT|date:'Y-m-d' }}">
+              {{ news.NEWS_CREATED_AT|date:"F j, Y" }}
+            </time>
+          </div>
+
+          <h1 class="news-article-title">{{ news.NEWS_TITLE }}</h1>
+
+          <div class="news-article-divider"></div>
+
+          <div class="news-article-body">
+            <p class="news-article-lead">{{ news.NEWS_DESCRIPTION }}</p>
+            
+            <p>
+              Holistic Herbs Nepal remains committed to elevating traditional Himalayan medicine through state-of-the-art scientific validation, sustainable wildcrafting partnerships, and transparent Good Manufacturing Practices (GMP). All botanical extracts are harvested under ecological sustainability protocols approved by local regional forest cooperatives across Nepal.
+            </p>
+          </div>
+
+          <div class="news-article-footer-nav">
+            <a class="news-back-link" href="/#news">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Back to all announcements</span>
+            </a>
+          </div>
+        </div>
+
+        {% if recent_news %}
+        <!-- Companion Announcements -->
+        <div class="news-related-section">
+          <h2 class="news-related-title">Recent Announcements</h2>
+          <div class="apothecary-news-grid">
+            {% for item in recent_news %}
+            <article class="apothecary-news-item">
+              <a class="apothecary-news-entry" href="/news/{{ item.NEWS_SLUG }}/">
+                <div class="news-date-col">
+                  <span class="news-date-day">{{ item.NEWS_CREATED_AT|date:"d" }}</span>
+                  <span class="news-date-month">{{ item.NEWS_CREATED_AT|date:"M"|upper }}</span>
+                </div>
+                <div class="news-v-divider" aria-hidden="true"></div>
+                <div class="news-content-col">
+                  <div class="news-meta-row">
+                    <span class="news-category-tag">{{ item.NEWS_TYPE }}</span>
+                  </div>
+                  <h3 class="news-headline">{{ item.NEWS_TITLE }}</h3>
+                  <p class="news-description">{{ item.NEWS_DESCRIPTION }}</p>
+                  <span class="news-view-link">View details</span>
+                </div>
+              </a>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </article>
+  </main>
+
+  <!-- Clean Apothecary Footer -->
+  <footer class="pdp-footer">
+    <div class="pdp-container">
+      <div class="pdp-footer-inner">
+        <div class="pdp-footer-brand">
+          <img class="pdp-footer-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+          <span>Holistic Herbs Nepal · Nature's Wisdom, Nepal's Heritage.</span>
+        </div>
+        <div class="pdp-footer-links">
+          <a href="/">Home</a>
+          <a href="/#all-products">All Products</a>
+          <a href="/#news">News</a>
+          <a href="/#hospital">Hospital</a>
+          <a href="/#gallery">Gallery</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

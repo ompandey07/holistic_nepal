@@ -17,6 +17,6 @@ urlpatterns = [
     # -- PRODUCT DETAIL PAGE ---
     path('product/<slug:slug>/', views.ProductDetailPageView(), name='product_detail'),
 
-
-
+    # -- NEWS DETAIL PAGE ---
+    path('news/<slug:slug>/', views.NewsDetailPageView(), name='news_detail'),
 ]

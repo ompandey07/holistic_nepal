@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
 
   <!-- Favicon -->
-  <link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+  <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
@@ -303,7 +303,7 @@
     <div class="header-inner">
       <!-- Brand Logo -->
       <a class="brand" href="/" aria-label="Holistic Herbs Home">
-        <img class="brand-logo-img" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
         <span class="brand-name">
           <strong>Holistic</strong>
           <em>Herbs</em>
@@ -335,7 +335,7 @@
   <aside class="mobile-drawer" aria-label="Mobile menu">
     <div class="drawer-header">
       <a class="brand" href="/" aria-label="Holistic Herbs Home">
-        <img class="brand-logo-img" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
         <span class="brand-name">
           <strong>Holistic</strong>
           <em>Herbs</em>
@@ -384,149 +384,24 @@
   <main class="products-catalog-section">
     <div class="products-catalog-container">
       <div class="catalog-grid" id="catalog-grid">
-        <!-- 1. Nutraceutical Product: Glucosamine Joint Care -->
-        <article class="product-item-card" data-category="nutraceutical">
+        {% for product in products %}
+        <article class="product-item-card" data-category="{{ product.category_group|lower }}">
           <div class="product-item-thumb">
-            <span class="product-category-tag">Nutraceutical</span>
-            <img src="{% static 'Images/NUTRACEUTICAL.png' %}" alt="Herbs Glucosamine Joint Care">
+            <span class="product-category-tag">{{ product.category }}</span>
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
           </div>
           <div class="product-item-body">
-            <h2 class="product-item-title">Glucosamine Joint Care</h2>
-            <p class="product-item-desc">Premium Himalayan herbal capsules for cartilage regeneration, flexibility, and joint support.</p>
+            <h2 class="product-item-title">{{ product.name }}</h2>
+            <p class="product-item-desc">{{ product.short_desc }}</p>
             <div class="product-item-footer">
-              <span class="product-price">Rs. 1,450</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
+              <span class="product-price">{{ product.price_display }}</span>
+              <a class="product-action-btn" href="{{ product.detail_url }}">View Details →</a>
             </div>
           </div>
         </article>
-
-        <!-- 2. Nutraceutical Product: Moringa Antioxidant -->
-        <article class="product-item-card" data-category="nutraceutical">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Nutraceutical</span>
-            <img src="{% static 'Images/NUTRACEUTICAL.png' %}" alt="Herbs Moringa Antioxidant">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Moringa Antioxidant</h2>
-            <p class="product-item-desc">Organic Moringa oleifera extract rich in essential vitamins, amino acids, and cellular defenders.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 1,150</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 3. Nutraceutical Product: Liver Care Detox -->
-        <article class="product-item-card" data-category="nutraceutical">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Nutraceutical</span>
-            <img src="{% static 'Images/NUTRACEUTICAL.png' %}" alt="Herbs Liver Care Detox">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Liver Care Detox &amp; Regenerate</h2>
-            <p class="product-item-desc">Synergistic Ayurvedic botanical complex promoting natural liver purification and healthy metabolism.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 1,380</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 4. Beverages Product: Chamrit Tea -->
-        <article class="product-item-card" data-category="beverages">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Beverages</span>
-            <img src="{% static 'Images/BEVEREGE.png' %}" alt="Chamrit Herbal Tea">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Chamrit Tea (25 Bags)</h2>
-            <p class="product-item-desc">Signature blend of wild Himalayan herbs formulated for mental calm, respiratory wellness, and daily vitality.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 650</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 5. Beverages Product: Ayurvedic Green Tea -->
-        <article class="product-item-card" data-category="beverages">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Beverages</span>
-            <img src="{% static 'Images/BEVEREGE.png' %}" alt="Ayurvedic Green Tea">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Ginseng Herbal Green Tea</h2>
-            <p class="product-item-desc">Handpicked organic green tea leaves blended with energizing Ginseng and antioxidant botanicals.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 580</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 6. Beverages Product: Silver Tips Premium White Tea -->
-        <article class="product-item-card" data-category="beverages">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Beverages</span>
-            <img src="{% static 'Images/BEVEREGE.png' %}" alt="Silver Tips Premium White Tea">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Silver Tips White Tea</h2>
-            <p class="product-item-desc">Rare high-altitude tea buds harvested in pristine Himalayan morning mist for supreme antioxidant clarity.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 950</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 7. Personal Care: Herbal Massage Oil -->
-        <article class="product-item-card" data-category="personal-care">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Personal Care</span>
-            <img src="{% static 'Images/PERSONAL CARE.png' %}" alt="Pain Reliever Herbal Massage Oil">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Pain Reliever Massage Oil (100ml)</h2>
-            <p class="product-item-desc">Traditional warm herbal extract formulation providing deep penetrating relief for muscular tension and sore joints.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 720</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 8. Personal Care: Herbs Soap Natural Care -->
-        <article class="product-item-card" data-category="personal-care">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Personal Care</span>
-            <img src="{% static 'Images/PERSONAL CARE.png' %}" alt="Herbs Natural Soap">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Natural Herbal Bath Soap</h2>
-            <p class="product-item-desc">Cold-pressed Ayurvedic vegetable oils infused with healing wild herbs for gentle cleansing and skin radiance.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 220</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 9. Personal Care: Herbal Ice Health Toothpaste -->
-        <article class="product-item-card" data-category="personal-care">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">Personal Care</span>
-            <img src="{% static 'Images/PERSONAL CARE.png' %}" alt="Herbal Toothpaste">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">Herbal Ice Health Toothpaste</h2>
-            <p class="product-item-desc">Natural clove, mint, and mineral formula for long-lasting fresh breath and gum strengthening.</p>
-            <div class="product-item-footer">
-              <span class="product-price">Rs. 190</span>
-              <a class="product-action-btn" href="#inquire">Inquire Now →</a>
-            </div>
-          </div>
-        </article>
+        {% empty %}
+        <p style="grid-column: 1 / -1; text-align: center; color: #616787; padding: 48px;">No products found in this category.</p>
+        {% endfor %}
       </div>
     </div>
   </main>

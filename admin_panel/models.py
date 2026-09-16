@@ -30,20 +30,20 @@ class Gallery(models.Model):
 # !--- NEWS MODEL -------
 class News(models.Model):
     NEWS_TYPE = models.CharField(max_length=50, choices=[
-        ("GENERAL", "General"),
         ("ANNOUNCEMENT", "Announcement"),
-        ("EVENT", "Event"),
+        ("CERTIFICATION", "Certification"),
         ("UPDATE", "Update"),
+        ("EVENT", "Event"),
+        ("PRESS", "Press"),
         ("NOTICE", "Notice"),
-        ("BLOG", "Blog"),
-        ("PRESS_RELEASE", "Press Release"),
-    ])
+        ("GENERAL", "General"),
+    ], default="ANNOUNCEMENT")
     NEWS_TITLE = models.CharField(max_length=500)
     NEWS_SLUG = models.SlugField(max_length=500, unique=True, blank=True)
-    NEWS_IMAGE = models.ImageField(upload_to="Uploads/News/")
+    NEWS_IMAGE = models.ImageField(upload_to="Uploads/News/", blank=True, null=True)
     NEWS_DESCRIPTION = models.TextField()
-    NEWS_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="NEWS_CREATED_BY")
-    NEWS_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="NEWS_MODIFIED_BY")
+    NEWS_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="NEWS_CREATED_BY")
+    NEWS_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="NEWS_MODIFIED_BY")
     NEWS_CREATED_AT = models.DateTimeField(default=timezone.now)
     NEWS_MODIFIED_AT = models.DateTimeField(auto_now=True)
 
@@ -63,8 +63,8 @@ class News(models.Model):
 class UnitSetup(models.Model):
     UNIT_NAME = models.CharField(max_length=200)
     UNIT_SYMBOL = models.CharField(max_length=50)
-    UNIT_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="UNIT_CREATED_BY")
-    UNIT_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="UNIT_MODIFIED_BY")
+    UNIT_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="UNIT_CREATED_BY")
+    UNIT_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="UNIT_MODIFIED_BY")
     UNIT_CREATED_AT = models.DateTimeField(default=timezone.now)
     UNIT_MODIFIED_AT = models.DateTimeField(auto_now=True)
 
@@ -78,8 +78,8 @@ class UnitSetup(models.Model):
 #!--- PRODUCT CATEGORY MODEL -------
 class ProductCategory(models.Model):
     CATEGORY_NAME = models.CharField(max_length=200)
-    CATEGORY_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="CATEGORY_CREATED_BY")
-    CATEGORY_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="CATEGORY_MODIFIED_BY")
+    CATEGORY_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="CATEGORY_CREATED_BY")
+    CATEGORY_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="CATEGORY_MODIFIED_BY")
     CATEGORY_CREATED_AT = models.DateTimeField(default=timezone.now)
     CATEGORY_MODIFIED_AT = models.DateTimeField(auto_now=True)
 
@@ -98,8 +98,8 @@ class ProductSetup(models.Model):
     PRODUCT_PRICE = models.DecimalField(max_digits=15, decimal_places=2)
     PRODUCT_DESCRIPTION = models.TextField()
     PRODUCT_IMAGE = models.ImageField(upload_to="Uploads/Product Images/")
-    PRODUCT_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="PRODUCT_CREATED_BY")
-    PRODUCT_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="PRODUCT_MODIFIED_BY")
+    PRODUCT_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="PRODUCT_CREATED_BY")
+    PRODUCT_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="PRODUCT_MODIFIED_BY")
     PRODUCT_CREATED_AT = models.DateTimeField(default=timezone.now)
     PRODUCT_MODIFIED_AT = models.DateTimeField(auto_now=True)
 
@@ -108,6 +108,10 @@ class ProductSetup(models.Model):
 
     def __str__(self):
         return self.PRODUCT_NAME
+
+    @property
+    def slug(self):
+        return slugify(self.PRODUCT_NAME)
 
 
 # !--- PRODUCT RATING MODEL -------

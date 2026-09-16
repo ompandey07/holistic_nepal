@@ -424,4 +424,292 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  // 8. Site-wide Language Switcher (ENG / नेपाली)
+  const setSiteLanguage = (lang) => {
+    document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
+      if (btn.getAttribute("data-lang") === lang) {
+        btn.classList.add("is-active");
+        btn.setAttribute("aria-pressed", "true");
+      } else {
+        btn.classList.remove("is-active");
+        btn.setAttribute("aria-pressed", "false");
+      }
+    });
+
+    try {
+      localStorage.setItem("site_lang", lang);
+    } catch (e) {}
+  };
+
+  document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const lang = btn.getAttribute("data-lang") || "eng";
+      setSiteLanguage(lang);
+    });
+  });
+
+  // Initialize with saved preference or default to 'eng'
+  const savedSiteLang = localStorage.getItem("site_lang") || "eng";
+  setSiteLanguage(savedSiteLang);
+
+  // 9. Ambient Process Video Controller (IntersectionObserver, Mute Toggle, Reduced Motion)
+  const initProcessVideo = () => {
+    const video = document.getElementById("process-ambient-video");
+    const section = document.getElementById("process");
+    const muteBtn = document.getElementById("process-mute-toggle");
+    const playBtn = document.getElementById("process-manual-play-btn");
+
+    if (!video || !section) return;
+
+    const iconMuted = muteBtn ? muteBtn.querySelector(".process-mute-icon-muted") : null;
+    const iconUnmuted = muteBtn ? muteBtn.querySelector(".process-mute-icon-unmuted") : null;
+
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      video.removeAttribute("autoplay");
+      video.pause();
+      if (playBtn) {
+        playBtn.style.display = "inline-flex";
+        playBtn.addEventListener("click", () => {
+          video.play();
+          playBtn.style.display = "none";
+        });
+      }
+    } else {
+      // Lazy autoplay / pause via IntersectionObserver when entering / leaving viewport
+      if ("IntersectionObserver" in window) {
+        const videoObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                  playPromise.catch(() => {
+                    // Browser prevented autoplay
+                  });
+                }
+              } else {
+                video.pause();
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+        videoObserver.observe(section);
+      }
+    }
+
+    // Audio Mute/Unmute toggle
+    if (muteBtn) {
+      muteBtn.addEventListener("click", () => {
+        video.muted = !video.muted;
+        if (video.muted) {
+          if (iconMuted) iconMuted.style.display = "block";
+          if (iconUnmuted) iconUnmuted.style.display = "none";
+          muteBtn.setAttribute("aria-label", "Unmute process video");
+        } else {
+          if (iconMuted) iconMuted.style.display = "none";
+          if (iconUnmuted) iconUnmuted.style.display = "block";
+          muteBtn.setAttribute("aria-label", "Mute process video");
+        }
+      });
+    }
+
+    // 4. Expand to Fullscreen Lightbox Controller
+    const expandBtn = document.getElementById("process-expand-btn");
+    const lightbox = document.getElementById("process-lightbox-modal");
+    const lightboxClose = document.getElementById("process-lightbox-close");
+    const lightboxBackdrop = document.getElementById("process-lightbox-backdrop");
+    const lightboxVideo = document.getElementById("process-lightbox-video");
+
+    if (expandBtn && lightbox && lightboxVideo) {
+      let previousActiveElement = null;
+
+      const openLightbox = () => {
+        previousActiveElement = document.activeElement;
+
+        // Pause ambient background video
+        video.pause();
+
+        // Reveal and activate lightbox
+        lightbox.style.display = "flex";
+        requestAnimationFrame(() => {
+          lightbox.classList.add("is-active");
+        });
+        lightbox.setAttribute("aria-hidden", "false");
+
+        // Sync and play unmuted with native controls
+        try {
+          lightboxVideo.currentTime = video.currentTime || 0;
+        } catch (e) {}
+
+        lightboxVideo.muted = false;
+        lightboxVideo.volume = 1.0;
+
+        const playPromise = lightboxVideo.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // If browser autoplay with audio blocked, fallback to user gesture
+          });
+        }
+
+        // Lock background scroll
+        document.body.style.overflow = "hidden";
+
+        // Focus close button for accessibility
+        if (lightboxClose) {
+          setTimeout(() => lightboxClose.focus(), 100);
+        }
+      };
+
+      const closeLightbox = () => {
+        // Pause lightbox video
+        lightboxVideo.pause();
+
+        // Smoothly fade out lightbox
+        lightbox.classList.remove("is-active");
+        lightbox.setAttribute("aria-hidden", "true");
+
+        setTimeout(() => {
+          lightbox.style.display = "none";
+        }, 280);
+
+        // Restore body scroll
+        document.body.style.overflow = "";
+
+        // Resume ambient background loop (muted)
+        video.muted = true;
+        if (!prefersReducedMotion) {
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {});
+          }
+        }
+
+        // Return focus
+        if (previousActiveElement && typeof previousActiveElement.focus === "function") {
+          previousActiveElement.focus();
+        } else if (expandBtn) {
+          expandBtn.focus();
+        }
+      };
+
+      expandBtn.addEventListener("click", openLightbox);
+
+      if (lightboxClose) {
+        lightboxClose.addEventListener("click", closeLightbox);
+      }
+
+      if (lightboxBackdrop) {
+        lightboxBackdrop.addEventListener("click", closeLightbox);
+      }
+
+      // Keyboard handling: Escape to close, Focus trap
+      document.addEventListener("keydown", (e) => {
+        if (!lightbox.classList.contains("is-active")) return;
+
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeLightbox();
+          return;
+        }
+
+        // Focus trap inside lightbox modal
+        if (e.key === "Tab") {
+          const focusableElements = lightbox.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), video[controls]'
+          );
+          if (focusableElements.length === 0) return;
+
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        }
+      });
+    }
+  };
+
+  initProcessVideo();
+
+  // Apothecary Footer Provenance Clock & Ascend Action
+  const initApothecaryFooter = () => {
+    // 1. Kathmandu Live Provenance Clock (UTC+5:45)
+    const clockEl = document.getElementById("footer-kathmandu-clock");
+    if (clockEl) {
+      const updateClock = () => {
+        const now = new Date();
+        const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+        // Nepal is UTC+5 hours 45 mins (+5.75 hours)
+        const nptDate = new Date(utcMs + (5.75 * 3600000));
+        let hours = nptDate.getHours();
+        const mins = String(nptDate.getMinutes()).padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+        clockEl.textContent = `${hours}:${mins} ${ampm} NPT`;
+      };
+      updateClock();
+      setInterval(updateClock, 30000);
+    }
+
+    // 2. Ascend to Summit Back-to-Top Button
+    const ascendBtn = document.getElementById("footer-ascend-btn");
+    if (ascendBtn) {
+      ascendBtn.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      });
+    }
+  };
+
+  // 3D Theatre Cinema Screen Tilt Interaction
+  const init3DTheatreTilt = () => {
+    const stage = document.getElementById("theatre-screen-stage");
+    const bezel = document.getElementById("theatre-screen-bezel");
+    if (!stage || !bezel) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let rafId = null;
+
+    stage.addEventListener("mousemove", (e) => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = stage.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        // Subtle 3D cinema tilt
+        const rotX = 2.8 - (y * 5.5);
+        const rotY = x * 6.5;
+
+        bezel.style.transform = `perspective(1400px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale(0.99)`;
+      });
+    });
+
+    stage.addEventListener("mouseleave", () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      bezel.style.transform = "perspective(1400px) rotateX(2.8deg) rotateY(0deg) scale(0.985)";
+    });
+  };
+
+  init3DTheatreTilt();
+
+  initApothecaryFooter();
 });
+
+

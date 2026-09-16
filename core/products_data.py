@@ -18,6 +18,12 @@ PRODUCTS_CATALOG = {
         "reviews_count": 14,
         "short_desc": "Maintains liver health, improves digestion and strengthens natural immunity.",
         "image": "Medicine/Herbs Aloe Vera.png",
+        "gallery_images": [
+            "Medicine/Herbs Aloe Vera.png",
+            "Images/NUTRACEUTICAL BG REMOVED.png",
+            "Images/BEVEREGE BG REMOVED.png",
+            "Images/PERSONAL CARE BG REMOVED.png",
+        ],
         "highlights": [
             "Maintains optimal liver health and detoxification",
             "Improves digestive system and nutrient absorption",
@@ -45,6 +51,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 19,
         "short_desc": "Reduces joint pain, repairs cartilage and strengthens bone flexibility.",
         "image": "Medicine/Herbs Glucosamine.jpeg",
+        "gallery_images": [
+            "Medicine/Herbs Glucosamine.jpeg",
+            "Images/NUTRACEUTICAL BG REMOVED.png",
+            "Images/PERSONAL CARE BG REMOVED.png",
+        ],
         "highlights": [
             "Reduces chronic joint pain and inflammatory stiffness",
             "Stimulates natural cartilage regeneration and bone strength",
@@ -71,6 +82,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 23,
         "short_desc": "Protects brain health, enhances memory focus, and fights depression and migraines.",
         "image": "Medicine/Herbs Gingko Biloba.png",
+        "gallery_images": [
+            "Medicine/Herbs Gingko Biloba.png",
+            "Images/NUTRACEUTICAL BG REMOVED.png",
+            "Images/BEVEREGE BG REMOVED.png",
+        ],
         "highlights": [
             "Improves cerebral micro-circulation and cognitive clarity",
             "Sharpen memory recall and mental alertness",
@@ -97,6 +113,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 16,
         "short_desc": "Natural weight care formulation, burns body fat and accelerates metabolism.",
         "image": "Medicine/Herbs Green Coffee Beans.png",
+        "gallery_images": [
+            "Medicine/Herbs Green Coffee Beans.png",
+            "Images/BEVEREGE BG REMOVED.png",
+            "Images/NUTRACEUTICAL BG REMOVED.png",
+        ],
         "highlights": [
             "Rich in Chlorogenic Acid to block fat synthesis",
             "Accelerates basal metabolic rate naturally without jitters",
@@ -123,6 +144,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 28,
         "short_desc": "Cleanses blood, flushes bodily toxins and aids everyday digestion.",
         "image": "Medicine/Herbs Green Tea.jpeg",
+        "gallery_images": [
+            "Medicine/Herbs Green Tea.jpeg",
+            "Medicine/Herbs Leaf Tea.jpeg",
+            "Images/BEVEREGE BG REMOVED.png",
+        ],
         "highlights": [
             "Blended with pure Ganoderma and wild Ginseng roots",
             "Flushes metabolic toxins and cleanses internal organs",
@@ -149,6 +175,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 31,
         "short_desc": "Relieves stress, eliminates fatigue and sustains physical stamina.",
         "image": "Medicine/Herbs Black Coffee.jpeg",
+        "gallery_images": [
+            "Medicine/Herbs Black Coffee.jpeg",
+            "Images/BEVEREGE BG REMOVED.png",
+            "Medicine/Herbs Leaf Tea.jpeg",
+        ],
         "highlights": [
             "Zero added sugar, 100% natural herbal vitality blend",
             "Relieves physical and cognitive burnout in minutes",
@@ -175,6 +206,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 22,
         "short_desc": "Protects enamel, stops gum bleeding and permanently cures bad breath.",
         "image": "Medicine/Herbs Toothpaste 50 Gm.png",
+        "gallery_images": [
+            "Medicine/Herbs Toothpaste 50 Gm.png",
+            "Medicine/Herbs Toothpaste 100 Gm.png",
+            "Images/PERSONAL CARE BG REMOVED.png",
+        ],
         "highlights": [
             "100% fluoride-free and SLS-free gentle botanical paste",
             "Clove and Neem extracts fight oral bacteria and plaque",
@@ -201,6 +237,11 @@ PRODUCTS_CATALOG = {
         "reviews_count": 26,
         "short_desc": "Reduces joint stiffness, backache, and deep muscle pain.",
         "image": "Medicine/Herbs Massage Oil.jpeg",
+        "gallery_images": [
+            "Medicine/Herbs Massage Oil.jpeg",
+            "Images/PERSONAL CARE BG REMOVED.png",
+            "Medicine/Herbs Massage Oil.jpeg",
+        ],
         "highlights": [
             "Deep penetrating warm herbal formula for immediate relief",
             "Sesame base infused with 16 wild Himalayan herbs",
@@ -217,10 +258,149 @@ PRODUCTS_CATALOG = {
 
 
 def get_all_products():
-    """Return a list of all products in order."""
-    return list(PRODUCTS_CATALOG.values())
+    """
+    Return a list of all products from the backend database (ProductSetup),
+    enriched with rich catalog metadata (gallery, highlights, bilingual desc, ratings).
+    Fallback to static PRODUCTS_CATALOG if DB is uninitialized.
+    """
+    try:
+        from django.utils.text import slugify
+        from admin_panel.models import ProductSetup
+        db_products = list(ProductSetup.objects.select_related('PRODUCT_CATEGORY', 'PRODUCT_UNIT').order_by('id'))
+    except Exception:
+        db_products = []
+
+    if not db_products:
+        # Fallback to static catalog
+        products = []
+        for p in PRODUCTS_CATALOG.values():
+            p_copy = dict(p)
+            if 'gallery_images' not in p_copy or not p_copy['gallery_images']:
+                p_copy['gallery_images'] = [p_copy['image']]
+            img = p_copy.get('image', '')
+            p_copy['image_url'] = img if (img.startswith('/') or img.startswith('http')) else f"/static/{img}"
+            p_copy['price_display'] = f"Rs {int(p_copy['price']):,}" if p_copy.get('price') else "Rs 0"
+            p_copy['detail_url'] = f"/product/{p_copy['slug']}/"
+            products.append(p_copy)
+        return products
+
+    from django.utils.text import slugify
+    products = []
+    seen_slugs = set()
+    for db_p in db_products:
+        base_slug = slugify(db_p.PRODUCT_NAME) or f"product-{db_p.id}"
+        catalog_meta = {}
+        for cat_slug, cat_val in PRODUCTS_CATALOG.items():
+            if cat_val.get('name', '').strip().lower() == db_p.PRODUCT_NAME.strip().lower() or cat_slug == base_slug:
+                catalog_meta = cat_val
+                base_slug = cat_val.get('slug', cat_slug)
+                break
+
+        slug = base_slug
+        counter = 1
+        while slug in seen_slugs:
+            counter += 1
+            slug = f"{base_slug}-{counter}"
+        seen_slugs.add(slug)
+
+        aliases = [slug, base_slug, slugify(db_p.PRODUCT_NAME), str(db_p.id)]
+
+        # Determine image_url
+        if db_p.PRODUCT_IMAGE:
+            try:
+                image_url = db_p.PRODUCT_IMAGE.url
+            except Exception:
+                image_url = f"/media/{db_p.PRODUCT_IMAGE}"
+        elif catalog_meta.get('image'):
+            cat_img = catalog_meta['image']
+            image_url = cat_img if (cat_img.startswith('/') or cat_img.startswith('http')) else f"/static/{cat_img}"
+        else:
+            image_url = "/static/Images/NUTRACEUTICAL BG REMOVED.png"
+
+        # Gallery images
+        gallery_images = []
+        if catalog_meta.get('gallery_images'):
+            for g in catalog_meta['gallery_images']:
+                g_url = g if (g.startswith('/') or g.startswith('http')) else f"/static/{g}"
+                gallery_images.append(g_url)
+        if not gallery_images:
+            gallery_images = [image_url]
+        elif image_url not in gallery_images:
+            gallery_images.insert(0, image_url)
+
+        # Price formatting
+        price_num = float(db_p.PRODUCT_PRICE) if db_p.PRODUCT_PRICE is not None else float(catalog_meta.get('price', 0))
+        price_formatted = f"Rs {price_num:,.2f}"
+        price_display = f"Rs {int(price_num):,}" if price_num.is_integer() else price_formatted
+
+        # Category and Unit
+        cat_name = db_p.PRODUCT_CATEGORY.CATEGORY_NAME if db_p.PRODUCT_CATEGORY else catalog_meta.get('category', 'Ayurvedic Remedies')
+        unit_name = db_p.PRODUCT_UNIT.UNIT_NAME if db_p.PRODUCT_UNIT else 'Standard Pack'
+        unit_symbol = db_p.PRODUCT_UNIT.UNIT_SYMBOL if db_p.PRODUCT_UNIT else ''
+        contain = catalog_meta.get('contain') or (f"{unit_symbol} ({unit_name})" if unit_symbol else unit_name)
+
+        # Descriptions
+        raw_desc = db_p.PRODUCT_DESCRIPTION or catalog_meta.get('short_desc') or catalog_meta.get('english_desc') or ''
+        short_desc = catalog_meta.get('short_desc') or (raw_desc[:110] + ('...' if len(raw_desc) > 110 else ''))
+        english_desc = catalog_meta.get('english_desc') or raw_desc
+        nepali_desc = catalog_meta.get('nepali_desc') or raw_desc
+
+        # Highlights
+        highlights = catalog_meta.get('highlights')
+        if not highlights:
+            lines = [l.strip(' -*•') for l in raw_desc.split('\n') if l.strip()]
+            highlights = lines[:4] if lines else [
+                "100% Pure authentic Himalayan herbal formulation",
+                "Processed under strict traditional Ayurvedic standards",
+                "Lab verified for chemical purity and active botanicals",
+                "Zero artificial additives, preservatives or harsh chemicals"
+            ]
+
+        prod_data = {
+            "id": db_p.id,
+            "db_id": db_p.id,
+            "slug": slug,
+            "name": db_p.PRODUCT_NAME,
+            "category": cat_name,
+            "category_group": catalog_meta.get('category_group', 'Nutraceutical'),
+            "contain": contain,
+            "price": price_num,
+            "price_formatted": price_formatted,
+            "price_display": price_display,
+            "dftqc_no": catalog_meta.get('dftqc_no', 'DFTQC Verified Formulation'),
+            "rating": catalog_meta.get('rating', 5.0),
+            "reviews_count": catalog_meta.get('reviews_count', 16),
+            "short_desc": short_desc,
+            "english_desc": english_desc,
+            "nepali_desc": nepali_desc,
+            "suggested_use": catalog_meta.get('suggested_use', 'Take 1 serving twice daily with lukewarm water after meals, or as recommended by an Ayurvedic specialist.'),
+            "ingredients": catalog_meta.get('ingredients', f"Pure extract of {db_p.PRODUCT_NAME}."),
+            "caution": catalog_meta.get('caution', 'Consult your physician prior to use if pregnant, nursing, or undergoing clinical treatment.'),
+            "image": image_url,
+            "image_url": image_url,
+            "gallery_images": gallery_images,
+            "highlights": highlights,
+            "detail_url": f"/product/{slug}/",
+            "aliases": aliases,
+        }
+        products.append(prod_data)
+
+    return products
 
 
 def get_product_by_slug(slug):
-    """Retrieve a single product by its slug."""
-    return PRODUCTS_CATALOG.get(slug)
+    """Retrieve a single product by its slug, alias, or db ID."""
+    all_prods = get_all_products()
+    for p in all_prods:
+        if p['slug'] == slug or slug in p.get('aliases', []):
+            return p
+    clean_req = slug.replace('-', ' ').strip().lower()
+    for p in all_prods:
+        if p['name'].strip().lower() == clean_req:
+            return p
+    if str(slug).isdigit():
+        prod_id = int(slug)
+        for p in all_prods:
+            if p.get('id') == prod_id or p.get('db_id') == prod_id:
+                return p
+    return None

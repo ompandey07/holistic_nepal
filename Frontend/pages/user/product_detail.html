@@ -15,18 +15,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
 
   <!-- Favicon -->
-  <link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+  <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="{% static 'css/index.css' %}?v=apothecary_pdp1.0">
 </head>
 
 <body class="product-detail-body">
-  <!-- Top Site Header -->
-  <header class="site-header" style="background: rgba(18, 20, 53, 0.96); position: sticky; top: 0; z-index: 100;">
+  <!-- Top Site Header (Royal Indigo #3B3B8E) -->
+  <header class="site-header pdp-site-header" style="background: #3B3B8E; position: sticky; top: 0; z-index: 100; padding: 16px 0;">
     <div class="header-inner">
       <a class="brand" href="/" aria-label="Holistic Herbs Home">
-        <img class="brand-logo-img" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
         <span class="brand-name">
           <strong>Holistic</strong>
           <em>Herbs</em>
@@ -41,14 +41,22 @@
         <a href="#account">My Account</a>
       </nav>
 
-      <a class="nav-cart-btn" href="#cart" aria-label="View shopping cart">
-        <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <path d="M16 10a4 4 0 0 1-8 0"></path>
-        </svg>
-        <span class="cart-badge" aria-live="polite">0</span>
-      </a>
+      <!-- Right Side Actions: Language Switcher & Cart Button -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="lang-btn-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="lang-btn-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="#cart" aria-label="View shopping cart">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" aria-live="polite">0</span>
+        </a>
+      </div>
 
       <button class="mobile-toggle" aria-label="Open menu">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -65,7 +73,7 @@
   <aside class="mobile-drawer" aria-label="Mobile menu">
     <div class="drawer-header">
       <a class="brand" href="/" aria-label="Holistic Herbs Home">
-        <img class="brand-logo-img" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
         <span class="brand-name">
           <strong>Holistic</strong>
           <em>Herbs</em>
@@ -81,6 +89,13 @@
       <a href="/#news">News</a>
       <a href="#account">My Account</a>
     </nav>
+    <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;">Language / भाषा:</span>
+      <div class="nav-lang-switch" role="group" aria-label="Language selection">
+        <button type="button" class="nav-lang-btn is-active" data-lang="eng" aria-pressed="true">ENG</button>
+        <button type="button" class="nav-lang-btn" data-lang="nep" aria-pressed="false">नेपाली</button>
+      </div>
+    </div>
   </aside>
 
   <main class="pdp-main-wrapper">
@@ -122,9 +137,6 @@
                 <path d="M12 17C8.5 16 7 12.5 7 12.5C9.5 12 12 15 12 17Z"></path>
               </svg>
 
-              <!-- Government Licensing Badge -->
-              <span class="pdp-dftqc-pill">{{ product.dftqc_no }}</span>
-
               <div class="pdp-main-img-wrap">
                 <img 
                   id="pdp-active-img" 
@@ -135,26 +147,19 @@
               </div>
             </div>
 
-            <!-- Trust Marks Strip -->
-            <div class="pdp-trust-strip">
-              <div class="pdp-trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-                <span>DFTQC Approved</span>
-              </div>
-              <div class="pdp-trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
-                  <path d="m9 12 2 2 4-4"></path>
-                </svg>
-                <span>100% Himalayan Flora</span>
-              </div>
-              <div class="pdp-trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-                <span>Ayurvedic Grade</span>
+            <!-- Daraz-Style Horizontal Thumbnail Gallery -->
+            <div class="pdp-thumb-gallery-wrap" id="pdp-thumb-gallery-wrap" aria-label="Product image gallery">
+              <div class="pdp-thumb-track" id="pdp-thumb-track">
+                {% for img_path in product.gallery_images %}
+                <button 
+                  type="button" 
+                  class="pdp-thumb-card {% if forloop.first %}is-active{% endif %}" 
+                  data-large-src="{% static img_path %}"
+                  aria-label="View product image {{ forloop.counter }}"
+                >
+                  <img src="{% static img_path %}" alt="{{ product.name }} thumbnail {{ forloop.counter }}">
+                </button>
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -179,13 +184,51 @@
               <span><strong>Contain:</strong> {{ product.contain }}</span>
             </div>
 
-            <!-- Rating & Verified Reviews -->
+            <!-- Rating & Verified Reviews with Client Rating Action -->
             <div class="pdp-rating-row">
-              <div class="pdp-stars" aria-label="5 out of 5 stars">
+              <div class="pdp-stars" id="pdp-stars-display" aria-label="Customer rating">
                 <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
               </div>
-              <span class="pdp-rating-text">5.0 ({{ product.reviews_count }} Customer Reviews)</span>
-              <span class="pdp-review-link">Verified Formulation</span>
+              <span class="pdp-rating-text" id="pdp-rating-text"><strong id="pdp-rating-val">{{ product.rating|default:"5.0" }}</strong> (<span id="pdp-reviews-count">{{ product.reviews_count }}</span> Customer Reviews)</span>
+              <button type="button" class="pdp-rate-action-btn" id="open-rating-toggle-btn" aria-expanded="false" aria-controls="pdp-rating-panel">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span>Rate this Product</span>
+              </button>
+            </div>
+
+            <!-- Interactive Rating Panel for New Clients -->
+            <div class="pdp-rating-panel" id="pdp-rating-panel" style="display: none;">
+              <div class="pdp-rating-panel-header">
+                <span class="pdp-rating-panel-title">Rate & Review this Herb</span>
+                <button type="button" class="pdp-rating-panel-close" id="close-rating-btn" aria-label="Close rating form">&times;</button>
+              </div>
+              
+              <div class="pdp-star-picker-wrap">
+                <span class="pdp-star-picker-label">Your Rating:</span>
+                <div class="pdp-interactive-stars" id="pdp-star-picker" role="radiogroup" aria-label="Choose 1 to 5 stars">
+                  <button type="button" class="pdp-star-btn" data-val="1" aria-label="1 star">★</button>
+                  <button type="button" class="pdp-star-btn" data-val="2" aria-label="2 stars">★</button>
+                  <button type="button" class="pdp-star-btn" data-val="3" aria-label="3 stars">★</button>
+                  <button type="button" class="pdp-star-btn" data-val="4" aria-label="4 stars">★</button>
+                  <button type="button" class="pdp-star-btn" data-val="5" aria-label="5 stars">★</button>
+                </div>
+                <span class="pdp-star-score-text" id="pdp-star-score-text">Click to choose</span>
+              </div>
+
+              <div class="pdp-rating-form-fields">
+                <input type="text" id="rating-client-name" class="pdp-rating-input" placeholder="Your Name / Client Name *" required maxlength="70">
+                <textarea id="rating-client-comment" class="pdp-rating-textarea" rows="2" placeholder="Write a short feedback or review (optional)..." maxlength="300"></textarea>
+                <div class="pdp-rating-actions">
+                  <button type="button" id="submit-client-rating-btn" class="pdp-rating-submit-btn">Submit Rating</button>
+                  <span class="pdp-rating-alert-error" id="rating-error-msg" style="display: none;">Please select a star rating and enter your name.</span>
+                </div>
+              </div>
+
+              <div class="pdp-rating-success-banner" id="pdp-rating-success" style="display: none;">
+                ✓ धन्यवाद! तपाईंको मूल्याङ्कन (Rating) दर्ता भयो। Thank you for rating!
+              </div>
             </div>
 
             <!-- Price Display -->
@@ -242,83 +285,20 @@
       </div>
     </section>
 
-    <!-- Deep-Dive Description Tabs (Matching Reference Image) -->
+    <!-- Deep-Dive Description Section -->
     <section class="pdp-tabs-section">
       <div class="pdp-container">
-        <!-- Tab Navigation Buttons -->
-        <div class="pdp-tab-headers" role="tablist">
-          <button class="pdp-tab-btn is-active" role="tab" aria-selected="true" aria-controls="tab-description" id="tab-btn-desc">
-            <span>विस्तृत विवरण (Description)</span>
-          </button>
-          <button class="pdp-tab-btn" role="tab" aria-selected="false" aria-controls="tab-usage" id="tab-btn-usage">
-            <span>प्रयोग विधि (Suggested Usage)</span>
-          </button>
-          <button class="pdp-tab-btn" role="tab" aria-selected="false" aria-controls="tab-ingredients" id="tab-btn-ingr">
-            <span>सामग्री तथा गुणस्तर (Ingredients &amp; Quality)</span>
-          </button>
+        <!-- Section Header -->
+        <div class="pdp-desc-header">
+          <h2 class="pdp-desc-heading">विस्तृत विवरण (Description)</h2>
         </div>
 
-        <!-- Tab 1: Description (Authentic Nepali & English) -->
-        <div class="pdp-tab-panel is-active" id="tab-description" role="tabpanel" aria-labelledby="tab-btn-desc">
-          <div class="pdp-nepali-lead-box">
-            <h3 class="pdp-nepali-title">नेपाली भाषामा विस्तृत विवरण :</h3>
-            <p class="pdp-nepali-text">
-              {{ product.nepali_desc }}
-            </p>
-          </div>
-
-          <div class="pdp-english-prose">
-            <h3>Botanical &amp; Clinical Background</h3>
-            <p>{{ product.english_desc }}</p>
-            <p>
-              Each batch is formulated under rigorous Ayurvedic Good Manufacturing Practices (GMP), tested for purity, microbial safety, and heavy metal limits in accordance with Department of Food Technology and Quality Control (DFTQC) standards in Kathmandu, Nepal.
-            </p>
-          </div>
-        </div>
-
-        <!-- Tab 2: Suggested Usage -->
-        <div class="pdp-tab-panel" id="tab-usage" role="tabpanel" aria-labelledby="tab-btn-usage" hidden>
-          <div class="pdp-usage-grid">
-            <div class="pdp-usage-card">
-              <div class="pdp-usage-icon">🥛</div>
-              <h4>Recommended Daily Dosage</h4>
-              <p>{{ product.suggested_use }}</p>
-            </div>
-            <div class="pdp-usage-card">
-              <div class="pdp-usage-icon">🛡️</div>
-              <h4>Safety &amp; Storage Precautions</h4>
-              <p>{{ product.caution }} Store in a cool, dry place away from direct sunlight. Keep out of reach of small children.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 3: Ingredients & Quality -->
-        <div class="pdp-tab-panel" id="tab-ingredients" role="tabpanel" aria-labelledby="tab-btn-ingr" hidden>
-          <div class="pdp-ingredients-content">
-            <h4>Active Formulation Constituents:</h4>
-            <p class="pdp-ingredients-text">{{ product.ingredients }}</p>
-            <div class="pdp-cert-table-wrap">
-              <table class="pdp-cert-table">
-                <tbody>
-                  <tr>
-                    <th>Licensing Agency</th>
-                    <td>Government of Nepal, Ministry of Agriculture (DFTQC)</td>
-                  </tr>
-                  <tr>
-                    <th>Registration Number</th>
-                    <td>{{ product.dftqc_no }}</td>
-                  </tr>
-                  <tr>
-                    <th>Capsule / Pack Type</th>
-                    <td>100% Vegetarian, Plant-derived Cellulose</td>
-                  </tr>
-                  <tr>
-                    <th>Origin</th>
-                    <td>Handcrafted &amp; Wildcrafted in Nepal</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <!-- Single Description Box with Live Language Switching -->
+        <div class="pdp-description-content">
+          <div class="pdp-nepali-lead-box" id="pdp-desc-box">
+            <h3 class="pdp-nepali-title" id="pdp-box-title">Product Description :</h3>
+            <p class="pdp-nepali-text" id="pdp-desc-eng">{{ product.english_desc }}</p>
+            <p class="pdp-nepali-text" id="pdp-desc-nep" style="display: none;">{{ product.nepali_desc }}</p>
           </div>
         </div>
       </div>
@@ -332,67 +312,85 @@
             <span class="pdp-category-eyebrow">Explore More Details</span>
             <h2 class="pdp-related-title">Companion Himalayan Remedies</h2>
           </div>
-          <a class="pdp-back-catalog-link" href="/#all-products">
-            <span>View All Products</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </a>
+          <div class="pdp-slider-controls-wrap">
+            <div class="pdp-slider-nav-btns" aria-label="Slide companion remedies">
+              <button type="button" class="pdp-slider-nav-btn" id="slider-prev-btn" aria-label="Previous items">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <button type="button" class="pdp-slider-nav-btn" id="slider-next-btn" aria-label="Next items">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+            <a class="pdp-back-catalog-link" href="/#all-products">
+              <span>View All Products</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
         </div>
 
-        <!-- 4-Column Grid of Companion Remedies -->
-        <div class="featured-products-grid">
-          {% for companion in related_products %}
-          <article class="apothecary-card" tabindex="0">
-            <a class="apothecary-card-link" href="/product/{{ companion.slug }}/" aria-label="Explore details for {{ companion.name }}"></a>
-            <div class="apothecary-img-area">
-              <svg class="apothecary-botanical-mark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 2L12 22"></path>
-                <path d="M12 7C8.5 6 7 2.5 7 2.5C9.5 2 12 5 12 7Z"></path>
-                <path d="M12 12C15.5 11 17 7.5 17 7.5C14.5 7 12 10 12 12Z"></path>
-                <path d="M12 17C8.5 16 7 12.5 7 12.5C9.5 12 12 15 12 17Z"></path>
-              </svg>
-              <div class="apothecary-img-stage">
-                <img 
-                  class="apothecary-product-img" 
-                  src="{% static companion.image %}" 
-                  alt="{{ companion.name }}"
-                  loading="lazy"
-                >
+        <!-- Slide Show Container & Track: Slides Right to Left -->
+        <div class="pdp-slider-viewport" id="pdp-slider-viewport">
+          <div class="pdp-slider-track" id="pdp-slider-track">
+            {% for companion in related_products %}
+            <article class="apothecary-card pdp-slider-slide" tabindex="0">
+              <a class="apothecary-card-link" href="/product/{{ companion.slug }}/" aria-label="Explore details for {{ companion.name }}"></a>
+              <div class="apothecary-img-area">
+                <svg class="apothecary-botanical-mark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2L12 22"></path>
+                  <path d="M12 7C8.5 6 7 2.5 7 2.5C9.5 2 12 5 12 7Z"></path>
+                  <path d="M12 12C15.5 11 17 7.5 17 7.5C14.5 7 12 10 12 12Z"></path>
+                  <path d="M12 17C8.5 16 7 12.5 7 12.5C9.5 12 12 15 12 17Z"></path>
+                </svg>
+                <div class="apothecary-img-stage">
+                  <img 
+                    class="apothecary-product-img" 
+                    src="{% static companion.image %}" 
+                    alt="{{ companion.name }}"
+                    loading="lazy"
+                  >
+                </div>
               </div>
-            </div>
-            <div class="apothecary-divider"></div>
-            <div class="apothecary-body">
-              <span class="apothecary-category">{{ companion.category }}</span>
-              <h3 class="apothecary-name">
-                <a href="/product/{{ companion.slug }}/">{{ companion.name }}</a>
-              </h3>
-              <p class="apothecary-desc">{{ companion.short_desc }}</p>
-              
-              <div class="apothecary-explore-row">
-                <a class="apothecary-explore-link" href="/product/{{ companion.slug }}/">
-                  <span>Explore Details</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </a>
-              </div>
+              <div class="apothecary-divider"></div>
+              <div class="apothecary-body">
+                <span class="apothecary-category">{{ companion.category }}</span>
+                <h3 class="apothecary-name">
+                  <a href="/product/{{ companion.slug }}/">{{ companion.name }}</a>
+                </h3>
+                <p class="apothecary-desc">{{ companion.short_desc }}</p>
+                
+                <div class="apothecary-explore-row">
+                  <a class="apothecary-explore-link" href="/product/{{ companion.slug }}/">
+                    <span>Explore Details</span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </a>
+                </div>
 
-              <div class="apothecary-footer">
-                <span class="apothecary-price">{{ companion.price_formatted }}</span>
-                <button class="apothecary-add-btn" type="button" aria-label="Add {{ companion.name }} to cart" data-product-id="{{ companion.slug }}">
-                  <svg class="apothecary-plus-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                  <span class="apothecary-check-icon" aria-hidden="true">✓</span>
-                </button>
+                <div class="apothecary-footer">
+                  <span class="apothecary-price">{{ companion.price_formatted }}</span>
+                  <button class="apothecary-add-btn" type="button" aria-label="Add {{ companion.name }} to cart" data-product-id="{{ companion.slug }}">
+                    <svg class="apothecary-plus-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span class="apothecary-check-icon" aria-hidden="true">✓</span>
+                  </button>
+                </div>
               </div>
-            </div>
-          </article>
-          {% endfor %}
+            </article>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </section>
@@ -403,7 +401,7 @@
     <div class="pdp-container">
       <div class="pdp-footer-inner">
         <div class="pdp-footer-brand">
-          <img class="pdp-footer-logo" src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Herbs Logo">
+          <img class="pdp-footer-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
           <span>Holistic Herbs Nepal · Nature's Wisdom, Nepal's Heritage.</span>
         </div>
         <div class="pdp-footer-links">
@@ -421,34 +419,7 @@
   <script>
     // Product Detail Page Specific Interactivity
     document.addEventListener("DOMContentLoaded", () => {
-      // 1. Interactive Tabs
-      const tabBtns = document.querySelectorAll(".pdp-tab-btn");
-      const tabPanels = document.querySelectorAll(".pdp-tab-panel");
-
-      tabBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const targetId = btn.getAttribute("aria-controls");
-
-          tabBtns.forEach((b) => {
-            b.classList.remove("is-active");
-            b.setAttribute("aria-selected", "false");
-          });
-          tabPanels.forEach((p) => {
-            p.classList.remove("is-active");
-            p.hidden = true;
-          });
-
-          btn.classList.add("is-active");
-          btn.setAttribute("aria-selected", "true");
-          const targetPanel = document.getElementById(targetId);
-          if (targetPanel) {
-            targetPanel.classList.add("is-active");
-            targetPanel.hidden = false;
-          }
-        });
-      });
-
-      // 2. Quantity Picker Counter
+      // 1. Quantity Picker Counter
       const qtyMinus = document.getElementById("qty-minus");
       const qtyPlus = document.getElementById("qty-plus");
       const qtyInput = document.getElementById("qty-input");
@@ -468,6 +439,51 @@
           }
         });
       }
+
+      // 2. Language Switcher (ENG / नेपाली)
+      function setLanguage(lang) {
+        const isEng = lang === "eng";
+        document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
+          if (btn.getAttribute("data-lang") === lang) {
+            btn.classList.add("is-active");
+            btn.setAttribute("aria-pressed", "true");
+          } else {
+            btn.classList.remove("is-active");
+            btn.setAttribute("aria-pressed", "false");
+          }
+        });
+
+        const descEng = document.getElementById("pdp-desc-eng");
+        const descNep = document.getElementById("pdp-desc-nep");
+        const boxTitle = document.getElementById("pdp-box-title");
+
+        if (descEng && descNep && boxTitle) {
+          if (isEng) {
+            descEng.style.display = "block";
+            descNep.style.display = "none";
+            boxTitle.textContent = "Product Description :";
+          } else {
+            descEng.style.display = "none";
+            descNep.style.display = "block";
+            boxTitle.textContent = "नेपाली भाषामा विस्तृत विवरण :";
+          }
+        }
+
+        try {
+          localStorage.setItem("site_lang", lang);
+        } catch (e) {}
+      }
+
+      document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const lang = btn.getAttribute("data-lang") || "eng";
+          setLanguage(lang);
+        });
+      });
+
+      // Default to ENG as requested
+      const initialLang = localStorage.getItem("site_lang") || "eng";
+      setLanguage(initialLang);
 
       // 3. Add to Cart PDP Button Interaction
       const pdpAddBtn = document.getElementById("pdp-add-btn");
@@ -491,6 +507,237 @@
           }, 1800);
         });
       }
+
+      // 4. Companion Remedies Non-Stop Continuous Smooth Marquee (Right-to-Left)
+      const sliderViewport = document.getElementById("pdp-slider-viewport");
+      const sliderTrack = document.getElementById("pdp-slider-track");
+      const btnPrev = document.getElementById("slider-prev-btn");
+      const btnNext = document.getElementById("slider-next-btn");
+
+      if (sliderViewport && sliderTrack) {
+        // Clone slides once to create an infinite, seamless continuous loop
+        const originalSlides = Array.from(sliderTrack.children);
+        originalSlides.forEach((slide) => {
+          const clone = slide.cloneNode(true);
+          clone.setAttribute("aria-hidden", "true");
+          sliderTrack.appendChild(clone);
+        });
+
+        let halfWidth = sliderTrack.scrollWidth / 2;
+        window.addEventListener("resize", () => {
+          halfWidth = sliderTrack.scrollWidth / 2;
+        });
+
+        let isHovered = false;
+        let scrollPos = sliderViewport.scrollLeft;
+        // Medium smooth continuous speed: 1.1px per frame (approx 65px/sec at 60fps)
+        const speed = 1.1;
+        let animId = null;
+
+        function runContinuousScroll() {
+          if (!isHovered) {
+            scrollPos += speed;
+            if (halfWidth > 0 && scrollPos >= halfWidth) {
+              scrollPos -= halfWidth;
+            }
+            sliderViewport.scrollLeft = scrollPos;
+          } else {
+            // Keep scroll position in sync with any manual user scroll
+            scrollPos = sliderViewport.scrollLeft;
+          }
+          animId = requestAnimationFrame(runContinuousScroll);
+        }
+
+        // Start non-stop continuous auto-scroll
+        animId = requestAnimationFrame(runContinuousScroll);
+
+        // Pause whenever mouse hovers over any item in the slider
+        sliderViewport.addEventListener("mouseenter", () => {
+          isHovered = true;
+        });
+
+        // Resume normally without stopping when mouse leaves
+        sliderViewport.addEventListener("mouseleave", () => {
+          scrollPos = sliderViewport.scrollLeft;
+          isHovered = false;
+        });
+
+        // Mobile touch interaction: pause while touching, resume when released
+        sliderViewport.addEventListener("touchstart", () => {
+          isHovered = true;
+        }, { passive: true });
+
+        sliderViewport.addEventListener("touchend", () => {
+          scrollPos = sliderViewport.scrollLeft;
+          setTimeout(() => {
+            scrollPos = sliderViewport.scrollLeft;
+            isHovered = false;
+          }, 800);
+        });
+
+        // Manual Navigation Buttons (Next / Prev)
+        const getStep = () => {
+          const firstSlide = sliderViewport.querySelector(".pdp-slider-slide");
+          return firstSlide ? firstSlide.offsetWidth + 24 : 304;
+        };
+
+        if (btnNext) {
+          btnNext.addEventListener("click", () => {
+            const step = getStep();
+            scrollPos += step;
+            if (halfWidth > 0 && scrollPos >= halfWidth) {
+              scrollPos -= halfWidth;
+            }
+            sliderViewport.scrollTo({ left: scrollPos, behavior: "smooth" });
+          });
+        }
+
+        if (btnPrev) {
+          btnPrev.addEventListener("click", () => {
+            const step = getStep();
+            scrollPos -= step;
+            if (scrollPos < 0 && halfWidth > 0) {
+              scrollPos += halfWidth;
+            }
+            sliderViewport.scrollTo({ left: scrollPos, behavior: "smooth" });
+          });
+        }
+      }
+
+      // 5. Daraz-Style Product Image Thumbnail Switching
+      const mainHeroImg = document.getElementById("pdp-active-img");
+      const thumbBtns = document.querySelectorAll(".pdp-thumb-card");
+
+      thumbBtns.forEach((thumb) => {
+        thumb.addEventListener("click", () => {
+          thumbBtns.forEach((btn) => btn.classList.remove("is-active"));
+          thumb.classList.add("is-active");
+
+          const largeSrc = thumb.getAttribute("data-large-src");
+          if (mainHeroImg && largeSrc) {
+            mainHeroImg.style.opacity = "0.2";
+            mainHeroImg.style.transform = "scale(0.96)";
+            setTimeout(() => {
+              mainHeroImg.src = largeSrc;
+              mainHeroImg.style.opacity = "1";
+              mainHeroImg.style.transform = "scale(1)";
+            }, 120);
+          }
+        });
+      });
+
+      // 6. Interactive Client Rating System
+      const openRatingBtn = document.getElementById("open-rating-toggle-btn");
+      const closeRatingBtn = document.getElementById("close-rating-btn");
+      const ratingPanel = document.getElementById("pdp-rating-panel");
+      const starBtns = document.querySelectorAll(".pdp-star-btn");
+      const starFeedback = document.getElementById("pdp-star-score-text");
+      const submitRatingBtn = document.getElementById("submit-client-rating-btn");
+      const clientNameInput = document.getElementById("rating-client-name");
+      const clientCommentInput = document.getElementById("rating-client-comment");
+      const errorMsg = document.getElementById("rating-error-msg");
+      const successBanner = document.getElementById("pdp-rating-success");
+      const reviewsCountEl = document.getElementById("pdp-reviews-count");
+
+      let selectedStars = 0;
+      const starLabels = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
+
+      if (openRatingBtn && ratingPanel) {
+        openRatingBtn.addEventListener("click", () => {
+          const isHidden = ratingPanel.style.display === "none";
+          ratingPanel.style.display = isHidden ? "block" : "none";
+          openRatingBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
+        });
+      }
+
+      if (closeRatingBtn && ratingPanel) {
+        closeRatingBtn.addEventListener("click", () => {
+          ratingPanel.style.display = "none";
+          if (openRatingBtn) openRatingBtn.setAttribute("aria-expanded", "false");
+        });
+      }
+
+      starBtns.forEach((btn, idx) => {
+        btn.addEventListener("mouseenter", () => {
+          starBtns.forEach((s, sIdx) => {
+            if (sIdx <= idx) s.classList.add("is-hover");
+            else s.classList.remove("is-hover");
+          });
+          if (starFeedback) starFeedback.textContent = `${idx + 1} Star (${starLabels[idx]})`;
+        });
+
+        btn.addEventListener("mouseleave", () => {
+          starBtns.forEach((s) => s.classList.remove("is-hover"));
+          if (starFeedback) {
+            starFeedback.textContent = selectedStars > 0 
+              ? `${selectedStars} Star (${starLabels[selectedStars - 1]})` 
+              : "Click to choose";
+          }
+        });
+
+        btn.addEventListener("click", () => {
+          selectedStars = idx + 1;
+          starBtns.forEach((s, sIdx) => {
+            if (sIdx < selectedStars) s.classList.add("is-selected");
+            else s.classList.remove("is-selected");
+          });
+          if (starFeedback) starFeedback.textContent = `${selectedStars} Star (${starLabels[selectedStars - 1]})`;
+          if (errorMsg) errorMsg.style.display = "none";
+        });
+      });
+
+      if (submitRatingBtn) {
+        submitRatingBtn.addEventListener("click", () => {
+          const clientName = clientNameInput ? clientNameInput.value.trim() : "";
+          if (!selectedStars || !clientName) {
+            if (errorMsg) {
+              errorMsg.style.display = "inline";
+              errorMsg.textContent = !selectedStars ? "Please click on the stars to rate." : "Please enter your name.";
+            }
+            return;
+          }
+
+          // Dynamically increment reviews count
+          if (reviewsCountEl) {
+            const curCount = parseInt(reviewsCountEl.textContent, 10) || 0;
+            reviewsCountEl.textContent = curCount + 1;
+          }
+
+          if (successBanner) successBanner.style.display = "block";
+          if (errorMsg) errorMsg.style.display = "none";
+          if (submitRatingBtn) submitRatingBtn.style.display = "none";
+
+          try {
+            const prodSlug = "{{ product.slug }}";
+            localStorage.setItem(`client_rating_${prodSlug}`, JSON.stringify({
+              stars: selectedStars,
+              client: clientName,
+              comment: clientCommentInput ? clientCommentInput.value.trim() : "",
+              date: new Date().toISOString()
+            }));
+          } catch (e) {}
+
+          setTimeout(() => {
+            if (openRatingBtn) {
+              openRatingBtn.innerHTML = `<span>★ You rated ${selectedStars}/5</span>`;
+              openRatingBtn.style.background = "rgba(74, 107, 79, 0.16)";
+            }
+          }, 1500);
+        });
+      }
+
+      // Restore past rating if already rated
+      try {
+        const prodSlug = "{{ product.slug }}";
+        const savedRating = localStorage.getItem(`client_rating_${prodSlug}`);
+        if (savedRating) {
+          const parsed = JSON.parse(savedRating);
+          if (openRatingBtn) {
+            openRatingBtn.innerHTML = `<span>★ You rated ${parsed.stars}/5</span>`;
+            openRatingBtn.style.background = "rgba(74, 107, 79, 0.16)";
+          }
+        }
+      } catch (e) {}
     });
   </script>
 </body>
