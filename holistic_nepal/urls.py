@@ -12,6 +12,7 @@ urlpatterns = [
     #-- APP ROUTES ---
     path('', include('core.routes')),
     path('admin-side/', include('admin_panel.routes')),
+    path('user-side/', include('users.routes')),
     path('security/', include('security.routes')),
     path('', include('security.routes')),
 ]

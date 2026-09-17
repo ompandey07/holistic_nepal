@@ -1,0 +1,683 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+<link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121820;
+    --ink-soft:#1b2430;
+    --paper:#f3f5f7;
+    --surface:#ffffff;
+    --accent:#1f6f5c;
+    --accent-soft:#e5f2ee;
+    --warn:#c2410c;
+    --warn-soft:#fdece3;
+    --text:#1a1f26;
+    --text-muted:#6b7280;
+    --text-on-ink:#c9d2dc;
+    --text-on-ink-dim:#7c8797;
+    --border:#e4e7eb;
+  }
+  *{box-sizing:border-box; border-radius:0 !important;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--paper);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    scrollbar-width:thin;
+    scrollbar-color:#c9d2dc var(--paper);
+  }
+  body::-webkit-scrollbar{width:8px;}
+  body::-webkit-scrollbar-track{background:var(--paper);}
+  body::-webkit-scrollbar-thumb{
+    background:#c9d2dc;
+    border:2px solid var(--paper);
+    background-clip:padding-box;
+  }
+  body::-webkit-scrollbar-thumb:hover{background:#a9b3bf;}
+  a{text-decoration:none;color:inherit;}
+  ul{list-style:none;margin:0;padding:0;}
+
+  .layout{display:flex; min-height:100vh;}
+
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  .topbar-title{font-size:19px; font-weight:600;}
+  .topbar-title p{
+    margin:2px 0 0;
+    font-size:13px;
+    font-weight:400;
+    color:var(--text-muted);
+  }
+  .topbar-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .topbar-user img{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+    border:1px solid var(--border);
+  }
+  .user-meta{text-align:right;}
+  .user-meta .name{font-size:14px; font-weight:600;}
+  .user-meta .role{font-size:12px; color:var(--text-muted);}
+
+  .content{padding:28px 32px 48px; width:100%;}
+
+  .settings-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+    align-items:start;
+  }
+
+  .left-column{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+
+  .form-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:24px;
+  }
+  .form-panel h3{
+    margin:0 0 20px;
+    font-size:16px;
+    font-weight:600;
+  }
+
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+    margin-bottom:6px;
+  }
+  .field input[type="text"],
+  .field input[type="tel"],
+  .field input[type="password"],
+  .field textarea{
+    width:100%;
+    padding:11px 13px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    background:var(--surface);
+    border:1px solid var(--border);
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  .field input:focus,
+  .field textarea:focus{border-color:var(--accent);}
+  .field input.field-error,
+  .field textarea.field-error{border-color:var(--warn);}
+  .field input[type="password"].field-error{border-color:var(--warn);}
+
+  .field-error-msg{
+    font-size:12px;
+    color:var(--warn);
+    margin-top:5px;
+    display:none;
+  }
+  .field-error-msg.show{display:block;}
+
+  .image-upload-box{
+    width:120px;
+    height:120px;
+    border:2px dashed var(--border);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .15s ease, background .15s ease;
+    background:var(--surface);
+    margin-top:8px;
+  }
+  .image-upload-box:hover{border-color:var(--accent);background:var(--accent-soft);}
+  .image-upload-box input[type="file"]{
+    position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+  }
+  .upload-icon{
+    width:32px;height:32px;
+    color:var(--text-muted);
+    pointer-events:none;
+    transition:color .15s ease;
+  }
+  .image-upload-box:hover .upload-icon{color:var(--accent);}
+  .upload-label{
+    font-size:11px;color:var(--text-muted);margin-top:6px;
+    pointer-events:none;transition:color .15s ease;
+    text-align:center;line-height:1.3;font-weight:500;
+  }
+  .image-upload-box:hover .upload-label{color:var(--accent);}
+  .image-preview-square{
+    position:absolute;inset:0;
+    object-fit:cover;
+    width:100%;height:100%;
+    display:none;
+  }
+
+  .btn-save{
+    width:100%;
+    padding:12px 0;
+    font-size:14.5px;
+    font-weight:600;
+    color:#fff;
+    background:var(--accent);
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:background .15s ease, opacity .15s ease;
+  }
+  .btn-save:hover{background:#195a4a;}
+  .btn-save:disabled{opacity:.75;cursor:not-allowed;}
+
+  .spinner{
+    width:16px;height:16px;
+    border:2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff;
+    border-radius:50% !important;
+    display:none;
+    animation:spin .7s linear infinite;
+  }
+  .btn-save.loading .spinner{display:inline-block;}
+  .btn-save.loading .btn-label{opacity:.85;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .info-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:24px;
+    height:fit-content;
+    position:sticky;
+    top:100px;
+  }
+  .info-panel h3{
+    margin:0 0 24px;
+    font-size:16px;
+    font-weight:600;
+  }
+  .info-item{
+    margin-bottom:20px;
+  }
+  .info-item:last-child{
+    margin-bottom:0;
+  }
+  .info-item label{
+    display:block;
+    font-size:12px;
+    color:var(--text-muted);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .info-item .value{
+    font-size:15px;
+    font-weight:600;
+    color:var(--text);
+  }
+
+  .toast-stack{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:50;
+    width:100%;
+    max-width:400px;
+    padding:0 16px;
+  }
+  .toast{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    box-shadow:0 8px 24px rgba(18,24,32,0.12);
+    padding:13px 16px 15px;
+    font-size:13.5px;
+    color:var(--text);
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+  .toast .toast-title{font-weight:600;margin-bottom:2px;display:block;}
+  .toast.success .toast-title{color:var(--accent);}
+  .toast.error .toast-title{color:var(--warn);}
+  .toast .toast-msg{color:var(--text-muted);}
+  .toast .toast-underline{
+    position:absolute;
+    left:0;
+    bottom:0;
+    height:2.5px;
+    width:100%;
+    background:var(--border);
+  }
+  .toast .toast-underline::after{
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:100%;
+    transform-origin:left;
+    transform:scaleX(1);
+  }
+  .toast.success .toast-underline::after{background:var(--accent);}
+  .toast.error .toast-underline::after{background:var(--warn);}
+  .toast.run .toast-underline::after{animation:drain 3.2s linear forwards;}
+  @keyframes drain{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+
+  @media (max-width: 1200px){
+    .settings-layout{grid-template-columns:1fr;}
+    .left-column{gap:24px;}
+  }
+  @media (max-width: 760px){
+    .content{padding:20px;}
+    .topbar{padding:16px 20px;}
+    .left-column{gap:20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  {% include 'pages/user/aside.html' with active_page='settings' %}
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title">
+        Settings
+        <p>Manage your account preferences</p>
+      </div>
+      <div class="topbar-user">
+        <div class="user-meta">
+          <div class="name">
+            {% if user_profile %}
+              {{ user_profile.PUBLIC_USER_FULL_NAME }}
+            {% else %}
+              {{ request.user.username }}
+            {% endif %}
+          </div>
+          <div class="role">Customer</div>
+        </div>
+        <img src="{% if user_profile.PUBLIC_USER_PROFILE_IMAGE %}{{ user_profile.PUBLIC_USER_PROFILE_IMAGE.url }}{% else %}https://www.w3schools.com/w3images/avatar2.png{% endif %}" alt="User Avatar">
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="settings-layout">
+        
+        <div class="left-column">
+          <div class="form-panel">
+            <h3>Edit Profile</h3>
+            <form id="settingsForm" enctype="multipart/form-data">
+              {% csrf_token %}
+              
+              <div class="field">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" 
+                       value="{% if user_profile %}{{ user_profile.PUBLIC_USER_FULL_NAME }}{% endif %}"
+                       placeholder="e.g. Ram Bahadur Thapa">
+                <div class="field-error-msg" id="full_nameError"></div>
+              </div>
+
+              <div class="field">
+                <label for="mobile_no">Mobile Number</label>
+                <input type="tel" id="mobile_no" name="mobile_no" 
+                       value="{% if user_profile %}{{ user_profile.PUBLIC_USER_MOBILE_NO }}{% endif %}"
+                       placeholder="9841xxxxxx" maxlength="10" inputmode="numeric">
+                <div class="field-error-msg" id="mobile_noError"></div>
+              </div>
+
+              <div class="field">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" rows="3" 
+                          placeholder="Full address">{% if user_profile %}{{ user_profile.PUBLIC_USER_ADDRESS }}{% endif %}</textarea>
+                <div class="field-error-msg" id="addressError"></div>
+              </div>
+
+              <div class="field">
+                <label for="profile_image">Profile Image</label>
+                
+                <div class="image-upload-box" id="imageUploadBox" title="Click to upload profile image">
+                  <input type="file" id="profile_image" name="profile_image" accept="image/*" style="display:none;">
+                  <svg class="upload-icon" id="uploadIcon" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                       xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span class="upload-label" id="uploadLabel">Upload<br>Image</span>
+                  <img class="image-preview-square" id="imagePreviewSquare" alt="Profile preview">
+                </div>
+                
+                <div class="field-error-msg" id="profile_imageError"></div>
+              </div>
+
+              <button type="submit" class="btn-save" id="saveBtn">
+                <span class="spinner"></span>
+                <span class="btn-label">Save Changes</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="form-panel">
+            <h3>Change Password</h3>
+            <form id="passwordForm">
+              {% csrf_token %}
+              
+              <div class="field">
+                <label for="current_password">Current Password</label>
+                <input type="password" id="current_password" name="current_password" placeholder="Enter current password">
+                <div class="field-error-msg" id="current_passwordError"></div>
+              </div>
+
+              <div class="field">
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" name="new_password" placeholder="Min. 6 characters">
+                <div class="field-error-msg" id="new_passwordError"></div>
+              </div>
+
+              <div class="field">
+                <label for="confirm_password">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter new password">
+                <div class="field-error-msg" id="confirm_passwordError"></div>
+              </div>
+
+              <button type="submit" class="btn-save" id="passwordBtn">
+                <span class="spinner"></span>
+                <span class="btn-label">Update Password</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="info-panel">
+          <h3>Account Information</h3>
+          
+          <div class="info-item">
+            <label>Email</label>
+            <div class="value">{{ request.user.email }}</div>
+          </div>
+          
+          <div class="info-item">
+            <label>Username</label>
+            <div class="value">{{ request.user.username }}</div>
+          </div>
+          
+          <div class="info-item">
+            <label>Account Type</label>
+            <div class="value">
+              {% if request.session.is_employee_or_superuser %}
+                Employee
+              {% else %}
+                Public
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <label>Member Since</label>
+            <div class="value">{{ request.user.date_joined|date:"F Y" }}</div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+  var toastStack = document.getElementById('toastStack');
+
+  function showToast(type, title, message, lifetime) {
+    lifetime = lifetime || 3200;
+    var t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.innerHTML =
+      '<span class="toast-title">' + title + '</span>' +
+      '<span class="toast-msg">' + message + '</span>' +
+      '<span class="toast-underline"></span>';
+    toastStack.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); t.classList.add('run'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, lifetime);
+  }
+
+  function setFieldError(fieldId, message) {
+    var inp = document.getElementById(fieldId);
+    var err = document.getElementById(fieldId + 'Error');
+    if (!inp || !err) return;
+    inp.classList.toggle('field-error', !!message);
+    err.textContent = message || '';
+    err.classList.toggle('show', !!message);
+  }
+
+  function clearProfileErrors() {
+    document.querySelectorAll('#settingsForm input, #settingsForm textarea').forEach(function (el) {
+      el.classList.remove('field-error');
+    });
+    document.querySelectorAll('#settingsForm .field-error-msg').forEach(function (el) {
+      el.textContent = '';
+      el.classList.remove('show');
+    });
+  }
+
+  function clearPasswordErrors() {
+    document.querySelectorAll('#passwordForm input').forEach(function (el) {
+      el.classList.remove('field-error');
+    });
+    document.querySelectorAll('#passwordForm .field-error-msg').forEach(function (el) {
+      el.textContent = '';
+      el.classList.remove('show');
+    });
+  }
+
+  var form = document.getElementById('settingsForm');
+  var saveBtn = document.getElementById('saveBtn');
+  var passwordForm = document.getElementById('passwordForm');
+  var passwordBtn = document.getElementById('passwordBtn');
+  var imageInput = document.getElementById('profile_image');
+  var imageUploadBox = document.getElementById('imageUploadBox');
+  var uploadIcon = document.getElementById('uploadIcon');
+  var uploadLabel = document.getElementById('uploadLabel');
+  var imagePreviewSquare = document.getElementById('imagePreviewSquare');
+  var currentImage = '{% if user_profile.PUBLIC_USER_PROFILE_IMAGE %}{{ user_profile.PUBLIC_USER_PROFILE_IMAGE.url }}{% endif %}';
+
+  function setLoadingProfile(on) {
+    saveBtn.classList.toggle('loading', on);
+    saveBtn.disabled = on;
+    form.querySelectorAll('input, textarea').forEach(function (el) { el.disabled = on; });
+  }
+
+  function setLoadingPassword(on) {
+    passwordBtn.classList.toggle('loading', on);
+    passwordBtn.disabled = on;
+    passwordForm.querySelectorAll('input').forEach(function (el) { el.disabled = on; });
+  }
+
+  function updateImagePreview(file) {
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreviewSquare.src = e.target.result;
+        imagePreviewSquare.style.display = 'block';
+        uploadIcon.style.display = 'none';
+        uploadLabel.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    } else if (currentImage) {
+      imagePreviewSquare.src = currentImage;
+      imagePreviewSquare.style.display = 'block';
+      uploadIcon.style.display = 'none';
+      uploadLabel.style.display = 'none';
+    } else {
+      imagePreviewSquare.style.display = 'none';
+      imagePreviewSquare.src = '';
+      uploadIcon.style.display = 'block';
+      uploadLabel.style.display = 'block';
+    }
+  }
+
+  // Initialize image preview if current image exists
+  if (currentImage) {
+    imagePreviewSquare.src = currentImage;
+    imagePreviewSquare.style.display = 'block';
+    uploadIcon.style.display = 'none';
+    uploadLabel.style.display = 'none';
+  }
+
+  imageUploadBox.addEventListener('click', function() {
+    imageInput.click();
+  });
+
+  imageInput.addEventListener('change', function() {
+    updateImagePreview(this.files[0]);
+  });
+
+  // Mobile number validation
+  var mobileInput = document.getElementById('mobile_no');
+  mobileInput.addEventListener('keypress', function (e) {
+    if (!/\d/.test(e.key)) e.preventDefault();
+  });
+  mobileInput.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearProfileErrors();
+
+    var csrf = form.querySelector('[name=csrfmiddlewaretoken]');
+    var formData = new FormData(form);
+    formData.append('action', 'profile');
+
+    setLoadingProfile(true);
+
+    fetch(window.location.href, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrf ? csrf.value : '',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: formData
+    })
+    .then(function (res) {
+      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+    })
+    .then(function (result) {
+      setLoadingProfile(false);
+
+      if (result.data.status === 'success') {
+        showToast('success', 'Profile updated!',
+          result.data.message || 'Your profile has been updated successfully.', 3200);
+        
+        setTimeout(function () {
+          window.location.reload();
+        }, 1500);
+        return;
+      }
+
+      var errors = result.data.errors || {};
+      Object.keys(errors).forEach(function (field) {
+        setFieldError(field, errors[field]);
+      });
+      showToast('error', 'Failed to update profile',
+        result.data.message || 'Please fix the highlighted fields.');
+    })
+    .catch(function () {
+      setLoadingProfile(false);
+      showToast('error', 'Something went wrong',
+        'Could not reach the server. Please try again.');
+    });
+  });
+
+  // Password form submission
+  passwordForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearPasswordErrors();
+
+    var csrf = passwordForm.querySelector('[name=csrfmiddlewaretoken]');
+    var formData = new FormData(passwordForm);
+    formData.append('action', 'password');
+
+    setLoadingPassword(true);
+
+    fetch(window.location.href, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrf ? csrf.value : '',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: formData
+    })
+    .then(function (res) {
+      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+    })
+    .then(function (result) {
+      setLoadingPassword(false);
+
+      if (result.data.status === 'success') {
+        showToast('success', 'Password updated!',
+          result.data.message || 'Your password has been updated successfully.', 3200);
+        
+        passwordForm.reset();
+        return;
+      }
+
+      var errors = result.data.errors || {};
+      Object.keys(errors).forEach(function (field) {
+        setFieldError(field, errors[field]);
+      });
+      showToast('error', 'Failed to update password',
+        result.data.message || 'Please fix the highlighted fields.');
+    })
+    .catch(function () {
+      setLoadingPassword(false);
+      showToast('error', 'Something went wrong',
+        'Could not reach the server. Please try again.');
+    });
+  });
+</script>
+
+</body>
+</html>
