@@ -1,4 +1,4 @@
-from .models import UnitSetup, ProductCategory, ProductSetup, ProductImage, ProductOrder
+from .models import UnitSetup, ProductCategory, ProductSetup, ProductImage, ProductOrder, News, NewsImage, Gallery, GalleryImage
 from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper
 from django.utils.decorators import method_decorator
 from users.wrapper import advance_security_wrapper
@@ -714,15 +714,13 @@ class ProductSetupView(View):
                         if del_ids:
                             ProductImage.objects.filter(id__in=del_ids, PRODUCT=product).delete()
 
-                    #!- SAVE NEW MULTIPLE IMAGES
+                    #!- SAVE NEW MULTIPLE IMAGES FIRST
                     for img_file in uploaded_images:
                         ProductImage.objects.create(PRODUCT=product, IMAGE=img_file)
 
-                    #!- UPDATE MAIN COVER IMAGE IF NEEDED
+                    #!- UPDATE MAIN COVER IMAGE FROM SAVED GALLERY IMAGES IF NEEDED
                     first_gallery_img = product.PRODUCT_IMAGES.first()
-                    if uploaded_images and (not product.PRODUCT_IMAGE or not product.PRODUCT_IMAGE.name):
-                        product.PRODUCT_IMAGE = uploaded_images[0]
-                    elif first_gallery_img and (not product.PRODUCT_IMAGE or not product.PRODUCT_IMAGE.name):
+                    if first_gallery_img and (not product.PRODUCT_IMAGE or not product.PRODUCT_IMAGE.name):
                         product.PRODUCT_IMAGE = first_gallery_img.IMAGE
 
                     product.save()
@@ -732,7 +730,6 @@ class ProductSetupView(View):
                 except ProductSetup.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Product not found'})
             else:
-                cover_img = uploaded_images[0] if uploaded_images else None
                 product = ProductSetup.objects.create(
                     PRODUCT_NAME         = product_name,
                     PRODUCT_UNIT         = unit,
@@ -742,15 +739,277 @@ class ProductSetupView(View):
                     PRODUCT_WEIGHT       = product_weight,
                     PRODUCT_DESCRIPTION  = product_description,
                     PRODUCT_KEY_FEATURES = product_key_features,
-                    PRODUCT_IMAGE        = cover_img,
+                    PRODUCT_IMAGE        = None,
                     PRODUCT_CREATED_BY   = created_by
                 )
                 #!- SAVE ALL MULTIPLE IMAGES FOR NEW PRODUCT
                 for img_file in uploaded_images:
                     ProductImage.objects.create(PRODUCT=product, IMAGE=img_file)
 
+                first_gallery_img = product.PRODUCT_IMAGES.first()
+                if first_gallery_img:
+                    product.PRODUCT_IMAGE = first_gallery_img.IMAGE
+                    product.save(update_fields=['PRODUCT_IMAGE'])
+
                 #!- INVALIDATE DASHBOARD CACHE SO PRODUCT COUNT REFRESHES
                 cache.delete('admin_dashboard_stats')
                 return JsonResponse({'status': 'success', 'message': 'Product added successfully'})
 
         return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+#?----------------------------------------------------------------------------------------------
+#!- NEWS SETUP VIEW PROTECTED WITH ADVANCE SECURITY WRAPPER
+@method_decorator(advance_security_wrapper(allowed_roles=['ADMIN', 'MANAGER']), name='dispatch')
+class NewsSetupView(View):
+
+    def get(self, request):
+        page = request.GET.get('page', 1)
+        news_qs = (
+            News.objects
+            .select_related('NEWS_CREATED_BY')
+            .prefetch_related('NEWS_IMAGES')
+            .order_by('-NEWS_CREATED_AT')
+        )
+        paginator = Paginator(news_qs, 50)
+        news_page = paginator.get_page(page)
+
+        news_types = News._meta.get_field('NEWS_TYPE').choices
+
+        context = {
+            'news_list':  news_page,
+            'total_news': paginator.count,
+            'news_types': news_types,
+            'page_range': paginator.get_elided_page_range(page, on_each_side=2, on_ends=1)
+        }
+        return render(request, 'admin/News/NewsSetup.html', context)
+
+    def post(self, request):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            action = request.POST.get('action', 'add')
+
+            if action == 'delete':
+                news_id = request.POST.get('news_id')
+                if not news_id:
+                    return JsonResponse({'status': 'error', 'message': 'News ID is required'})
+
+                try:
+                    news_item = News.objects.get(id=news_id)
+                    news_item.delete()
+                    return JsonResponse({'status': 'success', 'message': 'News deleted successfully'})
+                except News.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'News not found'})
+
+            if action == 'delete_single_image':
+                image_id = request.POST.get('image_id')
+                if not image_id:
+                    return JsonResponse({'status': 'error', 'message': 'Image ID is required'})
+                try:
+                    img = NewsImage.objects.get(id=image_id)
+                    news_item = img.NEWS
+                    img.delete()
+                    if news_item.NEWS_IMAGE and img.IMAGE and news_item.NEWS_IMAGE.name == img.IMAGE.name:
+                        next_img = news_item.NEWS_IMAGES.first()
+                        news_item.NEWS_IMAGE = next_img.IMAGE if next_img else None
+                        news_item.save(update_fields=['NEWS_IMAGE'])
+                    return JsonResponse({'status': 'success', 'message': 'Image deleted successfully'})
+                except NewsImage.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Image not found'})
+
+            news_id           = request.POST.get('news_id', '').strip()
+            news_type         = request.POST.get('news_type', '').strip()
+            news_title        = request.POST.get('news_title', '').strip()
+            news_description  = request.POST.get('news_description', '').strip()
+            deleted_image_ids = request.POST.get('deleted_image_ids', '').strip()
+
+            uploaded_images = request.FILES.getlist('news_images')
+            if not uploaded_images and request.FILES.get('news_image'):
+                uploaded_images = [request.FILES.get('news_image')]
+
+            errors = {}
+
+            if not news_type:
+                errors['news_type'] = 'News type is required'
+
+            if not news_title:
+                errors['news_title'] = 'News title is required'
+
+            if not news_description:
+                errors['news_description'] = 'News description is required'
+
+            if errors:
+                return JsonResponse({'status': 'error', 'message': 'Please fix the highlighted fields', 'errors': errors})
+
+            try:
+                created_by = EmployeeSetup.objects.only('id').get(id=request.session.get('employee_id')) if request.session.get('employee_id') else None
+            except Exception:
+                created_by = None
+
+            if news_id:
+                try:
+                    news_item = News.objects.get(id=news_id)
+                    news_item.NEWS_TYPE        = news_type
+                    news_item.NEWS_TITLE       = news_title
+                    news_item.NEWS_DESCRIPTION = news_description
+                    news_item.NEWS_MODIFIED_BY = created_by
+
+                    if deleted_image_ids:
+                        del_ids = [int(i.strip()) for i in deleted_image_ids.split(',') if i.strip().isdigit()]
+                        if del_ids:
+                            NewsImage.objects.filter(id__in=del_ids, NEWS=news_item).delete()
+
+                    for img_file in uploaded_images:
+                        NewsImage.objects.create(NEWS=news_item, IMAGE=img_file)
+
+                    first_gallery_img = news_item.NEWS_IMAGES.first()
+                    if first_gallery_img and (not news_item.NEWS_IMAGE or not news_item.NEWS_IMAGE.name):
+                        news_item.NEWS_IMAGE = first_gallery_img.IMAGE
+
+                    news_item.save()
+                    return JsonResponse({'status': 'success', 'message': 'News updated successfully'})
+                except News.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'News not found'})
+            else:
+                news_item = News.objects.create(
+                    NEWS_TYPE        = news_type,
+                    NEWS_TITLE       = news_title,
+                    NEWS_DESCRIPTION = news_description,
+                    NEWS_IMAGE       = None,
+                    NEWS_CREATED_BY  = created_by
+                )
+                for img_file in uploaded_images:
+                    NewsImage.objects.create(NEWS=news_item, IMAGE=img_file)
+
+                first_gallery_img = news_item.NEWS_IMAGES.first()
+                if first_gallery_img:
+                    news_item.NEWS_IMAGE = first_gallery_img.IMAGE
+                    news_item.save(update_fields=['NEWS_IMAGE'])
+
+                return JsonResponse({'status': 'success', 'message': 'News added successfully'})
+
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+#?----------------------------------------------------------------------------------------------
+#!- GALLERY SETUP VIEW PROTECTED WITH ADVANCE SECURITY WRAPPER
+@method_decorator(advance_security_wrapper(allowed_roles=['ADMIN', 'MANAGER']), name='dispatch')
+class GallerySetupView(View):
+
+    def get(self, request):
+        page = request.GET.get('page', 1)
+        gallery_qs = (
+            Gallery.objects
+            .select_related('GALLERY_CREATED_BY')
+            .prefetch_related('GALLERY_IMAGES')
+            .order_by('-GALLERY_CREATED_AT')
+        )
+        paginator = Paginator(gallery_qs, 50)
+        gallery_page = paginator.get_page(page)
+
+        context = {
+            'gallery_list':  gallery_page,
+            'total_gallery': paginator.count,
+            'page_range':    paginator.get_elided_page_range(page, on_each_side=2, on_ends=1)
+        }
+        return render(request, 'admin/Gallery/GallerySetup.html', context)
+
+    def post(self, request):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            action = request.POST.get('action', 'add')
+
+            if action == 'delete':
+                gallery_id = request.POST.get('gallery_id')
+                if not gallery_id:
+                    return JsonResponse({'status': 'error', 'message': 'Gallery ID is required'})
+
+                try:
+                    gallery_item = Gallery.objects.get(id=gallery_id)
+                    gallery_item.delete()
+                    return JsonResponse({'status': 'success', 'message': 'Gallery deleted successfully'})
+                except Gallery.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Gallery item not found'})
+
+            if action == 'delete_single_image':
+                image_id = request.POST.get('image_id')
+                if not image_id:
+                    return JsonResponse({'status': 'error', 'message': 'Image ID is required'})
+                try:
+                    img = GalleryImage.objects.get(id=image_id)
+                    gallery_item = img.GALLERY
+                    img.delete()
+                    if gallery_item.GALLERY_IMAGE and img.IMAGE and gallery_item.GALLERY_IMAGE.name == img.IMAGE.name:
+                        next_img = gallery_item.GALLERY_IMAGES.first()
+                        gallery_item.GALLERY_IMAGE = next_img.IMAGE if next_img else None
+                        gallery_item.save(update_fields=['GALLERY_IMAGE'])
+                    return JsonResponse({'status': 'success', 'message': 'Image deleted successfully'})
+                except GalleryImage.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Image not found'})
+
+            gallery_id          = request.POST.get('gallery_id', '').strip()
+            gallery_title       = request.POST.get('gallery_title', '').strip()
+            gallery_description = request.POST.get('gallery_description', '').strip()
+            deleted_image_ids   = request.POST.get('deleted_image_ids', '').strip()
+
+            uploaded_images = request.FILES.getlist('gallery_images')
+            if not uploaded_images and request.FILES.get('gallery_image'):
+                uploaded_images = [request.FILES.get('gallery_image')]
+
+            errors = {}
+
+            if not gallery_title:
+                errors['gallery_title'] = 'Gallery title is required'
+
+            if not gallery_description:
+                errors['gallery_description'] = 'Gallery description is required'
+
+            if errors:
+                return JsonResponse({'status': 'error', 'message': 'Please fix the highlighted fields', 'errors': errors})
+
+            try:
+                created_by = EmployeeSetup.objects.only('id').get(id=request.session.get('employee_id')) if request.session.get('employee_id') else None
+            except Exception:
+                created_by = None
+
+            if gallery_id:
+                try:
+                    gallery_item = Gallery.objects.get(id=gallery_id)
+                    gallery_item.GALLERY_TITLE       = gallery_title
+                    gallery_item.GALLERY_DESCRIPTION = gallery_description
+                    gallery_item.GALLERY_MODIFIED_BY = created_by
+
+                    if deleted_image_ids:
+                        del_ids = [int(i.strip()) for i in deleted_image_ids.split(',') if i.strip().isdigit()]
+                        if del_ids:
+                            GalleryImage.objects.filter(id__in=del_ids, GALLERY=gallery_item).delete()
+
+                    for img_file in uploaded_images:
+                        GalleryImage.objects.create(GALLERY=gallery_item, IMAGE=img_file)
+
+                    first_gallery_img = gallery_item.GALLERY_IMAGES.first()
+                    if first_gallery_img and (not gallery_item.GALLERY_IMAGE or not gallery_item.GALLERY_IMAGE.name):
+                        gallery_item.GALLERY_IMAGE = first_gallery_img.IMAGE
+
+                    gallery_item.save()
+                    return JsonResponse({'status': 'success', 'message': 'Gallery updated successfully'})
+                except Gallery.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Gallery not found'})
+            else:
+                gallery_item = Gallery.objects.create(
+                    GALLERY_TITLE       = gallery_title,
+                    GALLERY_DESCRIPTION = gallery_description,
+                    GALLERY_IMAGE       = None,
+                    GALLERY_CREATED_BY  = created_by
+                )
+                for img_file in uploaded_images:
+                    GalleryImage.objects.create(GALLERY=gallery_item, IMAGE=img_file)
+
+                first_gallery_img = gallery_item.GALLERY_IMAGES.first()
+                if first_gallery_img:
+                    gallery_item.GALLERY_IMAGE = first_gallery_img.IMAGE
+                    gallery_item.save(update_fields=['GALLERY_IMAGE'])
+
+                return JsonResponse({'status': 'success', 'message': 'Gallery added successfully'})
+
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
