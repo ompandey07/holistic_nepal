@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequ
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.files.storage import default_storage
 import json
@@ -92,14 +93,27 @@ class LoginView(View):
             public_user = PublicUserProfile.objects.filter(PUBLIC_USER_EMAIL=email).first()
 
         if public_user and verify_password(password, public_user.PUBLIC_USER_PASSWORD):
+            #!- CREATE OR GET DJANGO USER FOR PUBLIC USER
+            try:
+                django_user = User.objects.get(email=public_user.PUBLIC_USER_EMAIL)
+            except User.DoesNotExist:
+                # Create Django user for public user
+                django_user = User.objects.create_user(
+                    username=public_user.PUBLIC_USER_EMAIL,
+                    email=public_user.PUBLIC_USER_EMAIL,
+                    password=public_user.PUBLIC_USER_PASSWORD
+                )
+            
+            #!- LOGIN THE DJANGO USER
+            login(request, django_user)
             request.session['public_user_id'] = public_user.id
             request.session['public_user_name'] = public_user.PUBLIC_USER_FULL_NAME
             request.session['role'] = 'PUBLIC_USER'
             request.session['is_employee_or_superuser'] = False
             return JsonResponse({
                 'status': 'success',
-                'message': 'i am public',
-                'role': 'PUBLIC_USER'
+                'message': 'Welcome back! Redirecting to dashboard...',
+                'redirect_url': reverse('user_dashboard')
             })
 
         #!- INVALID CREDENTIALS RESPONSE

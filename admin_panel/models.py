@@ -8,10 +8,10 @@ from django.utils.text import slugify
 class Gallery(models.Model):
     GALLERY_TITLE = models.CharField(max_length=500)
     GALLERY_SLUG = models.SlugField(max_length=500, unique=True, blank=True)
-    GALLERY_IMAGE = models.ImageField(upload_to="Uploads/Gallary/")
+    GALLERY_IMAGE = models.ImageField(upload_to="Uploads/Gallary/", null=True, blank=True)
     GALLERY_DESCRIPTION = models.TextField()
-    GALLERY_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="GALLERY_CREATED_BY")
-    GALLERY_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="GALLERY_MODIFIED_BY")
+    GALLERY_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="GALLERY_CREATED_BY", null=True, blank=True)
+    GALLERY_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="GALLERY_MODIFIED_BY", null=True, blank=True)
     GALLERY_CREATED_AT = models.DateTimeField(default=timezone.now)
     GALLERY_MODIFIED_AT = models.DateTimeField(auto_now=True)
 
@@ -20,11 +20,33 @@ class Gallery(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.GALLERY_SLUG:
-            self.GALLERY_SLUG = slugify(self.GALLERY_TITLE)
+            orig_slug = slugify(self.GALLERY_TITLE, allow_unicode=True)
+            if not orig_slug:
+                orig_slug = f"gallery-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+            slug = orig_slug
+            counter = 1
+            while Gallery.objects.filter(GALLERY_SLUG=slug).exclude(id=self.id).exists():
+                slug = f"{orig_slug}-{counter}"
+                counter += 1
+            self.GALLERY_SLUG = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.GALLERY_TITLE
+
+
+# !--- GALLERY MULTIPLE IMAGES MODEL -------
+class GalleryImage(models.Model):
+    GALLERY = models.ForeignKey(Gallery, on_delete=models.CASCADE, related_name="GALLERY_IMAGES")
+    IMAGE = models.ImageField(upload_to="Uploads/Gallary/")
+    CREATED_AT = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "GALLERY IMAGE"
+
+    def __str__(self):
+        return f"Image for {self.GALLERY.GALLERY_TITLE}"
+
 
 
 # !--- NEWS MODEL -------
@@ -40,10 +62,10 @@ class News(models.Model):
     ], default="ANNOUNCEMENT")
     NEWS_TITLE = models.CharField(max_length=500)
     NEWS_SLUG = models.SlugField(max_length=500, unique=True, blank=True)
-    NEWS_IMAGE = models.ImageField(upload_to="Uploads/News/", blank=True, null=True)
+    NEWS_IMAGE = models.ImageField(upload_to="Uploads/News/")
     NEWS_DESCRIPTION = models.TextField()
-    NEWS_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="NEWS_CREATED_BY")
-    NEWS_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.SET_NULL, null=True, blank=True, related_name="NEWS_MODIFIED_BY")
+    NEWS_CREATED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="NEWS_CREATED_BY")
+    NEWS_MODIFIED_BY = models.ForeignKey(EmployeeSetup, on_delete=models.PROTECT, related_name="NEWS_MODIFIED_BY")
     NEWS_CREATED_AT = models.DateTimeField(default=timezone.now)
     NEWS_MODIFIED_AT = models.DateTimeField(auto_now=True)
 
@@ -52,11 +74,33 @@ class News(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.NEWS_SLUG:
-            self.NEWS_SLUG = slugify(self.NEWS_TITLE)
+            orig_slug = slugify(self.NEWS_TITLE, allow_unicode=True)
+            if not orig_slug:
+                orig_slug = f"news-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+            slug = orig_slug
+            counter = 1
+            while News.objects.filter(NEWS_SLUG=slug).exclude(id=self.id).exists():
+                slug = f"{orig_slug}-{counter}"
+                counter += 1
+            self.NEWS_SLUG = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.NEWS_TITLE
+
+
+# !--- NEWS MULTIPLE IMAGES MODEL -------
+class NewsImage(models.Model):
+    NEWS = models.ForeignKey(News, on_delete=models.CASCADE, related_name="NEWS_IMAGES")
+    IMAGE = models.ImageField(upload_to="Uploads/News/")
+    CREATED_AT = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "NEWS IMAGE"
+
+    def __str__(self):
+        return f"Image for {self.NEWS.NEWS_TITLE}"
+
 
 
 #!--- UNIT SETUP MODEL -------
@@ -113,7 +157,9 @@ class ProductSetup(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.PRODUCT_SLUG:
-            orig_slug = slugify(self.PRODUCT_NAME)
+            orig_slug = slugify(self.PRODUCT_NAME, allow_unicode=True)
+            if not orig_slug:
+                orig_slug = f"product-{timezone.now().strftime('%Y%m%d%H%M%S')}"
             slug = orig_slug
             counter = 1
             while ProductSetup.objects.filter(PRODUCT_SLUG=slug).exclude(id=self.id).exists():

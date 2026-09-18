@@ -3,7 +3,9 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from .models import (
     Gallery,
+    GalleryImage,
     News,
+    NewsImage,
     UnitSetup,
     ProductCategory,
     ProductSetup,
@@ -13,9 +15,15 @@ from .models import (
 )
 
 
+class GalleryImageInline(admin.TabularInline):
+    model = GalleryImage
+    extra = 1
+
+
 #!- --- GALLERY ADMIN CONFIGURATION ---
 @admin.register(Gallery)
 class GalleryAdmin(admin.ModelAdmin):
+    inlines = [GalleryImageInline]
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'GALLERY_TITLE',
@@ -51,9 +59,15 @@ class GalleryAdmin(admin.ModelAdmin):
         return mark_safe('<span style="color: #9ca3af;">NO IMAGE</span>')
 
 
+class NewsImageInline(admin.TabularInline):
+    model = NewsImage
+    extra = 1
+
+
 #!- --- NEWS ADMIN CONFIGURATION ---
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
+    inlines = [NewsImageInline]
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'NEWS_TITLE',

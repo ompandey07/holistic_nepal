@@ -19,6 +19,9 @@ urlpatterns = [
     path('product-category/', views.ProductCategoryView.as_view(), name='product_category'),
     path('product-setup/', views.ProductSetupView.as_view(), name='product_setup'),
 
+    # -- NEWS SETUP PAGE ---
+    path('news-setup/', views.NewsSetupView.as_view(), name='news_setup'),
 
-    
+    # -- GALLERY SETUP PAGE ---
+    path('gallery-setup/', views.GallerySetupView.as_view(), name='gallery_setup'),
 ]
