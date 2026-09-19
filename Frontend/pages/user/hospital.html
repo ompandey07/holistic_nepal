@@ -1,0 +1,997 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-lang="eng">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>होलिस्टिक हस्पिटल एण्ड रिसर्च सेन्टर · Holistic Hospital &amp; Research Center</title>
+  <meta name="description" content="Holistic Hospital &amp; Research Center, Thulo Kharibot Marga, Kathmandu — Kathmandu's premier integrative medical sanctuary providing physician-supervised naturopathy, neuro-rehabilitation, classical Panchakarma, and physiotherapy.">
+  <link rel="icon" type="image/x-icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}">
+
+  <!-- Google Fonts: Newsreader / Cormorant / Fraunces, DM Sans, Mukta -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Mukta:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=sanctuary3.0">
+</head>
+
+<body class="product-detail-body hospital-page-wrapper">
+  <!-- Top Navigation Header (Deep Indigo-Purple Preserved) -->
+  <header class="catalog-header">
+    <div class="header-inner">
+      <!-- Brand Logo -->
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="/" data-i18n="nav_home">Home page</a>
+        <a href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a class="active" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+      </nav>
+
+      <!-- Right Side Actions: Language Switcher, Cart Button & Profile -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="hospital-lang-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="hospital-lang-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart" id="header-cart-btn">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="global-cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
+        </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-toggle" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay"></div>
+  <aside class="mobile-drawer" aria-label="Mobile menu">
+    <div class="drawer-header">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+      <button class="drawer-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="drawer-menu">
+      <a href="/" data-i18n="nav_home">Home page</a>
+      <a href="/products/" data-i18n="nav_products">Our Products</a>
+      <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+      <a class="active" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+    </nav>
+  </aside>
+
+  <main id="main-content">
+    <!-- Breadcrumb -->
+    <nav class="sanct-breadcrumb-bar" aria-label="Breadcrumb">
+      <div class="sanct-container">
+        <ol class="sanct-breadcrumb-list">
+          <li>
+            <a href="/">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span data-i18n="breadcrumb_home">Home</span>
+            </a>
+          </li>
+          <li class="sanct-breadcrumb-sep">/</li>
+          <li class="sanct-breadcrumb-current" aria-current="page">
+            <span class="lang-eng">{{ hospital_info.HERO_TITLE_ENG|default:"Holistic Hospital & Research Center" }}</span>
+            <span class="lang-nep">{{ hospital_info.HERO_TITLE_NEP|default:"होलिस्टिक हस्पिटल एण्ड रिसर्च सेन्टर" }}</span>
+          </li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- ============================================================
+         1. HERO SECTION: LIGHT BOTANICAL ARRIVAL
+         ============================================================ -->
+    <section class="sanctuary-hero" aria-labelledby="heroTitle">
+      <div class="sanct-container">
+        <div class="sanctuary-hero-grid">
+          <!-- Left Column: Editorial Medical Authority -->
+          <div class="sanctuary-hero-content">
+            <!-- Live OPD Status Pill -->
+            <div class="sanct-live-pill" role="status">
+              <span class="pulse-dot" aria-hidden="true"></span>
+              <span data-i18n="hero_live_status">OPD &amp; Inpatient Admissions Open · 8:00 AM – 7:00 PM</span>
+            </div>
+
+            <!-- Institution Eyebrow -->
+            <div class="sanct-eyebrow" data-i18n="hero_eyebrow">
+              HOLISTIC HOSPITAL &amp; RESEARCH CENTER · ESTD. KATHMANDU
+            </div>
+
+            <!-- Main Headline -->
+            <h1 class="sanctuary-hero-title" id="heroTitle">
+              <span class="lang-eng">Natural Healing Through Authentic Ayurveda, Acupuncture &amp; <em class="serif-accent-italic">Herbal Therapies</em></span>
+              <span class="lang-nep">शुद्ध आयुर्वेद, जडीबुटी, अकुपञ्चर तथा <em class="serif-accent-italic">कपिङ थेरापीबाट प्राकृतिक उपचार</em></span>
+            </h1>
+
+            <!-- Editorial Lead Paragraph -->
+            <p class="sanctuary-hero-lead" data-i18n="hero_lead">
+              Kathmandu's dedicated natural healing center treating chronic health issues through pure Himalayan herbs, Ayurvedic medicine, acupuncture, cupping therapy, and physiotherapy — restoring wellness naturally without surgery.
+            </p>
+
+            <div class="sanctuary-hero-actions">
+              <a href="tel:014115830" class="btn-sanct-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span data-i18n="hero_cta_direct_call">Direct Call: 01-4115830</span>
+              </a>
+
+              <a href="https://wa.me/9779851088497?text=Hello%20Holistic%20Hospital,%20I%20would%20like%20to%20inquire%20about%20consultation." target="_blank" class="btn-sanct-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.57 4.183 1.564 5.938l-1.564 5.719 5.877-1.542c1.678.917 3.603 1.441 5.655 1.441 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/>
+                </svg>
+                <span>WhatsApp: 9851088497</span>
+              </a>
+            </div>
+
+            <!-- Patient Trust Matrix -->
+            <div class="sanctuary-hero-badges">
+              <div class="hero-badge-pill">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+                <span data-i18n="badge_suites">30+ Residential Suites</span>
+              </div>
+              <div class="hero-badge-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span data-i18n="badge_noninvasive">100% Non-Invasive Care</span>
+              </div>
+              <div class="hero-badge-pill">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z"/></svg>
+                <span data-i18n="badge_doctors">Registered MDs &amp; Vaidyas</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Creative Botanical & Clinical Sanctuary Monograph -->
+          <div class="sanctuary-hero-visual">
+            <div class="sanctuary-hero-monograph">
+              <!-- Archival Monograph Header -->
+              <div class="monograph-archival-header">
+                <span>Clinical Sanctuary · Kathmandu</span>
+                <span class="monograph-live-status">
+                  <span class="pulse-dot"></span>
+                  <span>OPD Open · 8am – 7pm</span>
+                </span>
+              </div>
+
+              <!-- Authentic Holistic Therapy Sanctuary Photo Plate -->
+              <div class="monograph-photo-plate">
+                <img src="{% static 'Images/holistic_therapy_clinic.jpg' %}" alt="Holistic Hospital &amp; Therapy Center - Ayurveda, Acupuncture, Cupping &amp; Herbal Healing Clinic in Kathmandu">
+                <div class="monograph-photo-overlay">
+                  <div>
+                    <h4 class="monograph-photo-title">Natural Therapy Sanctuary</h4>
+                    <p class="monograph-photo-sub">Ayurveda · Acupuncture · Cupping · Herbs</p>
+                  </div>
+                  <span class="monograph-seal-tag">ESTD. 2018</span>
+                </div>
+              </div>
+
+              <!-- Two Clinical Pillars -->
+              <div class="monograph-clinical-pillars">
+                <div class="monograph-pillar-box">
+                  <strong>🌿 Herbal &amp; Ayurvedic Care</strong>
+                  <span>Pure Himalayan herbs, classical Panchakarma &amp; tailored oils.</span>
+                </div>
+                <div class="monograph-pillar-box">
+                  <strong>🩺 Targeted Therapies</strong>
+                  <span>Acupuncture, cupping, physiotherapy &amp; non-invasive spine care.</span>
+                </div>
+              </div>
+
+              <!-- Direct Call Hotline Strip (Zero Modal, One-Tap Call) -->
+              <a href="tel:014115830" class="monograph-direct-call-strip" title="Direct Phone Call to Hospital Front Desk">
+                <div class="monograph-call-content">
+                  <div class="monograph-call-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                  </div>
+                  <div class="monograph-call-text">
+                    <span>Instant Reception Hotline</span>
+                    <strong>01-4115830</strong>
+                  </div>
+                </div>
+                <span class="monograph-call-arrow">Tap to Call &rarr;</span>
+              </a>
+
+              <!-- Sanctuary Location Footprint -->
+              <div class="monograph-geo-footprint">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div class="monograph-geo-text">
+                  <span class="lang-eng"><strong>Sanctuary Location:</strong> {{ hospital_info.CONTACT_LOCATION_ENG|default:"Thulo Kharibot Marga, Kathmandu, Bagmati Province 44600" }}</span>
+                  <span class="lang-nep"><strong>अस्पताल ठेगाना:</strong> {{ hospital_info.CONTACT_LOCATION_NEP|default:"ठूलो खरीबोट मार्ग, काठमाडौं, बागमती प्रदेश ४४६००" }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         2. CLINICAL CREDENTIALS BAND (METRIC AUTHORITY)
+         ============================================================ -->
+    <section class="sanct-credentials-band" aria-label="Clinical Credentials">
+      <div class="sanct-container">
+        <div class="credentials-grid">
+          <div class="credential-item">
+            <span class="credential-num" data-i18n="cred_modalities_num">08</span>
+            <div class="credential-info">
+              <strong data-i18n="cred_modalities_title">Integrated Modalities</strong>
+              <span data-i18n="cred_modalities_sub">Physiotherapy, Panchakarma, Acupuncture &amp; more</span>
+            </div>
+          </div>
+
+          <div class="credential-item">
+            <span class="credential-num" data-i18n="cred_conditions_num">24+</span>
+            <div class="credential-info">
+              <strong data-i18n="cred_conditions_title">Chronic Conditions</strong>
+              <span data-i18n="cred_conditions_sub">Neuromuscular, spine &amp; metabolic care</span>
+            </div>
+          </div>
+
+          <div class="credential-item">
+            <span class="credential-num" data-i18n="cred_noninvasive_num">100%</span>
+            <div class="credential-info">
+              <strong data-i18n="cred_noninvasive_title">Non-Invasive Protocol</strong>
+              <span data-i18n="cred_noninvasive_sub">Zero harsh chemical interventions</span>
+            </div>
+          </div>
+
+          <div class="credential-item">
+            <span class="credential-num" data-i18n="cred_nursing_num">24/7</span>
+            <div class="credential-info">
+              <strong data-i18n="cred_nursing_title">Residential Nursing</strong>
+              <span data-i18n="cred_nursing_sub">Full inpatient recovery care support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3. 8 SIGNATURE CLINICAL MODALITIES (INTERACTIVE SHOWCASE)
+         ============================================================ -->
+    <section class="sanct-section" id="modalities" aria-labelledby="modalitiesTitle">
+      <div class="sanct-container">
+        <div class="section-header-editorial">
+          <div class="section-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+            <span data-i18n="modalities_eyebrow">Verified Clinical Procedures</span>
+          </div>
+          <h2 class="section-title" id="modalitiesTitle">
+            <span class="lang-eng">Eight Signature Natural <em class="serif-forest-italic">Healing Modalities</em></span>
+            <span class="lang-nep">आठ प्रमुख प्राकृतिक <em class="serif-forest-italic">उपचार पद्धतिहरू</em></span>
+          </h2>
+          <p class="section-subtitle" data-i18n="modalities_subtitle">
+            Photographed directly inside our clinical rooms in Kathmandu. Select any therapeutic modality to review its physiological action and clinical indications.
+          </p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="modality-tabs-bar" role="tablist" aria-label="Therapy category filter">
+          <button type="button" class="modality-tab-btn is-active" role="tab" aria-selected="true" data-filter="all" data-i18n="tab_all">
+            All Modalities (8)
+          </button>
+          <button type="button" class="modality-tab-btn" role="tab" aria-selected="false" data-filter="spine" data-i18n="tab_spine">
+            Spinal &amp; Orthopedic
+          </button>
+          <button type="button" class="modality-tab-btn" role="tab" aria-selected="false" data-filter="neuro" data-i18n="tab_neuro">
+            Neuro &amp; Mind
+          </button>
+          <button type="button" class="modality-tab-btn" role="tab" aria-selected="false" data-filter="thermal" data-i18n="tab_thermal">
+            Thermal &amp; Detox
+          </button>
+        </div>
+
+        <!-- 8 Modalities Cards Grid (Real Hospital Media) -->
+        <div class="modalities-grid" id="modalitiesGrid">
+          <!-- Modality 1: Hot Stone -->
+          <div class="modality-card is-selected" tabindex="0" role="button" aria-pressed="true" data-category="thermal" data-index="0">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#01</span>
+              <img src="{% static 'Images/HOT STONE.jpeg' %}" alt="Patient undergoing Ayurvedic Hot Stone Therapy in clinic room" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Hot Stone Therapy</h3>
+              <span class="modality-card-subtitle">हट स्टोन थेरापी</span>
+              <div class="modality-card-meta">
+                <span>Thermal Basalt</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 2: Mud Therapy -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="thermal" data-index="1">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#02</span>
+              <img src="{% static 'Images/MUD THERAPY.jpeg' %}" alt="Patient undergoing mineral-rich Therapeutic Mud Bath in clinic" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Therapeutic Mud Bath</h3>
+              <span class="modality-card-subtitle">मड बाथ तथा लेप</span>
+              <div class="modality-card-meta">
+                <span>Mineral Clay</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 3: Shirodhara -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="neuro" data-index="2">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#03</span>
+              <img src="{% static 'Images/SIRODHARA.jpeg' %}" alt="Patient receiving classical herbal oil Shirodhara in treatment suite" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Medicated Shirodhara</h3>
+              <span class="modality-card-subtitle">शिरोधरा (Shirodhara)</span>
+              <div class="modality-card-meta">
+                <span>Warm Herbal Taila</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 4: Kati Basti -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="spine" data-index="3">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#04</span>
+              <img src="{% static 'Images/KATI BASTI.jpeg' %}" alt="Lumbar Kati Basti procedure with warm herbal oil dam for spine care" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Kati Basti Spinal Care</h3>
+              <span class="modality-card-subtitle">कटिबस्ती (Kati Basti)</span>
+              <div class="modality-card-meta">
+                <span>Spinal Decompression</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 5: Acupuncture -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="neuro" data-index="4">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#05</span>
+              <img src="{% static 'Images/ACUPUNCTURE.jpeg' %}" alt="Electro-Acupuncture session on clinical meridian points" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Electro-Acupuncture</h3>
+              <span class="modality-card-subtitle">अकुपंचर तथा अकुप्रेसर</span>
+              <div class="modality-card-meta">
+                <span>Meridian Stimulation</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 6: Footbath Hydrotherapy -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="thermal" data-index="5">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#06</span>
+              <img src="{% static 'Images/FOOTBATH.jpeg' %}" alt="Medicinal hydrotherapy footbath and reflexology session in clinic" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Botanical Footbath</h3>
+              <span class="modality-card-subtitle">पादस्नान हाइड्रोथेरापी</span>
+              <div class="modality-card-meta">
+                <span>Hydro-Reflexology</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 7: Clinical Physiotherapy -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="spine" data-index="6">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#07</span>
+              <img src="{% static 'Images/PHYSIOTHERAPY.jpeg' %}" alt="Patient practicing guided gait re-education in physiotherapy gym" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Clinical Physiotherapy</h3>
+              <span class="modality-card-subtitle">क्लिनिकल फिजियोथेरापी</span>
+              <div class="modality-card-meta">
+                <span>Gait &amp; Mobility</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality 8: Cupping Therapy -->
+          <div class="modality-card" tabindex="0" role="button" aria-pressed="false" data-category="spine" data-index="7">
+            <div class="modality-card-media">
+              <span class="modality-index-badge">#08</span>
+              <img src="{% static 'Images/CUPPLING.jpeg' %}" alt="Targeted myofascial cupping therapy for back pain relief" loading="lazy">
+            </div>
+            <div class="modality-card-body">
+              <h3 class="modality-card-title">Targeted Cupping</h3>
+              <span class="modality-card-subtitle">कपिङ थेरापी (Cupping)</span>
+              <div class="modality-card-meta">
+                <span>Myofascial Release</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Specimen Inspector Deck -->
+        <div class="modality-detail-inspector" id="modalityInspector" aria-live="polite">
+          <div class="inspector-media-frame">
+            <img id="inspectorImage" src="{% static 'Images/HOT STONE.jpeg' %}" alt="Hot Stone Therapy procedure in clinic room">
+          </div>
+          <div class="inspector-info">
+            <span class="section-eyebrow" id="inspectorEyebrow" style="margin-bottom: 8px;">CLINICAL MODALITY 01 · THERMAL MEDICINE</span>
+            <h3 id="inspectorTitle">Hot Stone Therapy</h3>
+            <span class="inspector-sub" id="inspectorSub">हट स्टोन थेरापी</span>
+            <p class="inspector-lead" id="inspectorLead">
+              Smooth basalt stones heated in mineral-rich water are placed along key meridian energy pathways to infuse deep penetrating warmth into contracted musculature. This time-honored thermal modality relieves chronic neuromuscular tension, accelerates lymphatic drainage, and induces restorative parasympathetic relaxation.
+            </p>
+            <div class="inspector-specs-row">
+              <div class="spec-item">
+                <strong data-i18n="spec_action">Physiological Action</strong>
+                <span id="inspectorAction">Thermotherapy &amp; Circulation</span>
+              </div>
+              <div class="spec-item">
+                <strong data-i18n="spec_indication">Primary Indication</strong>
+                <span id="inspectorIndication">Fibromyalgia, Chronic Muscle Spasms</span>
+              </div>
+            </div>
+            <a href="tel:014115830" class="btn-sanct-primary" id="inspectorCallBtn" style="padding: 11px 22px; font-size: 13.5px; align-self: flex-start; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <span>Consult via Direct Call: 01-4115830</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. SPECIALIZED CLINICAL SERVICES (11 INTEGRATED THERAPIES)
+         ============================================================ -->
+    <section class="sanct-section sanct-services-section" id="services" aria-labelledby="servicesTitle">
+      <div class="sanct-container">
+        <div class="section-header-editorial">
+          <div class="section-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+            <span data-i18n="services_eyebrow">Comprehensive Natural Healthcare</span>
+          </div>
+          <h2 class="section-title" id="servicesTitle">
+            <span class="lang-eng">Our Specialized <em class="serif-forest-italic">Clinical Services</em></span>
+            <span class="lang-nep">हाम्रा विशेषज्ञ <em class="serif-forest-italic">क्लिनिकल सेवाहरू</em></span>
+          </h2>
+          <p class="section-subtitle" data-i18n="services_subtitle">
+            Explore our 11 evidence-guided holistic therapies. Each modality is customized by our clinical physicians to resolve chronic root causes.
+          </p>
+        </div>
+
+        <div class="services-cards-grid">
+          {% for service in services %}
+          <a href="{% url 'service_detail' slug=service.slug %}" class="service-grid-card">
+            <div>
+              <div class="service-card-top">
+                <div class="service-card-icon-wrap" aria-hidden="true">
+                  {% if service.icon == 'droplet' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                  {% elif service.icon == 'nutrition' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 0-10 10c0 4.4 2.9 8.2 7 9.5V14a3 3 0 0 1 6 0v7.5c4.1-1.3 7-5.1 7-9.5A10 10 0 0 0 12 2z"></path></svg>
+                  {% elif service.icon == 'lotus' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8c-2 2-2 6 0 8 2-2 2-6 0-8z"></path></svg>
+                  {% elif service.icon == 'herb' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                  {% elif service.icon == 'synergy' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                  {% elif service.icon == 'clock' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  {% elif service.icon == 'heart-mind' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  {% elif service.icon == 'joint' or service.icon == 'needle' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v7m0 6v7m-7-10h7m6 0h-7"></path></svg>
+                  {% elif service.icon == 'foot' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 0-4 4c0 3 2 5 2 8 0 3.5 1.5 5 2 7 .5-2 2-3.5 2-7 0-3 2-5 2-8a4 4 0 0 0-4-4z"></path></svg>
+                  {% elif service.icon == 'hands' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>
+                  {% else %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                  {% endif %}
+                </div>
+                <span class="service-card-order">#{{ service.order|stringformat:"02d" }}</span>
+              </div>
+
+              <h3 class="service-card-title">
+                <span class="lang-eng">{{ service.name_en }}</span>
+                <span class="lang-nep">{{ service.name_np }}</span>
+              </h3>
+
+              <p class="service-card-desc">
+                <span class="lang-eng">{{ service.summary_en }}</span>
+                <span class="lang-nep">{{ service.summary_np }}</span>
+              </p>
+            </div>
+
+            <div class="service-card-cta">
+              <span data-i18n="service_learn_more">Learn More →</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FLAGSHIP CENTER: NEURO-RESTORATION & STROKE INSTITUTE
+         ============================================================ -->
+    <section class="sanct-section sanct-neuro-institute" id="neuro-institute" aria-labelledby="neuroTitle">
+      <div class="sanct-container">
+        <div class="neuro-institute-layout">
+          <!-- Left: Clinical Evidence & Protocol -->
+          <div class="neuro-content-col">
+            <div class="institute-badge" data-i18n="neuro_badge">
+              FLAGSHIP CLINICAL DEPARTMENT
+            </div>
+            <h2 id="neuroTitle">
+              <span class="lang-eng">Comprehensive Stroke &amp; <em class="serif-accent-italic">Paralysis Rehabilitation</em></span>
+              <span class="lang-nep">प्यारालाइसिस तथा पक्षघातको <em class="serif-accent-italic">सफल प्राकृतिक उपचार</em></span>
+            </h2>
+            <p data-i18n="neuro_lead">
+              At Holistic Hospital &amp; Research Center, complex neurological challenges including post-stroke hemiplegia, Bell's palsy, and acute motor nerve deficits are treated through a structured multidisciplinary rehabilitation protocol combining Naturopathy, Clinical Physiotherapy, Electro-Acupuncture, and specialized botanical therapies.
+            </p>
+
+            <div class="neuro-features-grid">
+              <div class="neuro-feature-card">
+                <strong data-i18n="neuro_f1_title">Early Neuro-Mobilization</strong>
+                <span data-i18n="neuro_f1_desc">Prevent contractures and re-educate neural motor pathways.</span>
+              </div>
+              <div class="neuro-feature-card">
+                <strong data-i18n="neuro_f2_title">Meridian Electro-Acupuncture</strong>
+                <span data-i18n="neuro_f2_desc">Targeted bio-electric frequency to restore motor tone.</span>
+              </div>
+              <div class="neuro-feature-card">
+                <strong data-i18n="neuro_f3_title">Supervised Gait Retraining</strong>
+                <span data-i18n="neuro_f3_desc">Parallel bar and balance board functional mobility exercises.</span>
+              </div>
+              <div class="neuro-feature-card">
+                <strong data-i18n="neuro_f4_title">Botanical Neuro-Nourishment</strong>
+                <span data-i18n="neuro_f4_desc">Medicated warm oil basti and classical nerve revitalizers.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Real Patient Recovery Photo Grid -->
+          <div class="neuro-visual-col">
+            <div class="neuro-media-frame">
+              <img src="{% static 'Images/paralysis_photos_cropped.jpeg' %}" alt="Real paralysis and stroke rehabilitation therapy sessions with clinicians and patients" loading="lazy">
+              <div class="neuro-media-caption">
+                <strong class="lang-eng">CLINICAL RECOVERY SESSIONS · KATHMANDU</strong>
+                <strong class="lang-nep">प्रत्यक्ष उपचार तथा व्यायामका तस्बिरहरू</strong>
+                <span class="lang-eng">Active neuromuscular re-education, assisted limb mobilization, and therapeutic exercise conducted under direct medical supervision.</span>
+                <span class="lang-nep">विशेषज्ञ डाक्टर तथा फिजियोथेरापिस्टहरूको प्रत्यक्ष रेखदेखमा बिरामीहरूको सफल व्यायाम तथा पुनर्स्थापना ।</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Direct Neuro Helpline Bar -->
+        <div class="neuro-helpline-bar">
+          <div class="helpline-contact-info">
+            <div class="helpline-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span class="lang-eng">Location: <strong>{{ hospital_info.CONTACT_LOCATION_ENG|default:"Thulo Kharibot Marga, Kathmandu" }}</strong></span>
+              <span class="lang-nep">स्थान: <strong>{{ hospital_info.CONTACT_LOCATION_NEP|default:"ठूलो खरीबोट मार्ग, काठमाडौं" }}</strong></span>
+            </div>
+            <div class="helpline-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span class="lang-eng">Helpline: <strong>{{ hospital_info.CONTACT_PHONE|default:"01-4115830, 9851088497" }}</strong></span>
+              <span class="lang-nep">फोन: <strong>{{ hospital_info.CONTACT_PHONE|default:"01-4115830, 9851088497" }}</strong></span>
+            </div>
+          </div>
+          <a href="tel:014115830" class="btn-sanct-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span class="lang-eng">Call Direct Helpline: 01-4115830</span>
+            <span class="lang-nep">हेल्पलाइनमा सिधा कल: ०१-४११५८३०</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         8. THE 4-STAGE PATIENT HEALING PATHWAY
+         ============================================================ -->
+    <section class="sanct-section" aria-labelledby="pathwayTitle">
+      <div class="sanct-container">
+        <div class="section-header-editorial">
+          <div class="section-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+            <span data-i18n="pathway_eyebrow">The Patient Roadmap</span>
+          </div>
+          <h2 class="section-title" id="pathwayTitle">
+            <span class="lang-eng">Your Four-Stage Journey to <em class="serif-forest-italic">Sustained Health</em></span>
+            <span class="lang-nep">स्वास्थ्य लाभका चार <em class="serif-forest-italic">महत्वपूर्ण चरणहरू</em></span>
+          </h2>
+          <p class="section-subtitle" data-i18n="pathway_subtitle">
+            Transparent, physician-led clinical progression from initial diagnostic assessment to full functional lifestyle restoration.
+          </p>
+        </div>
+
+        <div class="pathway-cards-grid">
+          <div class="pathway-card">
+            <span class="pathway-step-num">01</span>
+            <h3 class="pathway-card-title" data-i18n="step_01_title">Diagnostic Evaluation</h3>
+            <p class="pathway-card-desc" data-i18n="step_01_desc">
+              Comprehensive Ayurvedic pulse diagnosis (Nadi Pariksha), constitution assessment, and clinical neuromuscular examination by licensed doctors.
+            </p>
+          </div>
+
+          <div class="pathway-card">
+            <span class="pathway-step-num">02</span>
+            <h3 class="pathway-card-title" data-i18n="step_02_title">Custom Protocol Design</h3>
+            <p class="pathway-card-desc" data-i18n="step_02_desc">
+              Formulation of your integrated multidisciplinary regimen blending physiotherapy, classical Panchakarma, acupuncture, and botanical decoctions.
+            </p>
+          </div>
+
+          <div class="pathway-card">
+            <span class="pathway-step-num">03</span>
+            <h3 class="pathway-card-title" data-i18n="step_03_title">Supervised Treatment</h3>
+            <p class="pathway-card-desc" data-i18n="step_03_desc">
+              Daily therapeutic administration in our clean treatment suites or residential inpatient rooms under continuous medical supervision.
+            </p>
+          </div>
+
+          <div class="pathway-card">
+            <span class="pathway-step-num">04</span>
+            <h3 class="pathway-card-title" data-i18n="step_04_title">Post-Care Maintenance</h3>
+            <p class="pathway-card-desc" data-i18n="step_04_desc">
+              Personalized home dietary recommendations, restorative exercise plans, and routine follow-up reviews to ensure lasting results.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         9. APPOINTMENT CONCIERGE & CALL TO ACTION
+         ============================================================ -->
+    <section class="sanct-booking-bar-section" aria-labelledby="bookingBarTitle">
+      <div class="sanct-container">
+        <div class="booking-cta-box">
+          <div class="booking-cta-text">
+            <h3 id="bookingBarTitle" data-i18n="cta_banner_title">Begin Your Clinical Healing Journey Today</h3>
+            <p data-i18n="cta_banner_lead">
+              Consult with our licensed medical doctors and Ayurvedic specialists. We welcome outpatient consultations and residential recovery admissions at our Kathmandu center.
+            </p>
+          </div>
+
+          <div class="booking-cta-actions">
+            <a href="tel:014115830" class="btn-sanct-primary" id="footerCallDirectBtn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>Call Reception: 01-4115830</span>
+            </a>
+            <a href="https://wa.me/9779851088497" target="_blank" rel="noopener noreferrer" class="btn-sanct-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.57 4.183 1.564 5.938l-1.564 5.719 5.877-1.542c1.678.917 3.603 1.441 5.655 1.441 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
+              <span>WhatsApp Concierge</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statutory Medical Disclaimer -->
+    <div class="sanct-medical-disclaimer" role="contentinfo" aria-label="Medical Disclaimer">
+      <div class="sanct-container">
+        <p style="margin: 0;">
+          <strong>Medical Disclaimer / चिकित्सासम्बन्धी सूचना:</strong>
+          <span class="lang-eng">The clinical services, therapies, and botanical preparations provided at Holistic Hospital &amp; Research Center are administered under the direction of licensed medical doctors and Ayurvedic physicians. Treatment timelines and outcomes vary based on individual diagnosis and chronic severity.</span>
+          <span class="lang-nep">होलिस्टिक हस्पिटल एण्ड रिसर्च सेन्टरमा प्रदान गरिने क्लिनिकल सेवा, थेरापी तथा जडीबुटी औषधिहरू दर्तावाला विशेषज्ञ चिकित्सकहरूको प्रत्यक्ष निगरानीमा सञ्चालन गरिन्छ । उपचारको नतिजा बिरामीको व्यक्तिगत स्वास्थ्य अवस्था अनुसार फरक पर्न सक्छ ।</span>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Premium Botanical Apothecary Footer (Matching All Site Pages) -->
+  <footer class="catalog-site-footer">
+    <!-- Background Botanical Leaf Plants Foliage Left & Right -->
+    <img src="{% static 'Images/herbs_decor_left.png' %}" class="footer-plants-decor footer-plants-left" alt="" aria-hidden="true">
+    <img src="{% static 'Images/herbs_decor_right.png' %}" class="footer-plants-decor footer-plants-right" alt="" aria-hidden="true">
+
+    <!-- Faint Center Botanical Leaf Watermark -->
+    <div class="footer-botanical-watermark" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100,10 C100,60 100,150 100,190"></path>
+        <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
+        <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
+        <path d="M100,115 C75,105 60,82 60,82 C80,78 100,98 100,115 Z"></path>
+        <path d="M100,150 C125,140 140,115 140,115 C120,110 100,132 100,150 Z"></path>
+        <path d="M100,45 L78,28 M100,80 L122,62 M100,115 L74,94 M100,150 L126,128"></path>
+      </svg>
+    </div>
+
+    <div class="footer-content-wrap">
+      <!-- Brand Header -->
+      <a class="footer-brand-crest" href="/" aria-label="Holistic Herbs Home">
+        <img class="footer-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="footer-brand-title">Holistic Herbs Nepal</span>
+      </a>
+      <p class="footer-brand-tagline">
+        Pure Wildcrafted Himalayan Botanicals &amp; Herbal Apothecary · Rooted in Ayurvedic Healing.
+      </p>
+
+      <!-- Terroir Quality Badges with Sprout Leaves -->
+      <div class="footer-terroir-row">
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+          100% Wildcrafted Botanicals
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z"/></svg>
+          Pristine Himalayan Terroir
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Ethically Handcrafted in Nepal
+        </span>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="footer-nav-links" aria-label="Footer Navigation">
+        <a class="footer-nav-link" href="/" data-i18n="nav_home">Home</a>
+        <a class="footer-nav-link" href="/products/" data-i18n="nav_products">Our Products</a>
+        <a class="footer-nav-link" href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a class="footer-nav-link" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a class="footer-nav-link" href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+      </nav>
+
+      <!-- Dedicated Hospital Landline Hotline Below Holistic Hospital -->
+      <div class="footer-hospital-hotline-bar">
+        <a href="tel:014115830" class="footer-hospital-hotline-pill" title="Call Holistic Hospital Reception">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span class="lang-eng">Holistic Hospital Landline:</span>
+          <span class="lang-nep">हस्पिटल ल्याण्डलाइन:</span>
+          <strong>01-4115830</strong>
+        </a>
+      </div>
+
+      <!-- Delicate Botanical Leaf Divider -->
+      <div class="footer-leaf-divider" aria-hidden="true">
+        <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
+          <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+          <circle cx="140" cy="7" r="2.5" fill="currentColor" />
+          <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
+          <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
+        </svg>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-line">
+        <span>&copy; 2026 Holistic Herbs Nepal Pvt. Ltd. All rights reserved.</span>
+        <a class="footer-home-return-btn" href="/">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span data-i18n="footer_return_home">Return to Home</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bilingual Engine & Hospital Interactions Script -->
+  <script src="{% static 'js/hospital-i18n.js' %}?v=3.0"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // 1. Eight Modalities Clinical Data Store
+      const modalitiesData = [
+        {
+          index: "01",
+          title: "Hot Stone Therapy",
+          sub: "हट स्टोन थेरापी",
+          eyebrowEng: "CLINICAL MODALITY 01 · THERMAL MEDICINE",
+          eyebrowNep: "क्लिनिकल पद्धति ०१ · प्राकृतिक थर्मल चिकित्सा",
+          image: "{% static 'Images/HOT STONE.jpeg' %}",
+          leadEng: "Smooth basalt stones heated in mineral-rich water are placed along key meridian energy pathways to infuse deep penetrating warmth into contracted musculature. Relieves chronic tension and accelerates blood circulation.",
+          leadNep: "खनिजयुक्त पानीमा तताइएका चिल्लो बेसाल्ट ढुङ्गाहरूलाई शरीरका मुख्य नाडी विन्दुहरूमा राखेर कडा भएका मांशपेशीहरूलाई आराम प्रदान गरिन्छ। यसले रगतको प्रवाह बढाउँछ।",
+          action: "Thermotherapy & Circulation",
+          indication: "Fibromyalgia, Chronic Muscle Spasms"
+        },
+        {
+          index: "02",
+          title: "Therapeutic Mud Bath",
+          sub: "मड बाथ तथा लेप",
+          eyebrowEng: "CLINICAL MODALITY 02 · MINERAL DETOX",
+          eyebrowNep: "क्लिनिकल पद्धति ०२ · खनिज तथा छाला स्वास्थ्य",
+          image: "{% static 'Images/MUD THERAPY.jpeg' %}",
+          leadEng: "Purified, mineral-dense medicinal clay applied across affected joints and spine. Absorbs cutaneous thermal inflammation, enhances peripheral microcirculation, and delivers restorative minerals directly to irritated dermatological surfaces.",
+          leadNep: "औषधीय गुणयुक्त शुद्ध माटोलाई जोर्नी तथा ढाडमा लेप लगाएर भित्री जलन र सुन्निने समस्यालाई शान्त पारिन्छ र खनिज तत्व प्रदान गरिन्छ ।",
+          action: "Anti-Inflammatory & Cooling",
+          indication: "Arthritis Swelling, Skin Irritations"
+        },
+        {
+          index: "03",
+          title: "Medicated Shirodhara",
+          sub: "शिरोधरा (Shirodhara)",
+          eyebrowEng: "CLINICAL MODALITY 03 · NEURO-RESTORATIVE",
+          eyebrowNep: "क्लिनिकल पद्धति ०३ · स्नायु तथा मानसिक स्वास्थ्य",
+          image: "{% static 'Images/SIRODHARA.jpeg' %}",
+          leadEng: "A rhythmic, continuous stream of warm medicated herbal oil (Taila) directed onto the forehead (Ajna Chakra). Calms the central nervous system, reduces elevated cortisol levels, and induces deep parasympathetic neuro-restoration.",
+          leadNep: "निधारको आज्ञा चक्रमा औषधीय तेलको निरन्तर धारा बगाएर स्नायु प्रणालीलाई शान्त पार्ने र गहिरो निद्रा एवं मानसिक शान्ति प्रदान गर्ने शास्त्रीय विधि ।",
+          action: "Autonomic Nervous Regulation",
+          indication: "Chronic Insomnia, Migraines, Anxiety, Stroke Recovery"
+        },
+        {
+          index: "04",
+          title: "Kati Basti Spinal Care",
+          sub: "कटिबस्ती (Kati Basti)",
+          eyebrowEng: "CLINICAL MODALITY 04 · SPINAL CARE",
+          eyebrowNep: "क्लिनिकल पद्धति ०४ · मेरूदण्ड तथा नसा केयर",
+          image: "{% static 'Images/KATI BASTI.jpeg' %}",
+          leadEng: "A therapeutic herbal dough dam placed precisely over the lumbosacral junction, holding warm medicated herbal oils. Promotes non-surgical intervertebral disc decompression, nourishes spinal cartilage, and relieves nerve impingement.",
+          leadNep: "ढाडको तल्लो भागमा पिठोको घेरा बनाएर तातो औषधीय तेल राखी नसा च्यापिएको, डिस्क समस्या र कम्मरको दुखाइ कम गर्ने प्रभावकारी आयुर्वेदिक उपचार ।",
+          action: "Disc Decompression & Nourishment",
+          indication: "Sciatica, Lumbar Disc Spondylosis"
+        },
+        {
+          index: "05",
+          title: "Electro-Acupuncture",
+          sub: "अकुपंचर तथा अकुप्रेसर",
+          eyebrowEng: "CLINICAL MODALITY 05 · MERIDIAN NEURO-STIMULATION",
+          eyebrowNep: "क्लिनिकल पद्धति ०५ · स्नायु उत्तेजना तथा दुखाइ निवारण",
+          image: "{% static 'Images/ACUPUNCTURE.jpeg' %}",
+          leadEng: "Filiform needles inserted at precise meridian acupuncture points stimulated with controlled micro-current electrical frequencies. Blocks acute pain transmissions, stimulates endorphin release, and reactivates dormant motor nerve pathways in paralysis.",
+          leadNep: "शरीरका मुख्य अकुपंचर विन्दुहरूमा मसिनो सियो र हल्का विद्युत तरंगमार्फत स्नायुलाई सक्रिय बनाएर दुखाइ हटाउने र पक्षाघातमा मांशपेशी चलाउने पद्धति ।",
+          action: "Neuroplasticity & Pain Blockade",
+          indication: "Post-Stroke Paralysis, Bell's Palsy, Neuralgia"
+        },
+        {
+          index: "06",
+          title: "Botanical Footbath Hydrotherapy",
+          sub: "पादस्नान हाइड्रोथेरापी",
+          eyebrowEng: "CLINICAL MODALITY 06 · HYDRO-REFLEXOLOGY",
+          eyebrowNep: "क्लिनिकल पद्धति ०६ · हाइड्रो-रिफ्लेक्सोलोजी",
+          image: "{% static 'Images/FOOTBATH.jpeg' %}",
+          leadEng: "Temperature-regulated hydrotherapy baths infused with Himalayan herbal extracts and minerals. Stimulates targeted plantar reflexology nerve zones, regulates systemic blood pressure, and relieves congestive headaches.",
+          leadNep: "जडीबुटीयुक्त तातो पानीमा खुट्टा डुबाएर रिफ्लेक्सोलोजी विन्दुहरूलाई सक्रिय गराई रक्तसञ्चार सुधार गर्ने र टाउको तथा खुट्टाको दुखाइ कम गर्ने विधि ।",
+          action: "Vasomotor & Reflex Tone",
+          indication: "Hypertension, Foot Neuropathy, Chronic Fatigue"
+        },
+        {
+          index: "07",
+          title: "Clinical Physiotherapy",
+          sub: "क्लिनिकल फिजियोथेरापी",
+          eyebrowEng: "CLINICAL MODALITY 07 · NEUROMUSCULAR REHABILITATION",
+          eyebrowNep: "क्लिनिकल पद्धति ०७ · मांशपेशी तथा चाल पुनर्स्थापना",
+          image: "{% static 'Images/PHYSIOTHERAPY.jpeg' %}",
+          leadEng: "Physician-directed kinesiology, parallel-bar gait re-education, neuromuscular retraining, and therapeutic manipulation to restore complete physical mobility and post-injury functional independence.",
+          leadNep: "विशेषज्ञ फिजियोथेरापिस्टहरूको निगरानीमा प्यारालाईसिस, हाडजोर्नी र चोटपटकपछि हिँडडुल तथा शारीरिक चाल पुनः स्थापित गर्ने वैज्ञानिक अभ्यास ।",
+          action: "Gait Retraining & Mobilization",
+          indication: "Stroke Recovery, Joint Immobility, Sports Injuries"
+        },
+        {
+          index: "08",
+          title: "Targeted Cupping Therapy",
+          sub: "कपिङ थेरापी (Cupping)",
+          eyebrowEng: "CLINICAL MODALITY 08 · MYOFASCIAL DECOMPRESSION",
+          eyebrowNep: "क्लिनिकल पद्धति ०८ · मांशपेशी दुखाइ निवारण",
+          image: "{% static 'Images/CUPPLING.jpeg' %}",
+          leadEng: "Localized negative pressure suction cups applied along congested myofascial lines to decompress dense adhesions, disperse stagnant lymphatic fluid, and trigger cellular oxygenation in chronic pain areas.",
+          leadNep: "कप भित्र भ्याकुम बनाएर कडा भएको मांशपेशीलाई खुकुलो पार्ने, जमेको रगत र विषाक्त तत्व हटाउने र तत्काल दुखाइ कम गर्ने विशेष पद्धति ।",
+          action: "Decompression & Lymphatic Clearance",
+          indication: "Upper Back Spasm, Sciatica, Myofascial Pain"
+        }
+      ];
+
+      // Inspector Elements
+      const inspectorImg = document.getElementById('inspectorImage');
+      const inspectorEyebrow = document.getElementById('inspectorEyebrow');
+      const inspectorTitle = document.getElementById('inspectorTitle');
+      const inspectorSub = document.getElementById('inspectorSub');
+      const inspectorLead = document.getElementById('inspectorLead');
+      const inspectorAction = document.getElementById('inspectorAction');
+      const inspectorIndication = document.getElementById('inspectorIndication');
+      const modalityCards = document.querySelectorAll('.modality-card');
+
+      let currentInspectorIndex = 0;
+
+      function updateInspector(index) {
+        currentInspectorIndex = index;
+        const item = modalitiesData[index];
+        if (!item) return;
+
+        modalityCards.forEach(c => {
+          const isCurrent = c.getAttribute('data-index') == index;
+          c.classList.toggle('is-selected', isCurrent);
+          c.setAttribute('aria-pressed', isCurrent ? 'true' : 'false');
+        });
+
+        const isNep = document.documentElement.getAttribute('data-lang') === 'nep';
+
+        if (inspectorImg) inspectorImg.src = item.image;
+        if (inspectorEyebrow) inspectorEyebrow.textContent = isNep ? item.eyebrowNep : item.eyebrowEng;
+        if (inspectorTitle) inspectorTitle.textContent = item.title;
+        if (inspectorSub) inspectorSub.textContent = item.sub;
+        if (inspectorLead) inspectorLead.textContent = isNep ? item.leadNep : item.leadEng;
+        if (inspectorAction) inspectorAction.textContent = item.action;
+        if (inspectorIndication) inspectorIndication.textContent = item.indication;
+      }
+
+      window.updateInspectorOnLangSwitch = function (lang) {
+        updateInspector(currentInspectorIndex);
+      };
+
+      modalityCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const idx = parseInt(card.getAttribute('data-index'), 10);
+          updateInspector(idx);
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const idx = parseInt(card.getAttribute('data-index'), 10);
+            updateInspector(idx);
+          }
+        });
+      });
+
+      // Filter Tabs for Modalities
+      const tabBtns = document.querySelectorAll('.modality-tab-btn');
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => {
+            b.classList.remove('is-active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-selected', 'true');
+
+          const filter = btn.getAttribute('data-filter');
+          modalityCards.forEach(card => {
+            const cat = card.getAttribute('data-category');
+            if (filter === 'all' || cat === filter) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Initial state
+      updateInspector(0);
+    })();
+  </script>
+</body>
+
+</html>

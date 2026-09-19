@@ -665,7 +665,9 @@
               {% for news in news_list %}
               <tr data-news-id="{{ news.id }}">
                 <td>
-                  {% if news.NEWS_IMAGE %}
+                  {% if news.image_url %}
+                    <img src="{{ news.image_url }}" alt="{{ news.NEWS_TITLE }}" class="news-image-thumb">
+                  {% elif news.NEWS_IMAGE %}
                     <img src="{{ news.NEWS_IMAGE.url }}" alt="{{ news.NEWS_TITLE }}" class="news-image-thumb">
                   {% else %}
                     <div class="news-image-thumb" style="display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--text-muted);font-size:10px;">No Img</div>
@@ -705,7 +707,7 @@
                           data-title="{{ news.NEWS_TITLE }}" 
                           data-type="{{ news.NEWS_TYPE }}"
                           data-description="{{ news.NEWS_DESCRIPTION }}"
-                          data-image="{% if news.NEWS_IMAGE %}{{ news.NEWS_IMAGE.url }}{% endif %}"
+                          data-image="{% if news.image_url %}{{ news.image_url }}{% elif news.NEWS_IMAGE %}{{ news.NEWS_IMAGE.url }}{% endif %}"
                           data-images='[{% for img in news.NEWS_IMAGES.all %}{"id":{{ img.id }},"url":"{{ img.IMAGE.url }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'>Edit</button>
                   <button class="btn-action btn-delete" data-id="{{ news.id }}">Delete</button>
                 </td>

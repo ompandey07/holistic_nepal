@@ -104,16 +104,52 @@ class LoginView(View):
                     password=public_user.PUBLIC_USER_PASSWORD
                 )
             
+            # 1. Defensively snapshot guest session cart before login session cycle
+            guest_session_cart = dict(request.session.get('cart', {}))
+
             #!- LOGIN THE DJANGO USER
             login(request, django_user)
             request.session['public_user_id'] = public_user.id
             request.session['public_user_name'] = public_user.PUBLIC_USER_FULL_NAME
             request.session['role'] = 'PUBLIC_USER'
             request.session['is_employee_or_superuser'] = False
+
+            # 2. Restore guest session cart into cycled session if needed
+            if guest_session_cart:
+                current_cart = request.session.get('cart', {})
+                for k, v in guest_session_cart.items():
+                    if k not in current_cart or not current_cart[k]:
+                        current_cart[k] = v
+                request.session['cart'] = current_cart
+                request.session.modified = True
+
+            # 3. Merge guest session cart into user account cart
+            try:
+                from core.cart import Cart
+                cart = Cart(request)
+                cart.merge_session_cart(public_user)
+            except Exception:
+                pass
+
+            # Determine return destination: check next query param or payload
+            next_url = (request.GET.get('next') or request.POST.get('next') or '').strip()
+            if not next_url:
+                try:
+                    if request.body:
+                        b_data = json.loads(request.body.decode('utf-8'))
+                        if isinstance(b_data, dict):
+                            next_url = (b_data.get('next') or '').strip()
+                except Exception:
+                    pass
+
+            redirect_target = reverse('user_dashboard')
+            if next_url and next_url.startswith('/') and not next_url.startswith('//'):
+                redirect_target = next_url
+
             return JsonResponse({
                 'status': 'success',
-                'message': 'Welcome back! Redirecting to dashboard...',
-                'redirect_url': reverse('user_dashboard')
+                'message': 'Welcome back! Redirecting...',
+                'redirect_url': redirect_target
             })
 
         #!- INVALID CREDENTIALS RESPONSE

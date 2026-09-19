@@ -12,6 +12,10 @@ from .models import (
     ProductImage,
     ProductRating,
     ProductOrder,
+    HospitalInfo,
+    HospitalService,
+    HospitalServiceTag,
+    Service,
 )
 
 
@@ -159,6 +163,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'CATEGORY_NAME',
+        'CATEGORY_TAG',
         'category_image_preview',
         'CATEGORY_CREATED_BY',
         'CATEGORY_CREATED_AT',
@@ -168,7 +173,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     list_filter = ('CATEGORY_CREATED_AT',)
     
     #!- SEARCHABLE FIELDS
-    search_fields = ('CATEGORY_NAME',)
+    search_fields = ('CATEGORY_NAME', 'CATEGORY_TAG')
     
     #!- SORTING ORDER
     ordering = ('CATEGORY_NAME',)
@@ -246,24 +251,47 @@ class ProductRatingAdmin(admin.ModelAdmin):
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'PRODUCT_RATING_PRODUCT',
-        'PRODUCT_RATING_USER',
+        'reviewer_name',
+        'reviewer_location',
         'rating_stars_display',
-        'PRODUCT_RATING_VALUE',
+        'IS_FEATURED',
+        'IS_VERIFIED',
         'PRODUCT_RATING_CREATED_AT',
     )
     
     #!- FILTER OPTIONS
-    list_filter = ('PRODUCT_RATING_VALUE', 'PRODUCT_RATING_CREATED_AT')
+    list_filter = ('IS_FEATURED', 'IS_VERIFIED', 'PRODUCT_RATING_VALUE', 'PRODUCT_RATING_CREATED_AT')
     
     #!- SEARCHABLE FIELDS
     search_fields = (
         'PRODUCT_RATING_PRODUCT__PRODUCT_NAME',
+        'REVIEWER_NAME',
+        'REVIEWER_LOCATION',
         'PRODUCT_RATING_USER__PUBLIC_USER_FULL_NAME',
+        'COMMENT_ENG',
+        'COMMENT_NEP',
         'PRODUCT_RATING_COMMENT',
     )
     
+    #!- FIELDSETS FOR ORGANIZED FORM
+    fieldsets = (
+        ('Target Product & Rating', {
+            'fields': ('PRODUCT_RATING_PRODUCT', 'PRODUCT_RATING_VALUE', 'IS_FEATURED', 'IS_VERIFIED')
+        }),
+        ('Reviewer Info', {
+            'fields': ('REVIEWER_NAME', 'REVIEWER_LOCATION', 'PRODUCT_RATING_USER')
+        }),
+        ('Review Comments', {
+            'fields': ('COMMENT_ENG', 'COMMENT_NEP', 'PRODUCT_RATING_COMMENT')
+        }),
+        ('Timestamps', {
+            'fields': ('PRODUCT_RATING_CREATED_AT', 'PRODUCT_RATING_MODIFIED_AT'),
+            'classes': ('collapse',),
+        }),
+    )
+    
     #!- SORTING ORDER
-    ordering = ('-PRODUCT_RATING_CREATED_AT',)
+    ordering = ('-IS_FEATURED', '-PRODUCT_RATING_CREATED_AT')
     
     #!- READONLY FIELDS
     readonly_fields = ('PRODUCT_RATING_CREATED_AT', 'PRODUCT_RATING_MODIFIED_AT')
@@ -292,20 +320,25 @@ class ProductOrderAdmin(admin.ModelAdmin):
     #!- DISPLAY FIELDS IN LIST VIEW
     list_display = (
         'PRODUCT_ORDER_ID',
-        'PRODUCT_ORDER_USER',
-        'PRODUCT_ORDER_PRODUCT',
-        'PRODUCT_ORDER_QTY',
+        'customer_display',
+        'product_display_name',
+        'items_count_or_qty',
+        'order_amount_formatted',
         'status_badge',
-        'PRODUCT_ORDER_CREATED_BY',
+        'ORDER_SOURCE',
         'PRODUCT_ORDER_CREATED_AT',
     )
     
     #!- FILTER OPTIONS
-    list_filter = ('PRODUCT_ORDER_STATUS', 'PRODUCT_ORDER_CREATED_AT')
+    list_filter = ('PRODUCT_ORDER_STATUS', 'ORDER_SOURCE', 'PAYMENT_METHOD', 'IS_PAID', 'PRODUCT_ORDER_CREATED_AT')
     
     #!- SEARCHABLE FIELDS
     search_fields = (
         'PRODUCT_ORDER_ID',
+        'SHIPPING_NAME',
+        'SHIPPING_PHONE',
+        'SHIPPING_EMAIL',
+        'CUSTOMER__PUBLIC_USER_FULL_NAME',
         'PRODUCT_ORDER_USER__EMPLOYEE_FULL_NAME',
         'PRODUCT_ORDER_PRODUCT__PRODUCT_NAME',
     )
@@ -318,6 +351,19 @@ class ProductOrderAdmin(admin.ModelAdmin):
     
     #!- ITEMS PER PAGE
     list_per_page = 25
+
+    @admin.display(description='CUSTOMER / USER')
+    def customer_display(self, obj):
+        if obj.CUSTOMER:
+            return f"Client: {obj.CUSTOMER.PUBLIC_USER_FULL_NAME}"
+        elif obj.PRODUCT_ORDER_USER:
+            return f"Staff: {obj.PRODUCT_ORDER_USER.EMPLOYEE_FULL_NAME}"
+        return obj.SHIPPING_NAME or "Guest / Unassigned"
+
+    @admin.display(description='AMOUNT')
+    def order_amount_formatted(self, obj):
+        amt = obj.order_amount
+        return f"Rs {amt:,.2f}"
 
     #!- CUSTOM ORDER STATUS BADGE
     @admin.display(description='STATUS')
@@ -339,3 +385,91 @@ class ProductOrderAdmin(admin.ModelAdmin):
             color,
             obj.get_PRODUCT_ORDER_STATUS_display()
         )
+
+
+#!- --- HOSPITAL INFO ADMIN CONFIGURATION ---
+@admin.register(HospitalInfo)
+class HospitalInfoAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'HERO_TITLE_ENG', 'HERO_TITLE_NEP', 'CONTACT_PHONE', 'IS_ACTIVE', 'UPDATED_AT')
+    fieldsets = (
+        ('General & Hero Banner', {
+            'fields': (
+                'IS_ACTIVE',
+                'HERO_BANNER_IMAGE',
+                ('HERO_TITLE_ENG', 'HERO_TITLE_NEP'),
+                ('HERO_SUBTITLE_ENG', 'HERO_SUBTITLE_NEP'),
+            )
+        }),
+        ('Introduction Section', {
+            'fields': (
+                ('INTRO_TITLE_ENG', 'INTRO_TITLE_NEP'),
+                'INTRO_TEXT_NEP',
+                'INTRO_TEXT_ENG',
+            )
+        }),
+        ('Conditions & Diseases Treated', {
+            'fields': (
+                ('DISEASES_TITLE_ENG', 'DISEASES_TITLE_NEP'),
+                'DISEASES_TEXT_NEP',
+                'DISEASES_TEXT_ENG',
+            )
+        }),
+        ('Paralysis Treatment Feature', {
+            'fields': (
+                ('PARALYSIS_TITLE_ENG', 'PARALYSIS_TITLE_NEP'),
+                'PARALYSIS_BANNER_IMAGE',
+                'PARALYSIS_DESC_NEP',
+                'PARALYSIS_DESC_ENG',
+            )
+        }),
+        ('Contact Information', {
+            'fields': (
+                'CONTACT_PHONE',
+                'CONTACT_EMAIL',
+                ('CONTACT_LOCATION_ENG', 'CONTACT_LOCATION_NEP'),
+            )
+        }),
+    )
+
+
+#!- --- HOSPITAL SERVICE ADMIN CONFIGURATION ---
+@admin.register(HospitalService)
+class HospitalServiceAdmin(admin.ModelAdmin):
+    list_display = ('SERVICE_ORDER', 'SERVICE_NAME_NEP', 'SERVICE_NAME_ENG', 'image_thumbnail', 'IS_ACTIVE')
+    list_display_links = ('SERVICE_NAME_NEP',)
+    list_editable = ('SERVICE_ORDER', 'IS_ACTIVE')
+    list_filter = ('IS_ACTIVE',)
+    search_fields = ('SERVICE_NAME_NEP', 'SERVICE_NAME_ENG')
+    ordering = ('SERVICE_ORDER', 'id')
+
+    @admin.display(description='IMAGE')
+    def image_thumbnail(self, obj):
+        if obj and obj.SERVICE_IMAGE:
+            return format_html(
+                '<img src="{}" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #e4e7eb;" />',
+                obj.SERVICE_IMAGE.url
+            )
+        return mark_safe('<span style="color: #9ca3af;">NO IMAGE</span>')
+
+
+#!- --- HOSPITAL SERVICE TAG ADMIN CONFIGURATION ---
+@admin.register(HospitalServiceTag)
+class HospitalServiceTagAdmin(admin.ModelAdmin):
+    list_display = ('TAG_ORDER', 'TAG_LABEL_NEP', 'TAG_LABEL_ENG', 'IS_ACTIVE')
+    list_display_links = ('TAG_LABEL_NEP',)
+    list_editable = ('TAG_ORDER', 'IS_ACTIVE')
+    list_filter = ('IS_ACTIVE',)
+    search_fields = ('TAG_LABEL_NEP', 'TAG_LABEL_ENG')
+    ordering = ('TAG_ORDER', 'id')
+
+
+#!- --- CLINICAL SERVICE ADMIN CONFIGURATION ---
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name_en', 'slug', 'order')
+    list_display_links = ('name_en',)
+    list_editable = ('order',)
+    search_fields = ('name_en', 'name_np', 'slug')
+    ordering = ('order', 'id')
+    filter_horizontal = ('related_services',)
+

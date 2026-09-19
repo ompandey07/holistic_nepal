@@ -159,9 +159,104 @@
     pointer-events:none;
   }
 
+  /* Expand toggle button */
+  .expand-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    color: var(--accent);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    margin-right: 8px;
+    flex-shrink: 0;
+    font-weight: 700;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    vertical-align: middle;
+    user-select: none;
+  }
+  .expand-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .expand-btn.open {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Expanded items row */
+  .order-items-row {
+    display: none;
+    background: #f9fbfa;
+    border-bottom: 1px solid var(--border);
+  }
+  .order-items-row.visible {
+    display: table-row;
+  }
+  .order-items-inner {
+    padding: 14px 20px 16px 56px;
+  }
+  .order-items-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .order-item-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 13px;
+  }
+  .order-item-line:last-child {
+    border-bottom: none;
+  }
+  .order-item-thumb {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .order-item-name {
+    flex: 1;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .order-item-contain {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .order-item-qty {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .order-item-price {
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
+  }
+
   @media (max-width: 760px){
     .content{padding:20px;}
     .topbar{padding:16px 20px;}
+    .order-items-inner{padding:12px 16px 14px 16px;}
   }
 </style>
 </head>
@@ -202,22 +297,53 @@
       <div class="table-panel">
         <table>
           <thead>
-            <tr><th>Order ID</th><th>Product</th><th>Quantity</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+            <tr><th></th><th>Order ID</th><th>Product</th><th>Quantity</th><th>Amount</th><th>Status</th><th>Date</th></tr>
           </thead>
           <tbody>
             {% for order in orders %}
-            <tr>
-              <td>{{ order.PRODUCT_ORDER_ID }}</td>
-              <td>{{ order.PRODUCT_ORDER_PRODUCT.PRODUCT_NAME }}</td>
-              <td>{{ order.PRODUCT_ORDER_QTY }}</td>
+            {# Main order row #}
+            <tr class="order-main-row" data-order-id="{{ order.PRODUCT_ORDER_ID }}">
+              <td style="width:38px; padding-right:0;">
+                {% if order.ORDER_ITEMS_DATA %}
+                <button class="expand-btn" title="View ordered items" onclick="toggleOrderItems('{{ order.PRODUCT_ORDER_ID }}', this)">+</button>
+                {% endif %}
+              </td>
+              <td><strong>{{ order.PRODUCT_ORDER_ID }}</strong></td>
+              <td>{{ order.product_display_name }}</td>
+              <td>{{ order.items_count_or_qty }}</td>
               <td>Rs {{ order.order_amount|floatformat:2 }}</td>
               <td><span class="status {{ order.PRODUCT_ORDER_STATUS.lower }}">{{ order.PRODUCT_ORDER_STATUS }}</span></td>
               <td>{{ order.PRODUCT_ORDER_CREATED_AT|date:"Y-m-d" }}</td>
             </tr>
+            {# Hidden expanded items row #}
+            {% if order.ORDER_ITEMS_DATA %}
+            <tr class="order-items-row" id="items-row-{{ order.PRODUCT_ORDER_ID }}">
+              <td colspan="7" style="padding:0; border-bottom:1px solid var(--border);">
+                <div class="order-items-inner">
+                  <div class="order-items-label">Items in this order</div>
+                  {% for item in order.ORDER_ITEMS_DATA %}
+                  <div class="order-item-line">
+                    {% if item.image_url %}
+                    <img class="order-item-thumb" src="{{ item.image_url }}" alt="{{ item.name }}">
+                    {% else %}
+                    <div class="order-item-thumb" style="background:#f0f2f1;"></div>
+                    {% endif %}
+                    <div style="flex:1; min-width:0;">
+                      <div class="order-item-name">{{ item.name }}</div>
+                      {% if item.contain %}<div class="order-item-contain">{{ item.contain }}</div>{% endif %}
+                    </div>
+                    <div class="order-item-qty">× {{ item.quantity }}</div>
+                    <div class="order-item-price">Rs {{ item.subtotal|floatformat:0 }}</div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </td>
+            </tr>
+            {% endif %}
             {% empty %}
             <tr>
-              <td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px;">
-                No orders found. Order functionality will be available soon for public users.
+              <td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">
+                You have not placed any remedy orders yet. <a href="{% url 'our_products' %}" style="color:var(--accent); text-decoration:underline; font-weight:600;">Browse Our Formulations &rarr;</a>
               </td>
             </tr>
             {% endfor %}
@@ -228,6 +354,25 @@
     </div>
   </div>
 </div>
+
+<script>
+  function toggleOrderItems(orderId, btn) {
+    var row = document.getElementById('items-row-' + orderId);
+    if (!row) return;
+    var isOpen = row.classList.contains('visible');
+    if (isOpen) {
+      row.classList.remove('visible');
+      btn.classList.remove('open');
+      btn.textContent = '+';
+      btn.title = 'View ordered items';
+    } else {
+      row.classList.add('visible');
+      btn.classList.add('open');
+      btn.textContent = '−';
+      btn.title = 'Hide ordered items';
+    }
+  }
+</script>
 
 </body>
 </html>

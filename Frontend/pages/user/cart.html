@@ -1,0 +1,777 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Botanical Basket — Holistic Nepal</title>
+  <link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+  <style>
+    :root {
+      --herb-green: #1f6f5c;
+      --herb-green-dark: #154c3e;
+      --herb-green-light: #e5f2ee;
+      --paper-cream: #fbfbf9;
+      --paper-card: #ffffff;
+      --border-subtle: #e6eae8;
+      --charcoal-ink: #1a221e;
+      --charcoal-muted: #5e6b66;
+      --ochre-accent: #c48232;
+      --warm-orange: #ea580c;
+    }
+
+    body {
+      background-color: var(--paper-cream);
+      color: var(--charcoal-ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation bar */
+    .cart-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .cart-nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cart-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--charcoal-ink);
+    }
+    .cart-logo img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+    .cart-logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--herb-green);
+    }
+    .cart-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .cart-nav-link {
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--charcoal-muted);
+      transition: color 0.2s ease;
+    }
+    .cart-nav-link:hover {
+      color: var(--herb-green);
+    }
+
+    /* Main Container */
+    .cart-main {
+      flex: 1;
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      box-sizing: border-box;
+    }
+
+    .cart-header-title {
+      margin-bottom: 32px;
+    }
+    .cart-breadcrumb {
+      font-size: 13px;
+      color: var(--charcoal-muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .cart-breadcrumb a {
+      color: var(--charcoal-muted);
+      text-decoration: none;
+    }
+    .cart-breadcrumb a:hover {
+      color: var(--herb-green);
+    }
+    .cart-page-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--charcoal-ink);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    /* Layout Grid */
+    .cart-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 36px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .cart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left: Items list */
+    .cart-items-card {
+      background: var(--paper-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+    .cart-table-head {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1.5fr 1fr 40px;
+      padding: 16px 24px;
+      background: #fafbfa;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--charcoal-muted);
+    }
+    .cart-table-row {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1.5fr 1fr 40px;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.2s ease;
+    }
+    .cart-table-row:last-child {
+      border-bottom: none;
+    }
+    .cart-table-row:hover {
+      background: #fafcfb;
+    }
+
+    .cart-prod-cell {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .cart-prod-thumb {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      background: #f4f6f5;
+      padding: 6px;
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+    .cart-prod-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+    .cart-prod-info h3 a {
+      color: var(--charcoal-ink);
+      text-decoration: none;
+    }
+    .cart-prod-info h3 a:hover {
+      color: var(--herb-green);
+    }
+    .cart-prod-contain {
+      font-size: 12px;
+      color: var(--charcoal-muted);
+      display: inline-block;
+      background: var(--herb-green-light);
+      color: var(--herb-green-dark);
+      padding: 2px 8px;
+      font-weight: 500;
+    }
+
+    .cart-price-cell {
+      font-weight: 600;
+      color: var(--charcoal-ink);
+      font-size: 15px;
+    }
+
+    /* Qty Stepper */
+    .cart-qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border-subtle);
+      background: #fff;
+    }
+    .cart-qty-btn {
+      background: transparent;
+      border: none;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--charcoal-ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .cart-qty-btn:hover {
+      background: #f0f4f2;
+      color: var(--herb-green);
+    }
+    .cart-qty-val {
+      width: 36px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      outline: none;
+      padding: 0;
+      color: var(--charcoal-ink);
+      background: transparent;
+    }
+
+    .cart-subtotal-cell {
+      font-weight: 700;
+      color: var(--herb-green);
+      font-size: 15px;
+    }
+
+    .cart-remove-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-remove-btn:hover {
+      color: #dc2626;
+    }
+
+    /* Right: Summary Card */
+    .cart-summary-box {
+      background: var(--paper-card);
+      border: 1px solid var(--border-subtle);
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      position: sticky;
+      top: 96px;
+    }
+    .cart-summary-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14.5px;
+      margin-bottom: 12px;
+      color: var(--charcoal-muted);
+    }
+    .summary-line strong {
+      color: var(--charcoal-ink);
+    }
+    .summary-line.total-line {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--charcoal-ink);
+      padding-top: 14px;
+      margin-top: 16px;
+      border-top: 2px solid var(--border-subtle);
+    }
+    .summary-line.total-line .grand-price {
+      color: var(--herb-green);
+      font-size: 22px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+    }
+
+    /* Free Shipping Indicator */
+    .shipping-bar-wrap {
+      background: #f2f5f4;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      border-left: 3px solid var(--herb-green);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .shipping-bar-wrap strong {
+      color: var(--herb-green);
+    }
+
+    /* Login Requirement Banner */
+    .cart-login-status-box {
+      margin: 20px 0;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      background: #fafaf8;
+      border: 1px dashed var(--border-subtle);
+    }
+    .cart-login-status-box.guest {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+    .cart-login-status-box.guest .badge-guest {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #e2e8f0;
+      color: #334155;
+      padding: 2px 6px;
+      margin-bottom: 6px;
+    }
+    .cart-login-status-box.auth {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    /* Action Buttons */
+    .btn-checkout-gate {
+      display: block;
+      width: 100%;
+      background: var(--herb-green);
+      color: #fff;
+      text-align: center;
+      padding: 16px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: background 0.2s ease, transform 0.15s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-checkout-gate:hover {
+      background: var(--herb-green-dark);
+      transform: translateY(-1px);
+    }
+    .btn-continue-shop {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--charcoal-muted);
+      text-decoration: none;
+    }
+    .btn-continue-shop:hover {
+      color: var(--herb-green);
+      text-decoration: underline;
+    }
+
+    /* Empty state */
+    .cart-empty-view {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--paper-card);
+      border: 1px solid var(--border-subtle);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .empty-basket-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      color: var(--charcoal-muted);
+      opacity: 0.7;
+    }
+    .cart-empty-view h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      margin: 0 0 10px;
+    }
+    .cart-empty-view p {
+      color: var(--charcoal-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    /* Trust seals */
+    .cart-trust-row {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--charcoal-muted);
+    }
+    .cart-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cart-trust-item svg {
+      width: 14px;
+      height: 14px;
+      color: var(--herb-green);
+      flex-shrink: 0;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 640px) {
+      .cart-table-head {
+        display: none;
+      }
+      .cart-table-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        position: relative;
+        padding-right: 44px;
+      }
+      .cart-remove-btn {
+        position: absolute;
+        top: 20px;
+        right: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="cart-nav">
+    <div class="cart-nav-inner">
+      <a href="{% url 'home' %}" class="cart-logo">
+        <img src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Nepal Logo">
+        <span class="cart-logo-text">HOLISTIC NEPAL</span>
+      </a>
+
+      <nav class="cart-nav-actions">
+        <a href="{% url 'our_products' %}" class="cart-nav-link">Our Products</a>
+        <a href="{% url 'home' %}" class="cart-nav-link">Home</a>
+        <a href="{% url 'cart' %}" class="nav-cart-btn" aria-label="Shopping Cart">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="nav-cart-badge">{{ cart_total_count|default:0 }}</span>
+        </a>
+        {% include 'pages/user/nav_account_icon.html' %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="cart-main">
+    <div class="cart-header-title">
+      <div class="cart-breadcrumb">
+        <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp; <a href="{% url 'our_products' %}">Dispensary</a> &nbsp;/&nbsp; <span>Botanical Basket</span>
+      </div>
+      <h1 class="cart-page-h1">Your Botanical Basket</h1>
+    </div>
+
+    {% if cart_items %}
+      <div class="cart-grid">
+        <!-- Left: Items list -->
+        <div class="cart-items-card">
+          <div class="cart-table-head">
+            <div>Remedy</div>
+            <div>Price</div>
+            <div>Quantity</div>
+            <div>Subtotal</div>
+            <div></div>
+          </div>
+
+          <div id="cart-rows-container">
+            {% for item in cart_items %}
+              <div class="cart-table-row" id="cart-item-row-{{ item.id }}" data-product-id="{{ item.id }}">
+                <div class="cart-prod-cell">
+                  <img src="{{ item.image_url }}" alt="{{ item.name }}" class="cart-prod-thumb">
+                  <div class="cart-prod-info">
+                    <h3><a href="/product/{{ item.slug }}/">{{ item.name }}</a></h3>
+                    <span class="cart-prod-contain">{{ item.contain }}</span>
+                  </div>
+                </div>
+
+                <div class="cart-price-cell">
+                  {{ item.price_formatted }}
+                </div>
+
+                <div class="cart-qty-cell">
+                  <div class="cart-qty-stepper">
+                    <button type="button" class="cart-qty-btn btn-qty-minus" data-id="{{ item.id }}" aria-label="Decrease quantity">−</button>
+                    <input type="number" class="cart-qty-val" id="qty-input-{{ item.id }}" value="{{ item.quantity }}" min="1" max="99" readonly>
+                    <button type="button" class="cart-qty-btn btn-qty-plus" data-id="{{ item.id }}" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+
+                <div class="cart-subtotal-cell" id="subtotal-{{ item.id }}">
+                  {{ item.subtotal_formatted }}
+                </div>
+
+                <div>
+                  <button type="button" class="cart-remove-btn btn-remove-item" data-id="{{ item.id }}" aria-label="Remove {{ item.name }} from basket" title="Remove from basket">
+                    &times;
+                  </button>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Right: Summary Card -->
+        <div class="cart-summary-box">
+          <h2 class="cart-summary-title">Basket Summary</h2>
+
+          {% if amount_for_free_shipping > 0 %}
+            <div class="shipping-bar-wrap" id="shipping-threshold-banner">
+              Add <strong>Rs {{ amount_for_free_shipping|floatformat:'0' }}</strong> more to qualify for <strong>Free Himalayan Dispatch</strong>!
+            </div>
+          {% else %}
+            <div class="shipping-bar-wrap" style="background:#e5f2ee; border-left-color:#1f6f5c;">
+              ✓ You have unlocked <strong>Free Himalayan Dispatch</strong> on this order!
+            </div>
+          {% endif %}
+
+          <div class="summary-line">
+            <span>Items Subtotal (<span id="summary-item-count">{{ total_items }}</span> items)</span>
+            <strong id="summary-subtotal">{{ subtotal_formatted }}</strong>
+          </div>
+
+          <div class="summary-line">
+            <span>Standard Nepal Dispatch</span>
+            <strong id="summary-shipping">{{ shipping_fee_formatted }}</strong>
+          </div>
+
+          <div class="summary-line total-line">
+            <span>Grand Total</span>
+            <span class="grand-price" id="summary-grand-total">{{ grand_total_formatted }}</span>
+          </div>
+
+          <!-- Checkout Login Requirement Boundary Notice -->
+          {% if is_logged_in %}
+            <div class="cart-login-status-box auth">
+              ✓ <strong>Signed In:</strong> Authenticated as {{ user.PUBLIC_USER_FULL_NAME }}. Your order will be seamlessly recorded in your Ayurvedic account.
+            </div>
+            <a href="{% url 'checkout' %}" class="btn-checkout-gate" id="checkout-action-btn">
+              Proceed to Checkout &rarr;
+            </a>
+          {% else %}
+            <div class="cart-login-status-box guest">
+              <span class="badge-guest">Guest Basket Active</span><br>
+              You are browsing as a guest. All items are stored safely in your session. <strong>To complete your purchase and set your delivery location, sign in or create an account.</strong>
+            </div>
+            <a href="{% url 'login' %}?next={% url 'checkout' %}" class="btn-checkout-gate" id="checkout-action-btn">
+              Sign In to Proceed &rarr;
+            </a>
+          {% endif %}
+
+          <a href="{% url 'our_products' %}" class="btn-continue-shop">&larr; Continue Exploring Remedies</a>
+
+          <div class="cart-trust-row">
+            <div class="cart-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>100% Authentic Wildcrafted Himalayan Botanicals</span>
+            </div>
+            <div class="cart-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+              <span>Prompt Dispatch across Kathmandu Valley & Nepal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="cart-empty-view">
+        <svg class="empty-basket-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <h2>Your Botanical Basket is Empty</h2>
+        <p>You have not added any natural herbal remedies or formulations to your basket yet.</p>
+        <a href="{% url 'our_products' %}" class="btn-checkout-gate" style="display:inline-block; width:auto; padding:14px 28px;">
+          Explore Herbal Formulations &rarr;
+        </a>
+      </div>
+    {% endif %}
+  </main>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken') || '';
+
+    // Update quantity via AJAX
+    function updateItemQuantity(productId, newQty) {
+      fetch("{% url 'cart_update' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ product_id: productId, quantity: newQty })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          // Update row subtotal
+          const subtotalEl = document.getElementById(`subtotal-${productId}`);
+          if (subtotalEl) subtotalEl.textContent = data.item_subtotal_formatted;
+
+          // Update summary totals
+          const navBadge = document.getElementById('nav-cart-badge');
+          if (navBadge) navBadge.textContent = data.cart_count;
+
+          const summaryCount = document.getElementById('summary-item-count');
+          if (summaryCount) summaryCount.textContent = data.cart_count;
+
+          const summarySubtotal = document.getElementById('summary-subtotal');
+          if (summarySubtotal) summarySubtotal.textContent = data.cart_total_formatted;
+
+          const summaryShipping = document.getElementById('summary-shipping');
+          if (summaryShipping) summaryShipping.textContent = data.shipping_fee_formatted;
+
+          const summaryGrand = document.getElementById('summary-grand-total');
+          if (summaryGrand) summaryGrand.textContent = data.grand_total_formatted;
+
+          // If cart count dropped to 0, reload to show empty state
+          if (data.cart_count === 0) {
+            window.location.reload();
+          }
+        }
+      })
+      .catch(err => console.error('Cart update error:', err));
+    }
+
+    // Remove item via AJAX
+    function removeItem(productId) {
+      const row = document.getElementById(`cart-item-row-${productId}`);
+      if (row) {
+        row.style.opacity = '0.4';
+      }
+
+      fetch("{% url 'cart_remove' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ product_id: productId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          if (row) row.remove();
+
+          const navBadge = document.getElementById('nav-cart-badge');
+          if (navBadge) navBadge.textContent = data.cart_count;
+
+          const summaryCount = document.getElementById('summary-item-count');
+          if (summaryCount) summaryCount.textContent = data.cart_count;
+
+          const summarySubtotal = document.getElementById('summary-subtotal');
+          if (summarySubtotal) summarySubtotal.textContent = data.cart_total_formatted;
+
+          const summaryShipping = document.getElementById('summary-shipping');
+          if (summaryShipping) summaryShipping.textContent = data.shipping_fee_formatted;
+
+          const summaryGrand = document.getElementById('summary-grand-total');
+          if (summaryGrand) summaryGrand.textContent = data.grand_total_formatted;
+
+          if (data.cart_count === 0) {
+            window.location.reload();
+          }
+        }
+      })
+      .catch(err => console.error('Cart removal error:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Plus buttons
+      document.querySelectorAll('.btn-qty-plus').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const pId = btn.getAttribute('data-id');
+          const input = document.getElementById(`qty-input-${pId}`);
+          if (input) {
+            let current = parseInt(input.value, 10) || 1;
+            current += 1;
+            input.value = current;
+            updateItemQuantity(pId, current);
+          }
+        });
+      });
+
+      // Minus buttons
+      document.querySelectorAll('.btn-qty-minus').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const pId = btn.getAttribute('data-id');
+          const input = document.getElementById(`qty-input-${pId}`);
+          if (input) {
+            let current = parseInt(input.value, 10) || 1;
+            if (current > 1) {
+              current -= 1;
+              input.value = current;
+              updateItemQuantity(pId, current);
+            } else {
+              if (confirm("Remove this remedy from your botanical basket?")) {
+                removeItem(pId);
+              }
+            }
+          }
+        });
+      });
+
+      // Remove buttons
+      document.querySelectorAll('.btn-remove-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const pId = btn.getAttribute('data-id');
+          removeItem(pId);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

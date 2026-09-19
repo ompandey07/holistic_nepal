@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (nextItem.dataset.href) {
         heroCtaBtn.setAttribute("href", nextItem.dataset.href);
+        heroCtaBtn.setAttribute("aria-label", "Shop " + nextItem.textContent.trim());
       }
 
       setTimeout(() => {
@@ -374,6 +375,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let cartCount = 0;
   const cartBadges = document.querySelectorAll(".cart-badge, .cart-badge-drawer");
 
+  const getCsrfToken = () => {
+    let cookieValue = "";
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, 10) === "csrftoken=") {
+          cookieValue = decodeURIComponent(cookie.substring(10));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  };
+
   const updateCartCount = (count) => {
     cartCount = count;
     cartBadges.forEach((badge) => {
@@ -387,10 +403,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const setupAddToCartButtons = () => {
     const addButtons = document.querySelectorAll(".field-wax-seal, .specimen-wax-seal, .apothecary-add-btn, .product-add-btn");
 
+    // Initialize cartCount from rendered DOM badge
+    const initialBadge = document.querySelector(".cart-badge");
+    if (initialBadge) {
+      const parsed = parseInt(initialBadge.textContent.trim(), 10);
+      if (!isNaN(parsed)) cartCount = parsed;
+    }
+
     addButtons.forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (btn.classList.contains("is-added")) return;
+
+        const card = btn.closest(".apothecary-card, .specimen-card, .field-card, .product-card");
+        const prodId = btn.getAttribute("data-product-id") || 
+                       btn.getAttribute("data-product-slug") || 
+                       (card ? card.getAttribute("data-product-id") : null);
 
         // Quick wax-seal press animation
         btn.classList.add("is-pressed");
@@ -401,8 +429,30 @@ document.addEventListener("DOMContentLoaded", () => {
         // Button morphs to show "Added ✓" state / checkmark glyph
         btn.classList.add("is-added");
 
-        // Increment cart badge
-        updateCartCount(cartCount + 1);
+        if (prodId) {
+          fetch("/cart/add/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCsrfToken(),
+              "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({ product_id: prodId, quantity: 1 })
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success" && typeof data.cart_count !== "undefined") {
+              updateCartCount(data.cart_count);
+            } else {
+              updateCartCount(cartCount + 1);
+            }
+          })
+          .catch(() => {
+            updateCartCount(cartCount + 1);
+          });
+        } else {
+          updateCartCount(cartCount + 1);
+        }
 
         // Revert quietly after ~1.2s
         setTimeout(() => {
@@ -427,6 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 8. Site-wide Language Switcher (ENG / नेपाली)
   const setSiteLanguage = (lang) => {
+    document.documentElement.setAttribute("data-lang", lang);
     document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
       if (btn.getAttribute("data-lang") === lang) {
         btn.classList.add("is-active");
@@ -437,9 +488,25 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    const isNep = lang === "nep";
+    document.querySelectorAll(".say-quote-eng").forEach((el) => {
+      el.style.display = isNep ? "none" : "inline";
+    });
+    document.querySelectorAll(".say-quote-nep").forEach((el) => {
+      el.style.display = isNep ? "inline" : "none";
+    });
+    document.querySelectorAll(".lang-eng").forEach((el) => {
+      el.style.display = isNep ? "none" : "";
+    });
+    document.querySelectorAll(".lang-nep").forEach((el) => {
+      el.style.display = isNep ? "" : "none";
+    });
+
     try {
       localStorage.setItem("site_lang", lang);
     } catch (e) {}
+
+    window.dispatchEvent(new CustomEvent("siteLanguageChange", { detail: { lang: lang } }));
   };
 
   document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
@@ -453,196 +520,185 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedSiteLang = localStorage.getItem("site_lang") || "eng";
   setSiteLanguage(savedSiteLang);
 
-  // 9. Ambient Process Video Controller (IntersectionObserver, Mute Toggle, Reduced Motion)
-  const initProcessVideo = () => {
-    const video = document.getElementById("process-ambient-video");
-    const section = document.getElementById("process");
-    const muteBtn = document.getElementById("process-mute-toggle");
-    const playBtn = document.getElementById("process-manual-play-btn");
+  // 9. Client Item Ratings & Continuous Non-Stop Ticker Showcase
+  const initClientRatingsSystem = () => {
+    const sliderTrack = document.getElementById("ratings-slider-track");
+    const sliderViewport = document.getElementById("ratings-slider-viewport");
+    const prevBtn = document.getElementById("ratings-slider-prev");
+    const nextBtn = document.getElementById("ratings-slider-next");
 
-    if (!video || !section) return;
+    if (!sliderTrack || !sliderViewport) return;
 
-    const iconMuted = muteBtn ? muteBtn.querySelector(".process-mute-icon-muted") : null;
-    const iconUnmuted = muteBtn ? muteBtn.querySelector(".process-mute-icon-unmuted") : null;
+    let currentOffset = 0;
+    let isPaused = false;
+    let singleSetWidth = 0;
+    let cardStep = 0;
+    let rafId = null;
+    let lastTime = null;
+    // Brisk & lively steady reading speed: 72 pixels per second
+    const speedPixelsPerSec = 72;
 
-    // Respect prefers-reduced-motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      video.removeAttribute("autoplay");
-      video.pause();
-      if (playBtn) {
-        playBtn.style.display = "inline-flex";
-        playBtn.addEventListener("click", () => {
-          video.play();
-          playBtn.style.display = "none";
-        });
-      }
-    } else {
-      // Lazy autoplay / pause via IntersectionObserver when entering / leaving viewport
-      if ("IntersectionObserver" in window) {
-        const videoObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                  playPromise.catch(() => {
-                    // Browser prevented autoplay
-                  });
-                }
-              } else {
-                video.pause();
-              }
-            });
-          },
-          { threshold: 0.15 }
-        );
-        videoObserver.observe(section);
-      }
-    }
+    // 1. Setup Seamless Clones (duplicate the set so it streams continuously with 0 gap/glitch)
+    const setupSeamlessClones = () => {
+      // Remove existing clones if any
+      sliderTrack.querySelectorAll(".is-clone").forEach((el) => el.remove());
 
-    // Audio Mute/Unmute toggle
-    if (muteBtn) {
-      muteBtn.addEventListener("click", () => {
-        video.muted = !video.muted;
-        if (video.muted) {
-          if (iconMuted) iconMuted.style.display = "block";
-          if (iconUnmuted) iconUnmuted.style.display = "none";
-          muteBtn.setAttribute("aria-label", "Unmute process video");
-        } else {
-          if (iconMuted) iconMuted.style.display = "none";
-          if (iconUnmuted) iconUnmuted.style.display = "block";
-          muteBtn.setAttribute("aria-label", "Mute process video");
+      const originalCards = Array.from(sliderTrack.querySelectorAll(".item-rating-slide-card:not(.is-clone)"));
+      if (originalCards.length === 0) return;
+
+      // Duplicate cards to guarantee infinite stream
+      originalCards.forEach((card) => {
+        const clone = card.cloneNode(true);
+        clone.classList.add("is-clone");
+        clone.setAttribute("aria-hidden", "true");
+        sliderTrack.appendChild(clone);
+      });
+    };
+
+    // 2. Measure dimensions accurately on load and resize
+    const updateDimensions = () => {
+      const viewportWidth = sliderViewport.clientWidth || window.innerWidth;
+      let cardsPerView = 3;
+      if (window.innerWidth <= 640) cardsPerView = 1;
+      else if (window.innerWidth <= 992) cardsPerView = 2;
+
+      const gap = 24;
+      const totalGaps = (cardsPerView - 1) * gap;
+      const cardWidth = Math.max(260, Math.floor((viewportWidth - totalGaps) / cardsPerView));
+
+      sliderTrack.style.setProperty("--card-width", `${cardWidth}px`);
+
+      const originalCards = sliderTrack.querySelectorAll(".item-rating-slide-card:not(.is-clone)");
+      cardStep = cardWidth + gap;
+      singleSetWidth = originalCards.length * cardStep;
+    };
+
+    // 3. Continuous Non-Stop Animation Loop (from Right to Left)
+    const startTicker = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      lastTime = null;
+
+      const animate = (timestamp) => {
+        if (lastTime === null) lastTime = timestamp;
+        const elapsed = Math.min(64, timestamp - lastTime); // clamp delta
+        lastTime = timestamp;
+
+        if (!isPaused && singleSetWidth > 0) {
+          // Continuous smooth stream strictly from Right to Left:
+          currentOffset += (speedPixelsPerSec * (elapsed / 1000));
+
+          // Infinite Seamless Wrap
+          if (currentOffset >= singleSetWidth) {
+            currentOffset -= singleSetWidth;
+          } else if (currentOffset < 0) {
+            currentOffset += singleSetWidth;
+          }
+
+          sliderTrack.style.transform = `translate3d(-${currentOffset.toFixed(2)}px, 0, 0)`;
         }
+
+        rafId = requestAnimationFrame(animate);
+      };
+
+      rafId = requestAnimationFrame(animate);
+    };
+
+    // 4. Hover Pause strictly on rating item cards: Stop when mouse cursor is on item
+    const bindItemHoverListeners = () => {
+      const allCards = sliderTrack.querySelectorAll(".item-rating-slide-card");
+      allCards.forEach((card) => {
+        if (card.dataset.hoverBound) return;
+        card.dataset.hoverBound = "true";
+
+        card.addEventListener("mouseenter", () => {
+          isPaused = true;
+        });
+
+        card.addEventListener("mouseleave", () => {
+          isPaused = false;
+        });
+      });
+    };
+
+    // 5. Manual Controls: Prev (<) and Next (>) buttons
+    if (prevBtn) {
+      prevBtn.addEventListener("mouseenter", () => { isPaused = true; });
+      prevBtn.addEventListener("mouseleave", () => { isPaused = false; });
+      prevBtn.addEventListener("click", () => {
+        currentOffset -= (cardStep || 380);
+        if (currentOffset < 0) currentOffset += singleSetWidth;
+        sliderTrack.style.transform = `translate3d(-${currentOffset.toFixed(2)}px, 0, 0)`;
       });
     }
 
-    // 4. Expand to Fullscreen Lightbox Controller
-    const expandBtn = document.getElementById("process-expand-btn");
-    const lightbox = document.getElementById("process-lightbox-modal");
-    const lightboxClose = document.getElementById("process-lightbox-close");
-    const lightboxBackdrop = document.getElementById("process-lightbox-backdrop");
-    const lightboxVideo = document.getElementById("process-lightbox-video");
-
-    if (expandBtn && lightbox && lightboxVideo) {
-      let previousActiveElement = null;
-
-      const openLightbox = () => {
-        previousActiveElement = document.activeElement;
-
-        // Pause ambient background video
-        video.pause();
-
-        // Reveal and activate lightbox
-        lightbox.style.display = "flex";
-        requestAnimationFrame(() => {
-          lightbox.classList.add("is-active");
-        });
-        lightbox.setAttribute("aria-hidden", "false");
-
-        // Sync and play unmuted with native controls
-        try {
-          lightboxVideo.currentTime = video.currentTime || 0;
-        } catch (e) {}
-
-        lightboxVideo.muted = false;
-        lightboxVideo.volume = 1.0;
-
-        const playPromise = lightboxVideo.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            // If browser autoplay with audio blocked, fallback to user gesture
-          });
-        }
-
-        // Lock background scroll
-        document.body.style.overflow = "hidden";
-
-        // Focus close button for accessibility
-        if (lightboxClose) {
-          setTimeout(() => lightboxClose.focus(), 100);
-        }
-      };
-
-      const closeLightbox = () => {
-        // Pause lightbox video
-        lightboxVideo.pause();
-
-        // Smoothly fade out lightbox
-        lightbox.classList.remove("is-active");
-        lightbox.setAttribute("aria-hidden", "true");
-
-        setTimeout(() => {
-          lightbox.style.display = "none";
-        }, 280);
-
-        // Restore body scroll
-        document.body.style.overflow = "";
-
-        // Resume ambient background loop (muted)
-        video.muted = true;
-        if (!prefersReducedMotion) {
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(() => {});
-          }
-        }
-
-        // Return focus
-        if (previousActiveElement && typeof previousActiveElement.focus === "function") {
-          previousActiveElement.focus();
-        } else if (expandBtn) {
-          expandBtn.focus();
-        }
-      };
-
-      expandBtn.addEventListener("click", openLightbox);
-
-      if (lightboxClose) {
-        lightboxClose.addEventListener("click", closeLightbox);
-      }
-
-      if (lightboxBackdrop) {
-        lightboxBackdrop.addEventListener("click", closeLightbox);
-      }
-
-      // Keyboard handling: Escape to close, Focus trap
-      document.addEventListener("keydown", (e) => {
-        if (!lightbox.classList.contains("is-active")) return;
-
-        if (e.key === "Escape") {
-          e.preventDefault();
-          closeLightbox();
-          return;
-        }
-
-        // Focus trap inside lightbox modal
-        if (e.key === "Tab") {
-          const focusableElements = lightbox.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), video[controls]'
-          );
-          if (focusableElements.length === 0) return;
-
-          const firstElement = focusableElements[0];
-          const lastElement = focusableElements[focusableElements.length - 1];
-
-          if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
-              e.preventDefault();
-              lastElement.focus();
-            }
-          } else {
-            if (document.activeElement === lastElement) {
-              e.preventDefault();
-              firstElement.focus();
-            }
-          }
-        }
+    if (nextBtn) {
+      nextBtn.addEventListener("mouseenter", () => { isPaused = true; });
+      nextBtn.addEventListener("mouseleave", () => { isPaused = false; });
+      nextBtn.addEventListener("click", () => {
+        currentOffset += (cardStep || 380);
+        if (currentOffset >= singleSetWidth) currentOffset -= singleSetWidth;
+        sliderTrack.style.transform = `translate3d(-${currentOffset.toFixed(2)}px, 0, 0)`;
       });
     }
+
+    // 6. Touch Drag / Swipe for Mobile
+    let touchStartX = 0;
+    let touchInitialOffset = 0;
+
+    sliderViewport.addEventListener("touchstart", (e) => {
+      isPaused = true;
+      touchStartX = e.touches[0].clientX;
+      touchInitialOffset = currentOffset;
+    }, { passive: true });
+
+    sliderViewport.addEventListener("touchmove", (e) => {
+      const diff = touchStartX - e.touches[0].clientX;
+      let temp = touchInitialOffset + diff;
+      if (temp >= singleSetWidth) temp -= singleSetWidth;
+      else if (temp < 0) temp += singleSetWidth;
+      currentOffset = temp;
+      sliderTrack.style.transform = `translate3d(-${currentOffset.toFixed(2)}px, 0, 0)`;
+    }, { passive: true });
+
+    sliderViewport.addEventListener("touchend", () => {
+      isPaused = false;
+      lastTime = null;
+    }, { passive: true });
+
+    window.addEventListener("resize", () => {
+      updateDimensions();
+    });
+
+    window.addEventListener("load", () => {
+      updateDimensions();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        isPaused = true;
+      } else {
+        lastTime = null;
+        isPaused = false;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      isPaused = false;
+      lastTime = null;
+    });
+
+    setupSeamlessClones();
+    updateDimensions();
+    bindItemHoverListeners();
+    startTicker();
+
+    // Ensure any legacy localStorage cached mock reviews are wiped
+    try {
+      localStorage.removeItem("client_homepage_reviews");
+    } catch (e) {}
   };
 
-  initProcessVideo();
+  initClientRatingsSystem();
 
   // Apothecary Footer Provenance Clock & Ascend Action
   const initApothecaryFooter = () => {
@@ -664,14 +720,19 @@ document.addEventListener("DOMContentLoaded", () => {
       setInterval(updateClock, 30000);
     }
 
-    // 2. Ascend to Summit Back-to-Top Button
+    // 2. Back-to-Hero Section Upper Arrow Action
     const ascendBtn = document.getElementById("footer-ascend-btn");
     if (ascendBtn) {
       ascendBtn.addEventListener("click", () => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
+        const heroSection = document.getElementById("hero");
+        if (heroSection) {
+          heroSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+        }
       });
     }
   };
@@ -710,6 +771,76 @@ document.addEventListener("DOMContentLoaded", () => {
   init3DTheatreTilt();
 
   initApothecaryFooter();
+
+  // Nav Account Dropdown Interaction (Smooth hover bridge & click handler)
+  const initNavAccountDropdown = () => {
+    const accountWraps = document.querySelectorAll(".nav-user-account-wrap");
+    accountWraps.forEach((wrap) => {
+      const btn = wrap.querySelector(".nav-account-btn");
+      const dropdown = wrap.querySelector(".nav-account-dropdown");
+      if (!dropdown) return;
+
+      let closeTimer = null;
+
+      const showDropdown = () => {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+        wrap.classList.add("is-active");
+        if (btn) btn.setAttribute("aria-expanded", "true");
+      };
+
+      const hideDropdown = (delay = 250) => {
+        if (closeTimer) clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          wrap.classList.remove("is-active");
+          if (btn) btn.setAttribute("aria-expanded", "false");
+        }, delay);
+      };
+
+      wrap.addEventListener("mouseenter", showDropdown);
+      wrap.addEventListener("mouseleave", () => hideDropdown(250));
+
+      if (btn) {
+        btn.addEventListener("click", (e) => {
+          // If on touch device or toggling open
+          if (window.matchMedia("(pointer: coarse)").matches || !wrap.classList.contains("is-active")) {
+            e.preventDefault();
+            if (wrap.classList.contains("is-active")) {
+              hideDropdown(0);
+            } else {
+              showDropdown();
+            }
+          }
+        });
+      }
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".nav-user-account-wrap")) {
+        document.querySelectorAll(".nav-user-account-wrap.is-active").forEach((w) => {
+          w.classList.remove("is-active");
+          const b = w.querySelector(".nav-account-btn");
+          if (b) b.setAttribute("aria-expanded", "false");
+        });
+      }
+    });
+
+    // Close when Escape key is pressed
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        document.querySelectorAll(".nav-user-account-wrap.is-active").forEach((w) => {
+          w.classList.remove("is-active");
+          const b = w.querySelector(".nav-account-btn");
+          if (b) b.setAttribute("aria-expanded", "false");
+        });
+      }
+    });
+  };
+
+  initNavAccountDropdown();
 });
 
 

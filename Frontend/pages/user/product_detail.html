@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <meta name="theme-color" content="#121435" />
-  <meta name="description" content="{{ product.name }} — {{ product.short_desc }}" />
+  <meta name="description" content="{{ product.name }} - {{ product.short_desc|default:product.english_desc|striptags }}" />
   <title>{{ product.name }} — Holistic Herbs Nepal</title>
 
   <!-- Google Fonts -->
@@ -22,8 +22,8 @@
 </head>
 
 <body class="product-detail-body">
-  <!-- Top Site Header (Royal Indigo #3B3B8E) -->
-  <header class="site-header pdp-site-header" style="background: #3B3B8E; position: sticky; top: 0; z-index: 100; padding: 16px 0;">
+  <!-- Top Site Header (Deep Indigo #121435 matching Landing Page & Catalog) -->
+  <header class="site-header pdp-site-header" style="background: #121435; position: sticky; top: 0; z-index: 100; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.09); box-shadow: 0 4px 20px rgba(10, 14, 40, 0.35);">
     <div class="header-inner">
       <a class="brand" href="/" aria-label="Holistic Herbs Home">
         <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
@@ -35,10 +35,10 @@
 
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="/">Home page</a>
-        <a href="/#all-products">All Products</a>
-        <a href="/#hospital">Holistic Hospital</a>
-        <a href="/#gallery">Gallery</a>
-        <a href="#account">My Account</a>
+        <a href="/products/">Our Products</a>
+        <a href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
       </nav>
 
       <!-- Right Side Actions: Language Switcher & Cart Button -->
@@ -48,14 +48,16 @@
           <button type="button" class="nav-lang-btn" id="lang-btn-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
         </div>
 
-        <a class="nav-cart-btn" href="#cart" aria-label="View shopping cart">
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart">
           <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <path d="M16 10a4 4 0 0 1-8 0"></path>
           </svg>
-          <span class="cart-badge" aria-live="polite">0</span>
+          <span class="cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
         </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
       </div>
 
       <button class="mobile-toggle" aria-label="Open menu">
@@ -83,11 +85,10 @@
     </div>
     <nav class="drawer-menu">
       <a href="/">Home page</a>
-      <a href="/#all-products">All Products</a>
-      <a href="/#hospital">Holistic Hospital</a>
-      <a href="/#gallery">Gallery</a>
-      <a href="/#news">News</a>
-      <a href="#account">My Account</a>
+      <a href="/products/">Our Products</a>
+      <a href="{% url 'news_list' %}">News</a>
+      <a href="{% url 'hospital' %}">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}">Gallery</a>
     </nav>
     <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between;">
       <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;">Language / भाषा:</span>
@@ -114,7 +115,7 @@
           </li>
           <li class="breadcrumb-sep">/</li>
           <li>
-            <a href="/#all-products">{{ product.category_group }}</a>
+            <a href="/products/">{{ product.category|default:"Our Products" }}</a>
           </li>
           <li class="breadcrumb-sep">/</li>
           <li class="breadcrumb-current" aria-current="page">{{ product.name }}</li>
@@ -141,8 +142,9 @@
                 <img 
                   id="pdp-active-img" 
                   class="pdp-hero-img" 
-                  src="{% static product.image %}" 
+                  src="{{ product.image_url }}" 
                   alt="{{ product.name }}"
+                  onerror="this.onerror=null; this.src='/static/Images/fresh_herbs_extracted.png';"
                 >
               </div>
             </div>
@@ -154,10 +156,10 @@
                 <button 
                   type="button" 
                   class="pdp-thumb-card {% if forloop.first %}is-active{% endif %}" 
-                  data-large-src="{% static img_path %}"
+                  data-large-src="{{ img_path }}"
                   aria-label="View product image {{ forloop.counter }}"
                 >
-                  <img src="{% static img_path %}" alt="{{ product.name }} thumbnail {{ forloop.counter }}">
+                  <img src="{{ img_path }}" alt="{{ product.name }} thumbnail {{ forloop.counter }}" onerror="this.onerror=null; this.src='/static/Images/fresh_herbs_extracted.png';">
                 </button>
                 {% endfor %}
               </div>
@@ -167,7 +169,7 @@
           <!-- Right Column: Product Intelligence & Purchasing -->
           <div class="pdp-info-col">
             <!-- Category Tag -->
-            <div class="pdp-category-eyebrow">{{ product.category }} · {{ product.category_group }}</div>
+            <div class="pdp-category-eyebrow">{{ product.category }}</div>
 
             <!-- Title & Subtitle -->
             <h1 class="pdp-title">{{ product.name }}</h1>
@@ -184,51 +186,22 @@
               <span><strong>Contain:</strong> {{ product.contain }}</span>
             </div>
 
-            <!-- Rating & Verified Reviews with Client Rating Action -->
+            <!-- Overall Client Rating Display strictly from DB -->
             <div class="pdp-rating-row">
+              {% if product.reviews_count and product.rating %}
               <div class="pdp-stars" id="pdp-stars-display" aria-label="Customer rating">
-                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                <span style="color: #f59e0b; letter-spacing: 2px;">{{ product.avg_rating_stars }}</span>
               </div>
-              <span class="pdp-rating-text" id="pdp-rating-text"><strong id="pdp-rating-val">{{ product.rating|default:"5.0" }}</strong> (<span id="pdp-reviews-count">{{ product.reviews_count }}</span> Customer Reviews)</span>
-              <button type="button" class="pdp-rate-action-btn" id="open-rating-toggle-btn" aria-expanded="false" aria-controls="pdp-rating-panel">
+              <span class="pdp-rating-text" id="pdp-rating-text"><strong id="pdp-rating-val">{{ product.rating|floatformat:1 }}</strong> <span style="font-weight: 400; color: #5a6e62;">({{ product.reviews_count }} review{{ product.reviews_count|pluralize }})</span></span>
+              {% else %}
+              <span class="pdp-no-rating" style="font-size: 0.88rem; color: #5a6e62; font-style: italic;">No reviews yet</span>
+              {% endif %}
+              <a href="{% if logged_in_user %}#write-review{% else %}{% url 'login' %}?next={{ request.path }}#write-review{% endif %}" class="pdp-rate-action-btn" aria-label="Rate this Product">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                 </svg>
                 <span>Rate this Product</span>
-              </button>
-            </div>
-
-            <!-- Interactive Rating Panel for New Clients -->
-            <div class="pdp-rating-panel" id="pdp-rating-panel" style="display: none;">
-              <div class="pdp-rating-panel-header">
-                <span class="pdp-rating-panel-title">Rate & Review this Herb</span>
-                <button type="button" class="pdp-rating-panel-close" id="close-rating-btn" aria-label="Close rating form">&times;</button>
-              </div>
-              
-              <div class="pdp-star-picker-wrap">
-                <span class="pdp-star-picker-label">Your Rating:</span>
-                <div class="pdp-interactive-stars" id="pdp-star-picker" role="radiogroup" aria-label="Choose 1 to 5 stars">
-                  <button type="button" class="pdp-star-btn" data-val="1" aria-label="1 star">★</button>
-                  <button type="button" class="pdp-star-btn" data-val="2" aria-label="2 stars">★</button>
-                  <button type="button" class="pdp-star-btn" data-val="3" aria-label="3 stars">★</button>
-                  <button type="button" class="pdp-star-btn" data-val="4" aria-label="4 stars">★</button>
-                  <button type="button" class="pdp-star-btn" data-val="5" aria-label="5 stars">★</button>
-                </div>
-                <span class="pdp-star-score-text" id="pdp-star-score-text">Click to choose</span>
-              </div>
-
-              <div class="pdp-rating-form-fields">
-                <input type="text" id="rating-client-name" class="pdp-rating-input" placeholder="Your Name / Client Name *" required maxlength="70">
-                <textarea id="rating-client-comment" class="pdp-rating-textarea" rows="2" placeholder="Write a short feedback or review (optional)..." maxlength="300"></textarea>
-                <div class="pdp-rating-actions">
-                  <button type="button" id="submit-client-rating-btn" class="pdp-rating-submit-btn">Submit Rating</button>
-                  <span class="pdp-rating-alert-error" id="rating-error-msg" style="display: none;">Please select a star rating and enter your name.</span>
-                </div>
-              </div>
-
-              <div class="pdp-rating-success-banner" id="pdp-rating-success" style="display: none;">
-                ✓ धन्यवाद! तपाईंको मूल्याङ्कन (Rating) दर्ता भयो। Thank you for rating!
-              </div>
+              </a>
             </div>
 
             <!-- Price Display -->
@@ -246,7 +219,7 @@
                   <svg class="pdp-check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
-                  <span>{{ item }}</span>
+                  <span>{{ item|striptags }}</span>
                 </li>
                 {% endfor %}
               </ul>
@@ -260,7 +233,7 @@
                 <button type="button" class="pdp-qty-btn" id="qty-plus" aria-label="Increase quantity">+</button>
               </div>
 
-              <button class="pdp-add-cart-btn" id="pdp-add-btn" type="button" data-product-id="{{ product.slug }}">
+              <button class="pdp-add-cart-btn" id="pdp-add-btn" type="button" data-product-id="{% if db_product %}{{ db_product.id }}{% else %}{{ product.slug }}{% endif %}">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                   <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -297,10 +270,206 @@
         <div class="pdp-description-content">
           <div class="pdp-nepali-lead-box" id="pdp-desc-box">
             <h3 class="pdp-nepali-title" id="pdp-box-title">Product Description :</h3>
-            <p class="pdp-nepali-text" id="pdp-desc-eng">{{ product.english_desc }}</p>
-            <p class="pdp-nepali-text" id="pdp-desc-nep" style="display: none;">{{ product.nepali_desc }}</p>
+            <p class="pdp-nepali-text" id="pdp-desc-eng">{{ product.short_desc|default:product.english_desc|striptags }}</p>
+            <p class="pdp-nepali-text" id="pdp-desc-nep" style="display: none;">{{ product.short_desc|default:product.nepali_desc|striptags }}</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- CLIENT RATINGS & REVIEWS SHOWCASE + SUBMISSION SECTION -->
+    <section class="pdp-reviews-section" id="reviews" aria-label="Client Ratings and Reviews">
+      <div class="pdp-container">
+        <!-- Editorial Section Header -->
+        <div class="pdp-reviews-header">
+          <div>
+            <div class="pdp-reviews-eyebrow">
+              <span>⭐</span>
+              <span>CLIENT RATINGS &amp; REVIEWS · ग्राहक मूल्याङ्कन</span>
+            </div>
+            <h2 class="pdp-reviews-title">Verified Client Experiences</h2>
+            <p class="pdp-reviews-subtitle">
+              Authentic feedback and clinical experiences shared by verified patrons across Nepal.
+            </p>
+          </div>
+
+          <div class="pdp-reviews-score-badge">
+            {% if product_reviews and product.rating %}
+            <div class="pdp-score-num">{{ product.rating|floatformat:1 }}</div>
+            <div class="pdp-score-meta">
+              <div class="pdp-score-stars" style="color: #f59e0b;">{{ product.avg_rating_stars }}</div>
+              <span class="pdp-score-count">
+                {{ product_reviews|length }} verified review{{ product_reviews|length|pluralize }}
+              </span>
+            </div>
+            {% else %}
+            <div class="pdp-score-num" style="font-size: 1.4rem; color: #718096; font-weight: 500;">—</div>
+            <div class="pdp-score-meta">
+              <div class="pdp-score-stars" style="color: #cbd5e1;">☆☆☆☆☆</div>
+              <span class="pdp-score-count">No reviews yet</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if messages %}
+        <div class="pdp-messages" style="margin-bottom: 24px;">
+          {% for message in messages %}
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 14px 18px; border-radius: 8px; font-size: 0.95rem; font-weight: 500;">
+            ✓ {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Client Reviews Carousel: Centered & Animated Right-to-Left -->
+        {% if product_reviews %}
+        <div class="pdp-reviews-carousel-wrap">
+          {% if product_reviews|length > 1 %}
+          <div class="pdp-reviews-carousel-controls">
+            <button type="button" class="pdp-reviews-nav-btn" id="reviews-carousel-prev" aria-label="Previous review">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <span class="pdp-reviews-counter" id="reviews-carousel-counter">1 / {{ product_reviews|length }}</span>
+            <button type="button" class="pdp-reviews-nav-btn" id="reviews-carousel-next" aria-label="Next review">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+          {% endif %}
+
+          <div class="pdp-reviews-viewport" id="pdp-reviews-viewport">
+            <div class="pdp-reviews-track" id="pdp-reviews-track">
+              {% for review in product_reviews %}
+              <div class="pdp-review-slide" data-index="{{ forloop.counter0 }}">
+                <article class="item-rating-slide-card pdp-specimen-review-card">
+                  <!-- Real Review Header with position numbering & verified status -->
+                  <div class="slide-specimen-header">
+                    <span class="slide-specimen-index">REVIEW #{{ forloop.counter|stringformat:"02d" }}{% if review.IS_VERIFIED %} · VERIFIED EXPERIENCE{% endif %}</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <time class="pdp-review-date" datetime="{{ review.PRODUCT_RATING_CREATED_AT|date:'Y-m-d' }}">{{ review.PRODUCT_RATING_CREATED_AT|date:"M d, Y" }}</time>
+                      {% if review.IS_VERIFIED %}
+                      <span class="slide-specimen-cat">VERIFIED PATRON</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <!-- Dedicated 'What Clients Say' block (exact homepage component) -->
+                  <div class="slide-what-clients-say" style="margin-bottom: 0;">
+                    <div class="clients-say-label-row">
+                      <span class="say-tag">💬 WHAT CLIENTS SAY</span>
+                      <span class="say-rating-stars">{{ review.rating_stars }} {{ review.PRODUCT_RATING_VALUE|floatformat:1 }}</span>
+                    </div>
+                    <blockquote class="say-quote-text">
+                      <span class="say-quote-eng">"{{ review.english_comment }}"</span>
+                      <span class="say-quote-nep" style="display: none;">"{{ review.nepali_comment }}"</span>
+                    </blockquote>
+                    <div class="say-author-footer">
+                      <div class="say-avatar">{{ review.reviewer_initials }}</div>
+                      <div class="say-author-info">
+                        <strong class="say-author-name">{{ review.reviewer_name }}</strong>
+                        <span class="say-author-location">📍 {{ review.reviewer_location }}</span>
+                      </div>
+                      {% if review.IS_VERIFIED %}
+                      <span class="say-verified-chip">✓ Verified Client</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </article>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          {% if product_reviews|length > 1 %}
+          <!-- Dots Indicator -->
+          <div class="pdp-reviews-dots" id="pdp-reviews-dots">
+            {% for review in product_reviews %}
+            <button type="button" class="pdp-reviews-dot {% if forloop.first %}is-active{% endif %}" data-target="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="slide-what-clients-say slide-what-clients-empty" style="background: #f8faf7; border: 1.5px dashed #cbdad0; padding: 28px 24px; border-radius: 0; text-align: center; margin: 0 auto 28px auto; max-width: 780px;">
+          <p style="font-family: var(--serif, 'Newsreader', Georgia, serif); font-size: 1.15rem; color: #1a2e22; margin: 0 0 6px 0; font-weight: 600;">No reviews yet — be the first to review this product.</p>
+          <p style="font-size: 0.88rem; color: #5a6e62; margin: 0;">Be the first verified patron to share your clinical experience with this Himalayan botanical remedy.</p>
+        </div>
+        {% endif %}
+
+        <!-- Review Submission Section (Strictly Login-Gated) -->
+        {% if logged_in_user %}
+        <div class="pdp-review-form-card" id="write-review">
+          <div class="pdp-form-header">
+            <h3 class="pdp-form-title">
+              {% if user_review %}Edit Your Botanical Review{% else %}Share Your Botanical Review{% endif %}
+            </h3>
+            <p class="pdp-form-user-hint">
+              Posting as <strong>{{ logged_in_user.PUBLIC_USER_FULL_NAME }}</strong> · 📍 {{ logged_in_user.PUBLIC_USER_ADDRESS|default:"Nepal" }}
+            </p>
+          </div>
+
+          <form method="POST" action="{% url 'product_detail' slug=product.slug %}#reviews" class="pdp-review-form">
+            {% csrf_token %}
+
+            <div class="pdp-form-row">
+              <label class="pdp-form-label">Your Rating (1 to 5 Stars):</label>
+              <div class="star-rating-picker" id="star-picker" role="radiogroup" aria-label="Rating stars">
+                <input type="radio" id="star5" name="rating" value="5" {% if not user_review or user_review.PRODUCT_RATING_VALUE >= 4.5 %}checked{% endif %}>
+                <label for="star5" title="5 stars - Exceptional">★</label>
+
+                <input type="radio" id="star4" name="rating" value="4" {% if user_review and user_review.PRODUCT_RATING_VALUE >= 3.5 and user_review.PRODUCT_RATING_VALUE < 4.5 %}checked{% endif %}>
+                <label for="star4" title="4 stars - Very Good">★</label>
+
+                <input type="radio" id="star3" name="rating" value="3" {% if user_review and user_review.PRODUCT_RATING_VALUE >= 2.5 and user_review.PRODUCT_RATING_VALUE < 3.5 %}checked{% endif %}>
+                <label for="star3" title="3 stars - Average">★</label>
+
+                <input type="radio" id="star2" name="rating" value="2" {% if user_review and user_review.PRODUCT_RATING_VALUE >= 1.5 and user_review.PRODUCT_RATING_VALUE < 2.5 %}checked{% endif %}>
+                <label for="star2" title="2 stars - Below Expectations">★</label>
+
+                <input type="radio" id="star1" name="rating" value="1" {% if user_review and user_review.PRODUCT_RATING_VALUE < 1.5 %}checked{% endif %}>
+                <label for="star1" title="1 star - Poor">★</label>
+              </div>
+            </div>
+
+            <div class="pdp-form-row">
+              <label for="review-comment" class="pdp-form-label">Your Experience &amp; Comments:</label>
+              <textarea 
+                id="review-comment" 
+                name="comment" 
+                class="pdp-textarea" 
+                rows="4" 
+                placeholder="Share your personal experience with this formulation, observed benefits, and usage notes..." 
+                required
+              >{{ user_review.english_comment|default:'' }}</textarea>
+            </div>
+
+            <button type="submit" class="pdp-submit-btn">
+              <span>{% if user_review %}Update Your Review{% else %}Submit Review{% endif %}</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </form>
+        </div>
+        {% else %}
+        <!-- Non-Logged-in Gate: Form fields completely hidden -->
+        <div class="pdp-login-gate-banner" id="login-to-review">
+          <div class="pdp-login-gate-content">
+            <span class="pdp-login-gate-tag">🔒 VERIFIED CLIENT REVIEW</span>
+            <h3 class="pdp-login-gate-title">Log in to rate and review this product</h3>
+            <p class="pdp-login-gate-desc">
+              To uphold clinical authenticity and prevent fraudulent ratings, review submission is exclusively available to verified Holistic Herbs clients.
+            </p>
+          </div>
+          <a href="{% url 'login' %}?next={{ request.path }}#reviews" class="pdp-login-gate-btn">
+            <span>Log in to Rate This Product</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        {% endif %}
+
       </div>
     </section>
 
@@ -327,7 +496,7 @@
                 </svg>
               </button>
             </div>
-            <a class="pdp-back-catalog-link" href="/#all-products">
+            <a class="pdp-back-catalog-link" href="/products/">
               <span>View All Products</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -353,19 +522,20 @@
                 <div class="apothecary-img-stage">
                   <img 
                     class="apothecary-product-img" 
-                    src="{% static companion.image %}" 
+                    src="{{ companion.image_url }}" 
                     alt="{{ companion.name }}"
                     loading="lazy"
+                    onerror="this.onerror=null; this.src='/static/Images/fresh_herbs_extracted.png';"
                   >
                 </div>
               </div>
               <div class="apothecary-divider"></div>
               <div class="apothecary-body">
-                <span class="apothecary-category">{{ companion.category }}</span>
+                <span class="apothecary-category">{{ companion.category|default:"Botanical Formulation" }}</span>
                 <h3 class="apothecary-name">
                   <a href="/product/{{ companion.slug }}/">{{ companion.name }}</a>
                 </h3>
-                <p class="apothecary-desc">{{ companion.short_desc }}</p>
+                <p class="apothecary-desc">{{ companion.short_desc|striptags }}</p>
                 
                 <div class="apothecary-explore-row">
                   <a class="apothecary-explore-link" href="/product/{{ companion.slug }}/">
@@ -378,8 +548,13 @@
                 </div>
 
                 <div class="apothecary-footer">
-                  <span class="apothecary-price">{{ companion.price_formatted }}</span>
-                  <button class="apothecary-add-btn" type="button" aria-label="Add {{ companion.name }} to cart" data-product-id="{{ companion.slug }}">
+                  <div>
+                    <span class="apothecary-price">{{ companion.price_display|default:companion.price_formatted }}</span>
+                    {% if companion.PRODUCT_UNIT %}
+                    <span class="apothecary-unit-note" style="font-size: 0.78rem; color: #64748b; margin-left: 4px;">({{ companion.PRODUCT_UNIT.UNIT_NAME }})</span>
+                    {% endif %}
+                  </div>
+                  <button class="apothecary-add-btn" type="button" aria-label="Add {{ companion.name }} to cart" data-product-id="{% if companion.id %}{{ companion.id }}{% else %}{{ companion.slug }}{% endif %}">
                     <svg class="apothecary-plus-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -406,9 +581,10 @@
         </div>
         <div class="pdp-footer-links">
           <a href="/">Home</a>
-          <a href="/#all-products">All Products</a>
-          <a href="/#hospital">Hospital</a>
-          <a href="/#gallery">Gallery</a>
+          <a href="/products/">Our Products</a>
+          <a href="{% url 'news_list' %}">News</a>
+          <a href="{% url 'hospital' %}">Hospital</a>
+          <a href="{% url 'gallery' %}">Gallery</a>
         </div>
       </div>
     </div>
@@ -485,22 +661,54 @@
       const initialLang = localStorage.getItem("site_lang") || "eng";
       setLanguage(initialLang);
 
+      // Helper function to get CSRF token
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
       // 3. Add to Cart PDP Button Interaction
       const pdpAddBtn = document.getElementById("pdp-add-btn");
       if (pdpAddBtn) {
         pdpAddBtn.addEventListener("click", () => {
           const qty = parseInt(qtyInput ? qtyInput.value : "1", 10) || 1;
+          const productId = pdpAddBtn.getAttribute("data-product-id");
+          const csrftoken = getCookie('csrftoken') || '';
+
           pdpAddBtn.classList.add("is-success");
 
-          // Update header cart badges
-          const cartBadges = document.querySelectorAll(".cart-badge, .cart-badge-drawer");
-          cartBadges.forEach((badge) => {
-            const current = parseInt(badge.textContent, 10) || 0;
-            badge.textContent = current + qty;
-            badge.classList.remove("is-popping");
-            void badge.offsetWidth;
-            badge.classList.add("is-popping");
-          });
+          fetch("{% url 'cart_add' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrftoken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ product_id: productId, quantity: qty })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const cartBadges = document.querySelectorAll(".cart-badge, .cart-badge-drawer");
+              cartBadges.forEach((badge) => {
+                badge.textContent = data.cart_count;
+                badge.classList.remove("is-popping");
+                void badge.offsetWidth;
+                badge.classList.add("is-popping");
+              });
+            }
+          })
+          .catch(err => console.error('Add to cart error:', err));
 
           setTimeout(() => {
             pdpAddBtn.classList.remove("is-success");
@@ -508,100 +716,208 @@
         });
       }
 
-      // 4. Companion Remedies Non-Stop Continuous Smooth Marquee (Right-to-Left)
+      // Companion remedies add to cart
+      document.querySelectorAll(".apothecary-add-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const prodId = btn.getAttribute("data-product-id");
+          const csrftoken = getCookie('csrftoken') || '';
+
+          btn.classList.add("is-added");
+
+          fetch("{% url 'cart_add' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrftoken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ product_id: prodId, quantity: 1 })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const cartBadges = document.querySelectorAll(".cart-badge, .cart-badge-drawer");
+              cartBadges.forEach((badge) => {
+                badge.textContent = data.cart_count;
+                badge.classList.remove("is-popping");
+                void badge.offsetWidth;
+                badge.classList.add("is-popping");
+              });
+            }
+          })
+          .catch(err => console.error('Companion add to cart error:', err));
+
+          setTimeout(() => {
+            btn.classList.remove("is-added");
+          }, 1400);
+        });
+      });
+
+      // 4. Companion Remedies Continuous Smooth Marquee (Right-to-Left)
       const sliderViewport = document.getElementById("pdp-slider-viewport");
       const sliderTrack = document.getElementById("pdp-slider-track");
       const btnPrev = document.getElementById("slider-prev-btn");
       const btnNext = document.getElementById("slider-next-btn");
 
       if (sliderViewport && sliderTrack) {
-        // Clone slides once to create an infinite, seamless continuous loop
         const originalSlides = Array.from(sliderTrack.children);
-        originalSlides.forEach((slide) => {
-          const clone = slide.cloneNode(true);
-          clone.setAttribute("aria-hidden", "true");
-          sliderTrack.appendChild(clone);
-        });
-
-        let halfWidth = sliderTrack.scrollWidth / 2;
-        window.addEventListener("resize", () => {
-          halfWidth = sliderTrack.scrollWidth / 2;
-        });
-
-        let isHovered = false;
-        let scrollPos = sliderViewport.scrollLeft;
-        // Medium smooth continuous speed: 1.1px per frame (approx 65px/sec at 60fps)
-        const speed = 1.1;
-        let animId = null;
-
-        function runContinuousScroll() {
-          if (!isHovered) {
-            scrollPos += speed;
-            if (halfWidth > 0 && scrollPos >= halfWidth) {
-              scrollPos -= halfWidth;
-            }
-            sliderViewport.scrollLeft = scrollPos;
-          } else {
-            // Keep scroll position in sync with any manual user scroll
-            scrollPos = sliderViewport.scrollLeft;
+        if (originalSlides.length > 0) {
+          // Clone enough items to make an infinite seamless continuous right-to-left track
+          const minRequired = Math.max(8, Math.ceil((window.innerWidth * 2.5) / 280));
+          while (sliderTrack.children.length < minRequired) {
+            originalSlides.forEach((slide) => {
+              const clone = slide.cloneNode(true);
+              clone.setAttribute("aria-hidden", "true");
+              sliderTrack.appendChild(clone);
+            });
           }
-          animId = requestAnimationFrame(runContinuousScroll);
-        }
 
-        // Start non-stop continuous auto-scroll
-        animId = requestAnimationFrame(runContinuousScroll);
+          let halfWidth = sliderTrack.scrollWidth / 2;
+          window.addEventListener("resize", () => {
+            halfWidth = sliderTrack.scrollWidth / 2;
+          });
 
-        // Pause whenever mouse hovers over any item in the slider
-        sliderViewport.addEventListener("mouseenter", () => {
-          isHovered = true;
-        });
+          let isHovered = false;
+          let scrollPos = sliderViewport.scrollLeft;
+          const speed = 1.0;
 
-        // Resume normally without stopping when mouse leaves
-        sliderViewport.addEventListener("mouseleave", () => {
-          scrollPos = sliderViewport.scrollLeft;
-          isHovered = false;
-        });
+          function runContinuousScroll() {
+            if (!isHovered) {
+              scrollPos += speed;
+              if (halfWidth > 0 && scrollPos >= halfWidth) {
+                scrollPos = 0;
+              }
+              sliderViewport.scrollLeft = scrollPos;
+            } else {
+              scrollPos = sliderViewport.scrollLeft;
+            }
+            requestAnimationFrame(runContinuousScroll);
+          }
 
-        // Mobile touch interaction: pause while touching, resume when released
-        sliderViewport.addEventListener("touchstart", () => {
-          isHovered = true;
-        }, { passive: true });
+          requestAnimationFrame(runContinuousScroll);
 
-        sliderViewport.addEventListener("touchend", () => {
-          scrollPos = sliderViewport.scrollLeft;
-          setTimeout(() => {
+          sliderViewport.addEventListener("mouseenter", () => { isHovered = true; });
+          sliderViewport.addEventListener("mouseleave", () => {
             scrollPos = sliderViewport.scrollLeft;
             isHovered = false;
-          }, 800);
+          });
+
+          sliderViewport.addEventListener("touchstart", () => { isHovered = true; }, { passive: true });
+          sliderViewport.addEventListener("touchend", () => {
+            scrollPos = sliderViewport.scrollLeft;
+            setTimeout(() => {
+              scrollPos = sliderViewport.scrollLeft;
+              isHovered = false;
+            }, 800);
+          });
+
+          const getStep = () => {
+            const firstSlide = sliderViewport.querySelector(".pdp-slider-slide");
+            return firstSlide ? firstSlide.offsetWidth + 24 : 304;
+          };
+
+          if (btnNext) {
+            btnNext.addEventListener("click", () => {
+              const step = getStep();
+              scrollPos += step;
+              if (halfWidth > 0 && scrollPos >= halfWidth) {
+                scrollPos -= halfWidth;
+              }
+              sliderViewport.scrollTo({ left: scrollPos, behavior: "smooth" });
+            });
+          }
+
+          if (btnPrev) {
+            btnPrev.addEventListener("click", () => {
+              const step = getStep();
+              scrollPos -= step;
+              if (scrollPos < 0 && halfWidth > 0) {
+                scrollPos += halfWidth;
+              }
+              sliderViewport.scrollTo({ left: scrollPos, behavior: "smooth" });
+            });
+          }
+        }
+      }
+
+      // 5. Client Reviews Auto-Slideshow (Right-to-Left Slide Cycle with Hover Pause)
+      const reviewsViewport = document.getElementById("pdp-reviews-viewport");
+      const reviewsTrack = document.getElementById("pdp-reviews-track");
+      const reviewSlides = document.querySelectorAll(".pdp-review-slide");
+      const reviewDots = document.querySelectorAll(".pdp-reviews-dot");
+      const reviewsCounter = document.getElementById("reviews-carousel-counter");
+      const reviewPrevBtn = document.getElementById("reviews-carousel-prev");
+      const reviewNextBtn = document.getElementById("reviews-carousel-next");
+
+      if (reviewsTrack && reviewSlides.length > 0) {
+        let currentIdx = 0;
+        const totalSlides = reviewSlides.length;
+        let autoplayTimer = null;
+
+        function updateSlide(idx) {
+          currentIdx = (idx + totalSlides) % totalSlides;
+          reviewsTrack.style.transform = `translateX(-${currentIdx * 100}%)`;
+          if (reviewsCounter) {
+            reviewsCounter.textContent = `${currentIdx + 1} / ${totalSlides}`;
+          }
+          reviewDots.forEach((dot, dIdx) => {
+            if (dIdx === currentIdx) dot.classList.add("is-active");
+            else dot.classList.remove("is-active");
+          });
+        }
+
+        function nextSlide() {
+          updateSlide(currentIdx + 1);
+        }
+
+        function prevSlide() {
+          updateSlide(currentIdx - 1);
+        }
+
+        function startAutoplay() {
+          stopAutoplay();
+          if (totalSlides > 1) {
+            autoplayTimer = setInterval(nextSlide, 4500);
+          }
+        }
+
+        function stopAutoplay() {
+          if (autoplayTimer) {
+            clearInterval(autoplayTimer);
+            autoplayTimer = null;
+          }
+        }
+
+        if (reviewNextBtn) {
+          reviewNextBtn.addEventListener("click", () => {
+            nextSlide();
+            startAutoplay();
+          });
+        }
+
+        if (reviewPrevBtn) {
+          reviewPrevBtn.addEventListener("click", () => {
+            prevSlide();
+            startAutoplay();
+          });
+        }
+
+        reviewDots.forEach((dot) => {
+          dot.addEventListener("click", () => {
+            const target = parseInt(dot.getAttribute("data-target"), 10) || 0;
+            updateSlide(target);
+            startAutoplay();
+          });
         });
 
-        // Manual Navigation Buttons (Next / Prev)
-        const getStep = () => {
-          const firstSlide = sliderViewport.querySelector(".pdp-slider-slide");
-          return firstSlide ? firstSlide.offsetWidth + 24 : 304;
-        };
-
-        if (btnNext) {
-          btnNext.addEventListener("click", () => {
-            const step = getStep();
-            scrollPos += step;
-            if (halfWidth > 0 && scrollPos >= halfWidth) {
-              scrollPos -= halfWidth;
-            }
-            sliderViewport.scrollTo({ left: scrollPos, behavior: "smooth" });
-          });
+        const carouselWrap = document.querySelector(".pdp-reviews-carousel-wrap");
+        if (carouselWrap) {
+          carouselWrap.addEventListener("mouseenter", stopAutoplay);
+          carouselWrap.addEventListener("mouseleave", startAutoplay);
         }
 
-        if (btnPrev) {
-          btnPrev.addEventListener("click", () => {
-            const step = getStep();
-            scrollPos -= step;
-            if (scrollPos < 0 && halfWidth > 0) {
-              scrollPos += halfWidth;
-            }
-            sliderViewport.scrollTo({ left: scrollPos, behavior: "smooth" });
-          });
-        }
+        startAutoplay();
       }
 
       // 5. Daraz-Style Product Image Thumbnail Switching
@@ -625,119 +941,6 @@
           }
         });
       });
-
-      // 6. Interactive Client Rating System
-      const openRatingBtn = document.getElementById("open-rating-toggle-btn");
-      const closeRatingBtn = document.getElementById("close-rating-btn");
-      const ratingPanel = document.getElementById("pdp-rating-panel");
-      const starBtns = document.querySelectorAll(".pdp-star-btn");
-      const starFeedback = document.getElementById("pdp-star-score-text");
-      const submitRatingBtn = document.getElementById("submit-client-rating-btn");
-      const clientNameInput = document.getElementById("rating-client-name");
-      const clientCommentInput = document.getElementById("rating-client-comment");
-      const errorMsg = document.getElementById("rating-error-msg");
-      const successBanner = document.getElementById("pdp-rating-success");
-      const reviewsCountEl = document.getElementById("pdp-reviews-count");
-
-      let selectedStars = 0;
-      const starLabels = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
-
-      if (openRatingBtn && ratingPanel) {
-        openRatingBtn.addEventListener("click", () => {
-          const isHidden = ratingPanel.style.display === "none";
-          ratingPanel.style.display = isHidden ? "block" : "none";
-          openRatingBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
-        });
-      }
-
-      if (closeRatingBtn && ratingPanel) {
-        closeRatingBtn.addEventListener("click", () => {
-          ratingPanel.style.display = "none";
-          if (openRatingBtn) openRatingBtn.setAttribute("aria-expanded", "false");
-        });
-      }
-
-      starBtns.forEach((btn, idx) => {
-        btn.addEventListener("mouseenter", () => {
-          starBtns.forEach((s, sIdx) => {
-            if (sIdx <= idx) s.classList.add("is-hover");
-            else s.classList.remove("is-hover");
-          });
-          if (starFeedback) starFeedback.textContent = `${idx + 1} Star (${starLabels[idx]})`;
-        });
-
-        btn.addEventListener("mouseleave", () => {
-          starBtns.forEach((s) => s.classList.remove("is-hover"));
-          if (starFeedback) {
-            starFeedback.textContent = selectedStars > 0 
-              ? `${selectedStars} Star (${starLabels[selectedStars - 1]})` 
-              : "Click to choose";
-          }
-        });
-
-        btn.addEventListener("click", () => {
-          selectedStars = idx + 1;
-          starBtns.forEach((s, sIdx) => {
-            if (sIdx < selectedStars) s.classList.add("is-selected");
-            else s.classList.remove("is-selected");
-          });
-          if (starFeedback) starFeedback.textContent = `${selectedStars} Star (${starLabels[selectedStars - 1]})`;
-          if (errorMsg) errorMsg.style.display = "none";
-        });
-      });
-
-      if (submitRatingBtn) {
-        submitRatingBtn.addEventListener("click", () => {
-          const clientName = clientNameInput ? clientNameInput.value.trim() : "";
-          if (!selectedStars || !clientName) {
-            if (errorMsg) {
-              errorMsg.style.display = "inline";
-              errorMsg.textContent = !selectedStars ? "Please click on the stars to rate." : "Please enter your name.";
-            }
-            return;
-          }
-
-          // Dynamically increment reviews count
-          if (reviewsCountEl) {
-            const curCount = parseInt(reviewsCountEl.textContent, 10) || 0;
-            reviewsCountEl.textContent = curCount + 1;
-          }
-
-          if (successBanner) successBanner.style.display = "block";
-          if (errorMsg) errorMsg.style.display = "none";
-          if (submitRatingBtn) submitRatingBtn.style.display = "none";
-
-          try {
-            const prodSlug = "{{ product.slug }}";
-            localStorage.setItem(`client_rating_${prodSlug}`, JSON.stringify({
-              stars: selectedStars,
-              client: clientName,
-              comment: clientCommentInput ? clientCommentInput.value.trim() : "",
-              date: new Date().toISOString()
-            }));
-          } catch (e) {}
-
-          setTimeout(() => {
-            if (openRatingBtn) {
-              openRatingBtn.innerHTML = `<span>★ You rated ${selectedStars}/5</span>`;
-              openRatingBtn.style.background = "rgba(74, 107, 79, 0.16)";
-            }
-          }, 1500);
-        });
-      }
-
-      // Restore past rating if already rated
-      try {
-        const prodSlug = "{{ product.slug }}";
-        const savedRating = localStorage.getItem(`client_rating_${prodSlug}`);
-        if (savedRating) {
-          const parsed = JSON.parse(savedRating);
-          if (openRatingBtn) {
-            openRatingBtn.innerHTML = `<span>★ You rated ${parsed.stars}/5</span>`;
-            openRatingBtn.style.background = "rgba(74, 107, 79, 0.16)";
-          }
-        }
-      } catch (e) {}
     });
   </script>
 </body>

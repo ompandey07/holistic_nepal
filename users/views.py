@@ -25,26 +25,33 @@ class UserDashboardView(View):
         except PublicUserProfile.DoesNotExist:
             user_profile = None
 
-        #!- PUBLIC USERS DON'T HAVE ORDERS IN CURRENT SYSTEM (PRODUCT_ORDER IS FOR EMPLOYEES)
-        #!- RETURN EMPTY ORDER DATA FOR PUBLIC USERS
+        #!- REAL CUSTOMER ORDERS QUERY
+        if user_profile:
+            orders_qs = ProductOrder.objects.filter(CUSTOMER=user_profile).select_related('PRODUCT_ORDER_PRODUCT').order_by('-PRODUCT_ORDER_CREATED_AT')
+        else:
+            orders_qs = ProductOrder.objects.none()
+
         page = request.GET.get('page', 1)
-        orders = ProductOrder.objects.none()
-        paginator = Paginator(orders, 10)
+        paginator = Paginator(orders_qs, 10)
         orders_page = paginator.get_page(page)
 
-        #!- DEFAULT ORDER STATISTICS FOR PUBLIC USERS
+        total_orders = orders_qs.count()
+        total_spent = sum([float(o.order_amount) for o in orders_qs])
+        pending_orders = orders_qs.filter(PRODUCT_ORDER_STATUS='PENDING').count()
+        completed_orders = orders_qs.filter(PRODUCT_ORDER_STATUS__in=['DELIVERED', 'CONFIRMED']).count()
+
         order_stats = {
-            'total_orders': 0,
-            'total_spent': 0,
-            'pending_orders': 0,
-            'completed_orders': 0
+            'total_orders': total_orders,
+            'total_spent': total_spent,
+            'pending_orders': pending_orders,
+            'completed_orders': completed_orders
         }
 
         context = {
             'user_profile': user_profile,
             'orders': orders_page,
-            'total_orders': 0,
-            'page_range': [],
+            'total_orders': total_orders,
+            'page_range': paginator.get_elided_page_range(orders_page.number, on_each_side=1, on_ends=1) if total_orders > 0 else [],
             'order_stats': order_stats,
         }
         return render(request, 'users/Dashboard/dashboard.html', context)
@@ -63,19 +70,26 @@ class UserOrdersView(View):
         except PublicUserProfile.DoesNotExist:
             user_profile = None
 
-        #!- PUBLIC USERS DON'T HAVE ORDERS IN CURRENT SYSTEM (PRODUCT_ORDER IS FOR EMPLOYEES)
-        #!- RETURN EMPTY ORDER DATA FOR PUBLIC USERS
         page = request.GET.get('page', 1)
-        status_filter = request.GET.get('status', '')
-        orders = ProductOrder.objects.none()
-        paginator = Paginator(orders, 20)
+        status_filter = request.GET.get('status', '').strip().upper()
+
+        if user_profile:
+            orders_qs = ProductOrder.objects.filter(CUSTOMER=user_profile).select_related('PRODUCT_ORDER_PRODUCT').order_by('-PRODUCT_ORDER_CREATED_AT')
+        else:
+            orders_qs = ProductOrder.objects.none()
+
+        if status_filter:
+            orders_qs = orders_qs.filter(PRODUCT_ORDER_STATUS=status_filter)
+
+        total_orders = orders_qs.count()
+        paginator = Paginator(orders_qs, 20)
         orders_page = paginator.get_page(page)
 
         context = {
             'user_profile': user_profile,
             'orders': orders_page,
-            'total_orders': 0,
-            'page_range': [],
+            'total_orders': total_orders,
+            'page_range': paginator.get_elided_page_range(orders_page.number, on_each_side=1, on_ends=1) if total_orders > 0 else [],
             'status_filter': status_filter,
         }
         return render(request, 'users/Orders/orders.html', context)

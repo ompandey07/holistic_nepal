@@ -5,8 +5,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <meta name="theme-color" content="#131536" />
-  <meta name="description" content="Explore Holistic Herbs' complete collection of nutraceutical supplements, herbal beverages, and personal care." />
+  <meta name="theme-color" content="#121435" />
+  <meta name="description" content="Explore Holistic Herbs Nepal's complete collection of pure Himalayan herbal formulations: Nutraceuticals, Beverages, and Personal Care." />
   <title>Our Products — Holistic Herbs Nepal</title>
 
   <!-- Google Fonts -->
@@ -17,289 +17,761 @@
   <!-- Favicon -->
   <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
 
-  <!-- Stylesheets -->
+  <!-- Core Stylesheet (contains all landing page apothecary-card tokens & styles) -->
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
   <style>
-    /* Products Page Dedicated Styles */
-    .products-page-header {
-      background-color: var(--indigo-dark);
-      padding: clamp(140px, 18vh, 180px) var(--content-padding) clamp(48px, 6vw, 68px);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
+    /* ============================================================
+       CATALOG PAGE DEDICATED LAYOUT STYLES
+       ============================================================ */
 
-    .products-page-header::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(59, 59, 142, 0.4) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .products-header-content {
-      position: relative;
-      z-index: 2;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .products-page-eyebrow {
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--orange);
-      margin-bottom: 12px;
-      display: inline-block;
-    }
-
-    .products-page-title {
-      font-family: var(--serif);
-      font-size: clamp(38px, 4.8vw, 60px);
-      font-weight: 400;
-      line-height: 1.05;
-      color: #ffffff;
-      margin-bottom: 18px;
-    }
-
-    .products-page-desc {
-      font-family: var(--sans);
-      font-size: clamp(15px, 1.15vw, 17px);
-      color: rgba(255, 255, 255, 0.85);
-      line-height: 1.65;
-    }
-
-    /* Category Filter Bar */
-    .products-filter-section {
-      background-color: #ffffff;
-      border-bottom: 1px solid #edf0f5;
-      position: sticky;
+    /* Fixed Site Navigation Header (Royal Indigo #383889 matching user swatch) */
+    .catalog-header {
+      position: fixed;
       top: 0;
-      z-index: 40;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    }
-
-    .products-filter-container {
-      max-width: 1260px;
-      margin: 0 auto;
-      padding: 16px var(--content-padding);
+      left: 0;
+      width: 100%;
+      height: 70px;
+      z-index: 100;
+      background: #383889;
+      box-shadow: 0 4px 20px rgba(10, 14, 40, 0.28);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       align-items: center;
+    }
+
+    .catalog-header .header-inner {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      height: 100%;
+    }
+
+    /* Brand Logo: Clean natural flex item on the left (never overlaps with nav links) */
+    .catalog-header .brand {
+      position: static !important;
+      transform: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      flex-shrink: 0 !important;
+      text-decoration: none !important;
+      z-index: 2;
+    }
+
+    .catalog-header .brand-logo-img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+    }
+
+    /* Centered Navigation Links */
+    .catalog-header .nav-links {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: clamp(14px, 2vw, 32px) !important;
+      margin: 0 auto !important;
+      padding: 0 16px !important;
+    }
+
+    .catalog-header .nav-links a {
+      position: relative;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.88);
+      white-space: nowrap;
+      padding: 6px 0;
+      text-decoration: none;
+      transition: color 180ms ease;
+    }
+
+    .catalog-header .nav-links a:hover,
+    .catalog-header .nav-links a.active {
+      color: #ffffff;
+    }
+
+    .catalog-header .nav-links a.active::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2.5px;
+      background-color: var(--orange);
+      border-radius: 2px;
+    }
+
+    /* Right Side Actions: Natural flex item on the right */
+    .catalog-header .header-right-actions {
+      position: static !important;
+      transform: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+      flex-shrink: 0 !important;
+      z-index: 2;
+    }
+
+    .catalog-header .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      padding: 6px;
+      align-items: center;
       justify-content: center;
-      gap: 12px;
+    }
+
+    /* Hero Banner Section (Serene Himalayan Botanical Apothecary) */
+    .catalog-hero {
+      position: relative;
+      background: linear-gradient(180deg, #fafcfa 0%, #f0f6ee 55%, #e3ede1 100%);
+      padding-top: 116px;
+      padding-bottom: 42px;
+      overflow: hidden;
+      color: #122c1e;
+      text-align: center;
+      border-bottom: 1.5px solid #d3e1d1;
+    }
+
+    /* Ambient Hero Leaf Plants Decor */
+    .hero-plant-decor {
+      position: absolute;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .hero-plant-left {
+      left: -15px;
+      height: clamp(110px, 14vw, 180px);
+      opacity: 0.42;
+      transform-origin: bottom left;
+    }
+
+    .hero-plant-right {
+      right: -15px;
+      height: clamp(110px, 14vw, 180px);
+      opacity: 0.42;
+      transform-origin: bottom right;
+    }
+
+    .hero-botanical-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      width: clamp(240px, 30vw, 380px);
+      height: clamp(240px, 30vw, 380px);
+      opacity: 0.05;
+      color: #2d6a4f;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-botanical-watermark svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .catalog-hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 var(--content-padding);
+    }
+
+    .catalog-eyebrow-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 15px;
+      border-radius: 20px;
+      background: rgba(45, 106, 79, 0.09);
+      border: 1px solid rgba(45, 106, 79, 0.28);
+      color: #1b5636;
+      font-family: var(--sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .catalog-hero-title {
+      font-family: var(--serif);
+      font-size: clamp(34px, 4.4vw, 50px);
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px 0;
+      color: #122c1e;
+    }
+
+    .catalog-hero-subtitle {
+      font-family: var(--sans);
+      font-size: clamp(14px, 1.05vw, 15.5px);
+      color: #3f594b;
+      line-height: 1.6;
+      margin: 0 auto;
+      max-width: 640px;
+    }
+
+    /* Sticky Clean Category Filter Bar */
+    .catalog-filter-bar {
+      position: sticky;
+      top: 70px;
+      z-index: 60;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    }
+
+    .catalog-filter-scroll {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 12px var(--content-padding);
+      display: flex;
+      align-items: center;
+      gap: 10px;
       overflow-x: auto;
       white-space: nowrap;
     }
 
-    .filter-tab {
-      display: inline-flex;
-      align-items: center;
-      padding: 9px 20px;
-      border-radius: 40px;
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 600;
-      color: #4f5574;
-      background: #f4f6fa;
-      border: 1px solid transparent;
-      text-decoration: none;
-      transition: all 220ms ease;
-    }
-
-    .filter-tab:hover {
-      color: #121435;
-      background: #e9ecf4;
-    }
-
-    .filter-tab.is-active {
-      background: #121435;
-      color: #ffffff;
-      border-color: #121435;
-      box-shadow: 0 4px 12px rgba(18, 20, 53, 0.2);
-    }
-
-    /* Products Grid Section */
-    .products-catalog-section {
-      background-color: #fbfcff;
-      padding: clamp(56px, 7vw, 88px) var(--content-padding);
-      min-height: 50vh;
-    }
-
-    .products-catalog-container {
-      max-width: 1260px;
-      margin: 0 auto;
-    }
-
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: clamp(24px, 2.8vw, 36px);
-    }
-
-    /* Single Product Item Card */
-    .product-item-card {
-      background: #ffffff;
-      border-radius: 12px;
-      border: 1px solid #e7ebf3;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 16px rgba(18, 20, 53, 0.05);
-      transition: transform 280ms var(--ease-out), box-shadow 280ms var(--ease-out), border-color 280ms ease;
-    }
-
-    .product-item-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 16px 36px rgba(18, 20, 53, 0.12);
-      border-color: #ccd3e5;
-    }
-
-    .product-item-thumb {
-      height: 220px;
-      background: linear-gradient(180deg, #f8f9fc 0%, #edf0f8 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-      border-bottom: 1px solid #edf0f5;
-    }
-
-    .product-item-thumb img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
-      transition: transform 320ms ease;
-    }
-
-    .product-item-card:hover .product-item-thumb img {
-      transform: scale(1.06);
-    }
-
-    .product-category-tag {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--orange);
-      padding: 4px 10px;
-      border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .product-item-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .product-item-title {
-      font-family: var(--sans);
-      font-size: 17.5px;
-      font-weight: 700;
-      color: #121435;
-      margin-bottom: 8px;
-      line-height: 1.25;
-    }
-
-    .product-item-desc {
-      font-family: var(--sans);
-      font-size: 13.5px;
-      color: #616787;
-      line-height: 1.55;
-      margin-bottom: 18px;
-      flex-grow: 1;
-    }
-
-    .product-item-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid #f0f2f7;
-      padding-top: 14px;
-      margin-top: auto;
-    }
-
-    .product-price {
-      font-family: var(--sans);
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--orange);
-    }
-
-    .product-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #121435;
-      color: #ffffff;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-family: var(--sans);
-      font-size: 12.5px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background-color 200ms ease, transform 180ms ease;
-    }
-
-    .product-action-btn:hover {
-      background: var(--orange);
-      transform: translateY(-2px);
-    }
-
-    /* Back Link / Breadcrumb */
-    .catalog-back-nav {
-      max-width: 1260px;
-      margin: 0 auto;
-      padding: 24px var(--content-padding) 0;
-    }
-
-    .back-home-link {
+    .filter-pill-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      padding: 8px 18px;
+      border-radius: 24px;
       font-family: var(--sans);
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
-      color: #555c7b;
+      color: #475569;
+      background: #f1f5f9;
+      border: 1.5px solid transparent;
       text-decoration: none;
-      transition: color 200ms ease;
+      cursor: pointer;
+      transition: all 180ms ease;
+      flex-shrink: 0;
     }
 
-    .back-home-link:hover {
-      color: var(--orange);
+    .filter-pill-btn svg {
+      width: 15px;
+      height: 15px;
+      color: #64748b;
+      transition: color 180ms ease;
+      flex-shrink: 0;
     }
 
-    /* Simple Footer */
-    .products-page-footer {
-      background: #121435;
-      color: rgba(255, 255, 255, 0.7);
-      text-align: center;
-      padding: 48px var(--content-padding);
+    .filter-pill-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .filter-pill-btn:hover svg {
+      color: #0f172a;
+    }
+
+    .filter-pill-btn.is-active {
+      background: var(--orange);
+      color: #ffffff;
+      border-color: var(--orange);
+      box-shadow: 0 4px 14px rgba(245, 124, 0, 0.32);
+    }
+
+    .filter-pill-btn.is-active svg {
+      color: #ffffff;
+    }
+
+    .filter-pill-count {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.07);
+      color: inherit;
+    }
+
+    .filter-pill-btn.is-active .filter-pill-count {
+      background: rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+    }
+
+    /* Main Products Catalog Section with Subtle Leaf Backdrop */
+    .catalog-main-content {
+      position: relative;
+      background-color: #f8fafc;
+      padding: 44px var(--content-padding) 88px;
+      min-height: 60vh;
+      overflow: hidden;
+    }
+
+    /* Ambient Botanical Leaves in Catalog Background */
+    .catalog-bg-leaves {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .catalog-bg-leaf-left {
+      position: absolute;
+      top: 30px;
+      left: -90px;
+      width: 280px;
+      opacity: 0.12;
+      transform: rotate(-25deg);
+      filter: blur(0.5px);
+    }
+
+    .catalog-bg-leaf-right {
+      position: absolute;
+      bottom: 50px;
+      right: -70px;
+      width: 260px;
+      opacity: 0.12;
+      transform: rotate(18deg);
+      filter: blur(0.5px);
+    }
+
+    /* Single Unified Container Box for All Categories (Clean White Background) */
+    .catalog-sections-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0;
+      padding: clamp(24px, 3.8vw, 44px);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Category Section Block: Merged seamlessly inside the single white box */
+    .category-group-section {
+      scroll-margin-top: 145px;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 0 0 52px 0 !important;
+      margin-bottom: 52px !important;
+      border-bottom: 1px solid #f1f5f9 !important;
+      box-shadow: none !important;
+      transition: opacity 220ms ease;
+    }
+
+    .category-group-section:last-child {
+      border-bottom: none !important;
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    .category-group-section.is-hidden {
+      display: none !important;
+    }
+
+    /* Category Section Header */
+    .category-section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 18px;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .category-title-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .category-icon-frame {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(59, 59, 142, 0.08);
+      border: 1px solid rgba(59, 59, 142, 0.14);
+      color: #3B3B8E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .category-icon-frame svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .category-heading-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .category-section-title {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 30px);
+      font-weight: 600;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.18;
+    }
+
+    .category-section-desc {
       font-family: var(--sans);
+      font-size: 13.5px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .category-item-count-chip {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-family: var(--sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .category-item-count-chip strong {
+      color: var(--orange);
+      font-weight: 700;
       font-size: 14px;
     }
 
-    .products-page-footer a {
-      color: var(--orange);
+    /* Landing Page Apothecary Grid Override: Immediate Visibility */
+    .category-group-section .featured-products-grid .apothecary-card {
+      opacity: 1 !important;
+      transform: none !important;
+      border-radius: 0 !important;
+      box-shadow: none;
+      border: 1px solid var(--card-border, rgba(74, 107, 79, 0.14));
+    }
+
+    /* Toast Notification */
+    .cart-feedback-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 260ms ease;
+      pointer-events: none;
+    }
+
+    .cart-feedback-toast.is-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Premium Botanical Apothecary Footer (Harmonious Cream-Sage with Leaf Plants) */
+    .catalog-site-footer {
+      position: relative;
+      background: linear-gradient(180deg, #fafcfa 0%, #f1f6ef 52%, #e6efe4 100%);
+      color: #1b3527;
+      padding: 56px var(--content-padding) 30px;
+      overflow: hidden;
+      border-top: 1.5px solid #d4e2d2;
+      font-family: var(--sans);
+    }
+
+    /* Background Botanical Leaf Plants Foliage */
+    .footer-plants-decor {
+      position: absolute;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .footer-plants-left {
+      left: -20px;
+      height: clamp(140px, 18vw, 220px);
+      opacity: 0.46;
+      transform-origin: bottom left;
+    }
+
+    .footer-plants-right {
+      right: -20px;
+      height: clamp(140px, 18vw, 220px);
+      opacity: 0.46;
+      transform-origin: bottom right;
+    }
+
+    /* Faint Center Botanical Leaves Watermark */
+    .footer-botanical-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(260px, 32vw, 420px);
+      height: clamp(260px, 32vw, 420px);
+      opacity: 0.055;
+      color: #2d6a4f;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .footer-botanical-watermark svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .footer-content-wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 1080px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Brand Header */
+    .footer-brand-crest {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      text-decoration: none;
+    }
+
+    .footer-brand-logo {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08));
+    }
+
+    .footer-brand-title {
+      font-family: var(--serif);
+      font-size: 24px;
       font-weight: 600;
+      color: #142e20;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-brand-tagline {
+      font-size: 14px;
+      color: #3f594a;
+      max-width: 600px;
+      line-height: 1.55;
+      margin: 0 0 20px 0;
+    }
+
+    /* Terroir Chips */
+    .footer-terroir-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .footer-terroir-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: rgba(45, 106, 79, 0.08);
+      border: 1px solid rgba(45, 106, 79, 0.2);
+      color: #1e5238;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .footer-terroir-pill svg {
+      width: 13px;
+      height: 13px;
+      color: #2d6a4f;
+    }
+
+    /* Quick Navigation Links */
+    .footer-nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px 26px;
+      margin-bottom: 26px;
+    }
+
+    .footer-nav-link {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #2b543e;
+      text-decoration: none;
+      transition: color 180ms ease, transform 180ms ease;
+    }
+
+    .footer-nav-link:hover {
+      color: #d97706;
+      transform: translateY(-1px);
+    }
+
+    /* Delicate Leaf Divider */
+    .footer-leaf-divider {
+      width: 100%;
+      max-width: 480px;
+      height: 14px;
+      color: #799a86;
+      opacity: 0.45;
+      margin-bottom: 22px;
+    }
+
+    .footer-leaf-divider svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Bottom Copyright & Return Home */
+    .footer-bottom-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      color: #557062;
+    }
+
+    .footer-home-return-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #c2410c;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 12px;
+      background: rgba(194, 65, 12, 0.08);
+      transition: all 180ms ease;
+    }
+
+    .footer-home-return-btn:hover {
+      background: rgba(194, 65, 12, 0.16);
+      color: #9a3412;
+    }
+
+    @media (max-width: 960px) {
+      .catalog-header .nav-links {
+        display: none !important;
+      }
+      .catalog-header .mobile-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+      .catalog-header .header-right-actions {
+        margin-left: auto;
+        margin-right: 8px;
+      }
+      .category-group-section .featured-products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .catalog-header {
+        height: 62px;
+      }
+      .catalog-header .header-inner {
+        padding: 0 16px;
+      }
+      .catalog-header .brand-logo-img {
+        width: 38px;
+        height: 38px;
+      }
+      .catalog-filter-bar {
+        top: 62px;
+      }
+      .catalog-hero {
+        padding-top: 96px;
+        padding-bottom: 28px;
+      }
+      .category-group-section {
+        scroll-margin-top: 125px;
+        padding: 18px 14px;
+      }
+      .category-group-section .featured-products-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .footer-plants-left,
+      .footer-plants-right {
+        opacity: 0.28;
+        height: 110px;
+      }
+      .catalog-site-footer {
+        padding: 44px 16px 24px;
+      }
+    /* Apothecary Card Footer & Single-Line Price Alignment */
+    .apothecary-card .apothecary-footer {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      margin-top: auto !important;
+      padding: 8px 0 0 0 !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .apothecary-card .apothecary-price {
+      font-family: var(--sans) !important;
+      font-size: 17.5px !important;
+      font-weight: 700 !important;
+      color: #212522 !important;
+      white-space: nowrap !important;
+      display: inline-block !important;
+      letter-spacing: -0.01em !important;
     }
   </style>
 </head>
 
 <body>
-  <!-- Navigation Header -->
-  <header class="site-header" style="background: rgba(18, 20, 52, 0.95); position: fixed;">
+  <!-- Fixed Top Navigation Header -->
+  <header class="catalog-header">
     <div class="header-inner">
       <!-- Brand Logo -->
       <a class="brand" href="/" aria-label="Holistic Herbs Home">
@@ -313,13 +785,32 @@
       <!-- Desktop Navigation Links -->
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="/">Home page</a>
-        <a class="active" href="/products/?category=all">Products</a>
-        <a href="/products/?category=nutraceutical">Nutraceutical</a>
-        <a href="/products/?category=beverages">Beverages</a>
-        <a href="/products/?category=personal-care">Personal Care</a>
+        <a class="active" href="/products/">Our Products</a>
+        <a href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
       </nav>
 
-      <!-- Mobile Menu Button -->
+      <!-- Right Side Actions: Language Switcher & Cart Button -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="main-lang-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="main-lang-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart" id="header-cart-btn">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="global-cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
+        </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
+      </div>
+
+      <!-- Mobile Menu Toggle Button -->
       <button class="mobile-toggle" aria-label="Open menu">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="4" y1="6" x2="20" y2="6"></line>
@@ -345,119 +836,436 @@
     </div>
     <nav class="drawer-menu">
       <a href="/">Home page</a>
-      <a href="/products/?category=all">All Products</a>
-      <a href="/products/?category=nutraceutical">Nutraceutical</a>
-      <a href="/products/?category=beverages">Beverages</a>
-      <a href="/products/?category=personal-care">Personal Care</a>
+      <a class="active" href="/products/">Our Products</a>
+      <a href="{% url 'news_list' %}">News</a>
+      <a href="{% url 'hospital' %}">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}">Gallery</a>
     </nav>
   </aside>
 
-  <!-- Page Header Hero -->
-  <header class="products-page-header">
-    <div class="products-header-content">
-      <span class="products-page-eyebrow">Pristine Botanical Formulations</span>
-      <h1 class="products-page-title">Our Products Collection</h1>
-      <p class="products-page-desc">
-        Handcrafted from pure Himalayan heritage flora. From natural nutraceutical supplements to revitalizing herbal teas and traditional Ayurvedic care.
+  <!-- Hero Banner (Serene Himalayan Botanical Apothecary) -->
+  <header class="catalog-hero">
+    <!-- Background Botanical Leaf Plants Foliage Left & Right -->
+    <img src="{% static 'Images/herbs_decor_left.png' %}" class="hero-plant-decor hero-plant-left" alt="" aria-hidden="true">
+    <img src="{% static 'Images/herbs_decor_right.png' %}" class="hero-plant-decor hero-plant-right" alt="" aria-hidden="true">
+
+    <!-- Faint Center Botanical Leaf Watermark -->
+    <div class="hero-botanical-watermark" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100,10 C100,60 100,150 100,190"></path>
+        <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
+        <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
+        <path d="M100,115 C75,105 60,82 60,82 C80,78 100,98 100,115 Z"></path>
+        <path d="M100,150 C125,140 140,115 140,115 C120,110 100,132 100,150 Z"></path>
+        <path d="M100,45 L78,28 M100,80 L122,62 M100,115 L74,94 M100,150 L126,128"></path>
+      </svg>
+    </div>
+
+    <div class="catalog-hero-inner">
+      <div class="catalog-eyebrow-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+        </svg>
+        <span>Authentic Himalayan Atelier</span>
+      </div>
+      <h1 class="catalog-hero-title">Our Products Catalog</h1>
+      <p class="catalog-hero-subtitle">
+        Explore pure wildcrafted remedies from Nepal's pristine terrain, carefully categorized into targeted holistic formulations.
       </p>
     </div>
   </header>
 
-  <!-- Breadcrumb Navigation -->
-  <div class="catalog-back-nav">
-    <a class="back-home-link" href="/">
-      <span>← Back to Home</span>
-    </a>
-  </div>
+  <!-- Sticky Professional Filter Nav Bar -->
+  <nav class="catalog-filter-bar" aria-label="Filter catalog by category">
+    <div class="catalog-filter-scroll">
+      <!-- 1. All Categories Button with Grid SVG Icon -->
+      <a class="filter-pill-btn {% if not selected_category or selected_category == 'all' %}is-active{% endif %}" href="/products/?category=all" data-category="all">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        </svg>
+        <span>All Categories</span>
+        <span class="filter-pill-count">{{ total_products_count }}</span>
+      </a>
 
-  <!-- Interactive Category Filter Navigation -->
-  <nav class="products-filter-section" aria-label="Filter products by category">
-    <div class="products-filter-container">
-      <a class="filter-tab {% if not selected_category or selected_category == 'all' %}is-active{% endif %}" href="/products/?category=all" data-category="all">All Categories</a>
-      <a class="filter-tab {% if selected_category == 'nutraceutical' %}is-active{% endif %}" href="/products/?category=nutraceutical" data-category="nutraceutical">Nutraceutical</a>
-      <a class="filter-tab {% if selected_category == 'beverages' or selected_category == 'beverage' %}is-active{% endif %}" href="/products/?category=beverages" data-category="beverages">Beverages</a>
-      <a class="filter-tab {% if selected_category == 'personal-care' %}is-active{% endif %}" href="/products/?category=personal-care" data-category="personal-care">Personal Care</a>
+      <!-- 2. Main Brand Categories + Any Client Created Category -->
+      {% for cat in categories_data %}
+      <a class="filter-pill-btn {% if selected_category == cat.slug %}is-active{% endif %}" href="/products/?category={{ cat.slug }}" data-category="{{ cat.slug }}">
+        {% if cat.icon_type == 'leaf' %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+        </svg>
+        {% elif cat.icon_type == 'tea' %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+          <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+          <line x1="6" y1="2" x2="6" y2="4"></line>
+          <line x1="10" y1="2" x2="10" y2="4"></line>
+          <line x1="14" y1="2" x2="14" y2="4"></line>
+        </svg>
+        {% elif cat.icon_type == 'droplet' %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path>
+        </svg>
+        {% else %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 20h10"></path><path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+          <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4.1 5.5.8z"></path>
+          <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+        </svg>
+        {% endif %}
+        <span>{{ cat.name }}</span>
+        <span class="filter-pill-count">{{ cat.count }}</span>
+      </a>
+      {% endfor %}
     </div>
   </nav>
 
-  <!-- Products Catalog Display Grid -->
-  <main class="products-catalog-section">
-    <div class="products-catalog-container">
-      <div class="catalog-grid" id="catalog-grid">
-        {% for product in products %}
-        <article class="product-item-card" data-category="{{ product.category_group|lower }}">
-          <div class="product-item-thumb">
-            <span class="product-category-tag">{{ product.category }}</span>
-            <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
-          </div>
-          <div class="product-item-body">
-            <h2 class="product-item-title">{{ product.name }}</h2>
-            <p class="product-item-desc">{{ product.short_desc }}</p>
-            <div class="product-item-footer">
-              <span class="product-price">{{ product.price_display }}</span>
-              <a class="product-action-btn" href="{{ product.detail_url }}">View Details →</a>
+  <!-- Main Category-Wise Products Catalog -->
+  <main class="catalog-main-content">
+    <!-- Ambient Botanical Leaves in Catalog Background -->
+    <div class="catalog-bg-leaves" aria-hidden="true">
+      <img src="{% static 'Images/Leaves.png' %}" class="catalog-bg-leaf-left" alt="">
+      <img src="{% static 'Images/herbs_decor_right.png' %}" class="catalog-bg-leaf-right" alt="">
+    </div>
+
+    <div class="catalog-sections-wrap" id="catalog-sections-container">
+      {% for cat in categories_data %}
+      <section class="category-group-section {% if selected_category and selected_category != 'all' and selected_category != cat.slug and not cat.is_active %}is-hidden{% endif %}" id="cat-{{ cat.slug }}" data-category="{{ cat.slug }}">
+        <!-- Category Section Header -->
+        <div class="category-section-header">
+          <div class="category-title-left">
+            <div class="category-icon-frame" aria-hidden="true">
+              {% if cat.icon_type == 'leaf' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+              </svg>
+              {% elif cat.icon_type == 'tea' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+                <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+                <line x1="6" y1="2" x2="6" y2="4"></line>
+                <line x1="10" y1="2" x2="10" y2="4"></line>
+                <line x1="14" y1="2" x2="14" y2="4"></line>
+              </svg>
+              {% elif cat.icon_type == 'droplet' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path>
+              </svg>
+              {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 20h10"></path><path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4.1 5.5.8z"></path>
+                <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+              </svg>
+              {% endif %}
+            </div>
+            <div class="category-heading-block">
+              <h2 class="category-section-title">{{ cat.name }}</h2>
+              <p class="category-section-desc">{{ cat.desc }}</p>
             </div>
           </div>
-        </article>
-        {% empty %}
-        <p style="grid-column: 1 / -1; text-align: center; color: #616787; padding: 48px;">No products found in this category.</p>
-        {% endfor %}
-      </div>
+
+          <div class="category-item-count-chip">
+            <strong>{{ cat.count }}</strong>
+            <span>{% if cat.count == 1 %}Product{% else %}Products{% endif %}</span>
+          </div>
+        </div>
+
+        <!-- EXACT LANDING PAGE 4-COLUMN APOTHECARY PRODUCT GRID -->
+        <div class="featured-products-grid">
+          {% for product in cat.products %}
+          <article class="apothecary-card" tabindex="0">
+            <a class="apothecary-card-link" href="{{ product.detail_url }}" aria-label="Explore details for {{ product.name }}"></a>
+            <div class="apothecary-img-area">
+              <svg class="apothecary-botanical-mark" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M12 2L12 22"></path>
+                <path d="M12 7C8.5 6 7 2.5 7 2.5C9.5 2 12 5 12 7Z"></path>
+                <path d="M12 12C15.5 11 17 7.5 17 7.5C14.5 7 12 10 12 12Z"></path>
+                <path d="M12 17C8.5 16 7 12.5 7 12.5C9.5 12 12 15 12 17Z"></path>
+              </svg>
+              <div class="apothecary-img-stage">
+                <img class="apothecary-product-img" src="{{ product.image_url }}" alt="{{ product.name }}"
+                  loading="lazy" decoding="async">
+              </div>
+            </div>
+            <div class="apothecary-divider"></div>
+            <div class="apothecary-body">
+              <span class="apothecary-category">{{ product.category }}</span>
+              <h3 class="apothecary-name">
+                <a href="{{ product.detail_url }}">{{ product.name }}</a>
+              </h3>
+              <p class="apothecary-desc">{{ product.short_desc|striptags }}</p>
+
+              <div class="apothecary-explore-row">
+                <a class="apothecary-explore-link" href="{{ product.detail_url }}">
+                  <span>Explore more details</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </a>
+              </div>
+
+              <div class="apothecary-footer">
+                <span class="apothecary-price">{{ product.price_display }}</span>
+                <button class="apothecary-add-btn" type="button"
+                  aria-label="Add {{ product.name }} to cart - {{ product.price_display }}"
+                  data-product-id="{% if product.id %}{{ product.id }}{% else %}{{ product.slug }}{% endif %}" data-name="{{ product.name }}">
+                  <svg class="apothecary-plus-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span class="apothecary-check-icon" aria-hidden="true">✓</span>
+                </button>
+              </div>
+            </div>
+          </article>
+          {% empty %}
+          <div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: #64748b; font-size: 14px;">
+            No formulations registered under {{ cat.name }}.
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
     </div>
   </main>
 
-  <!-- Page Footer -->
-  <footer class="products-page-footer">
-    <p>&copy; 2026 Holistic Herbs Nepal. Nature’s Wisdom, Nepal’s Heritage. <a href="/">Return to Home</a></p>
+  <!-- Cart Notification Toast -->
+  <div class="cart-feedback-toast" id="cart-feedback-toast" role="status" aria-live="polite">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="cart-toast-text">Item added to your basket</span>
+  </div>
+
+  <!-- Botanical Apothecary Footer with Natural Leaf Plants -->
+  <footer class="catalog-site-footer">
+    <!-- Background Botanical Leaf Plants Foliage Left & Right -->
+    <img src="{% static 'Images/herbs_decor_left.png' %}" class="footer-plants-decor footer-plants-left" alt="" aria-hidden="true">
+    <img src="{% static 'Images/herbs_decor_right.png' %}" class="footer-plants-decor footer-plants-right" alt="" aria-hidden="true">
+
+    <!-- Faint Center Botanical Leaf Watermark -->
+    <div class="footer-botanical-watermark" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100,10 C100,60 100,150 100,190"></path>
+        <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
+        <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
+        <path d="M100,115 C75,105 60,82 60,82 C80,78 100,98 100,115 Z"></path>
+        <path d="M100,150 C125,140 140,115 140,115 C120,110 100,132 100,150 Z"></path>
+        <path d="M100,45 L78,28 M100,80 L122,62 M100,115 L74,94 M100,150 L126,128"></path>
+      </svg>
+    </div>
+
+    <div class="footer-content-wrap">
+      <!-- Brand Header -->
+      <a class="footer-brand-crest" href="/" aria-label="Holistic Herbs Home">
+        <img class="footer-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="footer-brand-title">Holistic Herbs Nepal</span>
+      </a>
+      <p class="footer-brand-tagline">
+        Pure Wildcrafted Himalayan Botanicals &amp; Herbal Apothecary · Rooted in Ayurvedic Healing.
+      </p>
+
+      <!-- Terroir Quality Badges with Sprout Leaves -->
+      <div class="footer-terroir-row">
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+          100% Wildcrafted Botanicals
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z"/></svg>
+          Pristine Himalayan Terroir
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Ethically Handcrafted in Nepal
+        </span>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="footer-nav-links" aria-label="Footer Navigation">
+        <a class="footer-nav-link" href="/">Home</a>
+        <a class="footer-nav-link" href="/products/">Our Products</a>
+        <a class="footer-nav-link" href="{% url 'news_list' %}">News</a>
+        <a class="footer-nav-link" href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a class="footer-nav-link" href="{% url 'gallery' %}">Gallery</a>
+      </nav>
+
+      <!-- Dedicated Hospital Landline Hotline Below Holistic Hospital -->
+      <div class="footer-hospital-hotline-bar">
+        <a href="tel:014115830" class="footer-hospital-hotline-pill" title="Call Holistic Hospital Reception">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>Holistic Hospital Landline:</span>
+          <strong>01-4115830</strong>
+        </a>
+      </div>
+
+      <!-- Delicate Botanical Leaf Divider -->
+      <div class="footer-leaf-divider" aria-hidden="true">
+        <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
+          <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+          <circle cx="140" cy="7" r="2.5" fill="currentColor" />
+          <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
+          <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
+        </svg>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-line">
+        <span>&copy; 2026 Holistic Herbs Nepal Pvt. Ltd. All rights reserved.</span>
+        <a class="footer-home-return-btn" href="/">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Return to Home</span>
+        </a>
+      </div>
+    </div>
   </footer>
 
-  <!-- Script for client-side instant filtering -->
+  <!-- Include Core JavaScript (handles cart sync, badge updates, animations, lang switch) -->
+  <script src="{% static 'js/main.js' %}"></script>
+
+  <!-- Category Filter & Cart Toast Scripts -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Mobile Drawer Toggle
-      const drawer = document.querySelector(".mobile-drawer");
-      const overlay = document.querySelector(".drawer-overlay");
-      const toggleBtn = document.querySelector(".mobile-toggle");
-      const closeBtn = document.querySelector(".drawer-close");
+      // Category Pill Filtering
+      const filterPills = document.querySelectorAll(".filter-pill-btn");
+      const categorySections = document.querySelectorAll(".category-group-section");
+      const catalogContainer = document.getElementById("catalog-sections-container");
+      const toast = document.getElementById("cart-feedback-toast");
+      const toastText = document.getElementById("cart-toast-text");
+      let toastTimer = null;
 
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-          drawer.classList.add("is-open");
-          overlay.classList.add("is-open");
-        });
-      }
-      if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-          drawer.classList.remove("is-open");
-          overlay.classList.remove("is-open");
-        });
-      }
-      if (overlay) {
-        overlay.addEventListener("click", () => {
-          drawer.classList.remove("is-open");
-          overlay.classList.remove("is-open");
-        });
-      }
+      const switchCategory = (categorySlug, updateUrl = true, shouldScroll = false) => {
+        const normalizedSlug = (categorySlug || "all").toLowerCase().trim();
 
-      // Filter Logic
-      const filterTabs = document.querySelectorAll(".filter-tab");
-      const productCards = document.querySelectorAll(".product-item-card");
-
-      const applyCategoryFilter = (category) => {
-        productCards.forEach((card) => {
-          const cardCat = card.getAttribute("data-category");
-          if (category === "all" || cardCat === category || (category === "beverages" && cardCat === "beverage")) {
-            card.style.display = "flex";
+        // 1. Highlight active pill
+        filterPills.forEach(pill => {
+          const pillCat = (pill.getAttribute("data-category") || "").toLowerCase().trim();
+          if (pillCat === normalizedSlug) {
+            pill.classList.add("is-active");
           } else {
-            card.style.display = "none";
+            pill.classList.remove("is-active");
           }
         });
+
+        // 2. If 'all', show ALL categories and their items. Otherwise, show ONLY that category's items.
+        categorySections.forEach(section => {
+          const secCat = (section.getAttribute("data-category") || "").toLowerCase().trim();
+          if (normalizedSlug === "all" || secCat === normalizedSlug) {
+            section.classList.remove("is-hidden");
+            section.style.display = "block";
+          } else {
+            section.classList.add("is-hidden");
+            section.style.display = "none";
+          }
+        });
+
+        // 3. Smooth scroll to catalog top so user immediately sees the products
+        if (shouldScroll && catalogContainer) {
+          const yOffset = -90; // Just below sticky filter bar
+          const y = catalogContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+
+        // 4. Update browser URL
+        if (updateUrl && history.pushState) {
+          const newUrl = normalizedSlug === "all" ? "/products/" : "/products/?category=" + encodeURIComponent(normalizedSlug);
+          history.pushState({ category: normalizedSlug }, "", newUrl);
+        }
       };
 
-      // Check current URL param
+      // Handle Filter Pill Click
+      filterPills.forEach(pill => {
+        pill.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetCat = pill.getAttribute("data-category");
+          switchCategory(targetCat, true, true);
+        });
+      });
+
+      // Browser History Back/Forward Sync
+      window.addEventListener("popstate", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const cat = urlParams.get("category") || "all";
+        switchCategory(cat, false, false);
+      });
+
+      // Initial Sync from URL on page load
       const urlParams = new URLSearchParams(window.location.search);
-      const activeParam = urlParams.get("category") || "all";
-      applyCategoryFilter(activeParam.toLowerCase());
+      const initialCat = urlParams.get("category") || "all";
+      switchCategory(initialCat, false, false);
+
+      // Helper function to get CSRF token
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      // Add to Cart AJAX call & toast notification for all apothecary-add-btn
+      document.querySelectorAll(".apothecary-add-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const prodName = btn.getAttribute("data-name") || "Formulation";
+          const prodId = btn.getAttribute("data-product-id");
+          const csrftoken = getCookie('csrftoken') || '';
+
+          if (toast && toastText) {
+            toastText.textContent = `"${prodName}" added to your basket`;
+            toast.classList.add("is-visible");
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+              toast.classList.remove("is-visible");
+            }, 2400);
+          }
+
+          fetch("{% url 'cart_add' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrftoken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ product_id: prodId, quantity: 1 })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const badges = document.querySelectorAll(".cart-badge, #global-cart-badge");
+              badges.forEach(b => {
+                b.textContent = data.cart_count;
+                b.classList.remove("is-popping");
+                void b.offsetWidth;
+                b.classList.add("is-popping");
+              });
+            }
+          })
+          .catch(err => console.error('Add to cart error:', err));
+        });
+      });
     });
   </script>
 </body>

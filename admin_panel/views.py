@@ -862,8 +862,10 @@ class NewsSetupView(View):
                         NewsImage.objects.create(NEWS=news_item, IMAGE=img_file)
 
                     first_gallery_img = news_item.NEWS_IMAGES.first()
-                    if first_gallery_img and (not news_item.NEWS_IMAGE or not news_item.NEWS_IMAGE.name):
+                    if first_gallery_img:
                         news_item.NEWS_IMAGE = first_gallery_img.IMAGE
+                    elif not uploaded_images and deleted_image_ids:
+                        news_item.NEWS_IMAGE = None
 
                     news_item.save()
                     return JsonResponse({'status': 'success', 'message': 'News updated successfully'})
@@ -986,8 +988,11 @@ class GallerySetupView(View):
                         GalleryImage.objects.create(GALLERY=gallery_item, IMAGE=img_file)
 
                     first_gallery_img = gallery_item.GALLERY_IMAGES.first()
-                    if first_gallery_img and (not gallery_item.GALLERY_IMAGE or not gallery_item.GALLERY_IMAGE.name):
-                        gallery_item.GALLERY_IMAGE = first_gallery_img.IMAGE
+                    if first_gallery_img:
+                        if not gallery_item.GALLERY_IMAGE or not gallery_item.GALLERY_IMAGE.name or not gallery_item.GALLERY_IMAGES.filter(IMAGE=gallery_item.GALLERY_IMAGE.name).exists():
+                            gallery_item.GALLERY_IMAGE = first_gallery_img.IMAGE
+                    else:
+                        gallery_item.GALLERY_IMAGE = None
 
                     gallery_item.save()
                     return JsonResponse({'status': 'success', 'message': 'Gallery updated successfully'})

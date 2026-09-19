@@ -6,8 +6,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <meta name="theme-color" content="#131536" />
-  <meta name="description" content="Holistic Herbs — Nature’s Wisdom, Nepal’s Heritage." />
-  <title>Holistic Herbs Nature’s Wisdom, Nepal’s Heritage.</title>
+  <meta name="description" content="Holistic Herbs — Himalayan Herbs, Pure Holistic Wellness." />
+  <title>Holistic Herbs Himalayan Herbs, Pure Holistic Wellness</title>
 
   <!-- Google Fonts: DM Sans & Newsreader & Courier Prime (Archival Typewriter Mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
   <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=herbarium4.0">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=nonstop_ticker5.7">
 
   <!-- Prevent scroll restoration glitch on refresh/load -->
   <script>
@@ -46,11 +46,10 @@
       <!-- Desktop Navigation Links (matching screenshot) -->
       <nav class="nav-links" aria-label="Primary navigation">
         <a class="active" href="/">Home page</a>
-        <a href="#all-products">Products</a>
-        <a href="#news">News</a>
-        <a href="#hospital">Holistic Hospital</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#account">My Account</a>
+        <a href="/products/">Our Products</a>
+        <a href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
       </nav>
 
       <!-- Right Side Actions: Language Switcher & Cart Button -->
@@ -62,15 +61,17 @@
             aria-pressed="false">नेपाली</button>
         </div>
 
-        <a class="nav-cart-btn" href="#cart" aria-label="View shopping cart">
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart">
           <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <path d="M16 10a4 4 0 0 1-8 0"></path>
           </svg>
-          <span class="cart-badge" aria-live="polite">0</span>
+          <span class="cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
         </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
       </div>
 
       <!-- Mobile Menu Button -->
@@ -89,7 +90,8 @@
   <aside class="floating-box-nav" id="floating-box-nav" aria-label="Floating quick navigation">
     <div class="floating-nav-inner">
       <a class="floating-brand" href="/" aria-label="Holistic Herbs Home">
-        <img class="floating-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <img class="floating-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}"
+          alt="Holistic Herbs Logo">
         <span class="floating-brand-name">
           <strong>Holistic</strong>
           <em>Herbs</em>
@@ -98,11 +100,10 @@
 
       <nav class="floating-nav-links" aria-label="Floating navigation">
         <a class="active" href="/">Home page</a>
-        <a href="#all-products">Products</a>
-        <a href="#news">News</a>
-        <a href="#hospital">Holistic Hospital</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#account">My Account</a>
+        <a href="/products/">Our Products</a>
+        <a href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
       </nav>
 
       <!-- Right Side Floating Actions: Language Switcher & Cart Button -->
@@ -114,15 +115,17 @@
             aria-pressed="false">नेपाली</button>
         </div>
 
-        <a class="nav-cart-btn floating-cart-btn" href="#cart" aria-label="View shopping cart">
+        <a class="nav-cart-btn floating-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart">
           <svg class="nav-cart-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <path d="M16 10a4 4 0 0 1-8 0"></path>
           </svg>
-          <span class="cart-badge" aria-live="polite">0</span>
+          <span class="cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
         </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
       </div>
 
       <button class="mobile-toggle floating-mobile-toggle" aria-label="Open menu">
@@ -150,12 +153,11 @@
       <button class="drawer-close" aria-label="Close menu">&times;</button>
     </div>
     <nav class="drawer-menu">
-      <a href="/">Home page</a>
-      <a href="#all-products">Products</a>
-      <a href="#hospital">Holistic Hospital</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#news">News</a>
-      <a href="#account">My Account</a>
+      <a class="active" href="/">Home page</a>
+      <a href="/products/">Our Products</a>
+      <a href="{% url 'news_list' %}">News</a>
+      <a href="{% url 'hospital' %}">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}">Gallery</a>
     </nav>
     <div
       style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between;">
@@ -182,34 +184,34 @@
       <!-- Hero Content -->
       <div class="hero-container">
         <div class="hero-content">
-          <!-- Main Headline with green leaf in background of 'Nature’s' -->
+          <!-- Main Headline with green leaf in background of 'Himalayan' -->
           <h1 class="hero-headline">
             <span class="headline-line">
               <span class="nature-anchor">
                 <img src="{% static 'Images/Leaves.png' %}" class="leaf-graphic" alt="" aria-hidden="true">
-                <span class="nature-text">Nature’s</span>
+                <span class="nature-text">Himalayan</span>
               </span>
-              <em class="wisdom-italic"><span class="wisdom-w">W</span>isdom,</em>
+              <em class="wisdom-italic"><span class="wisdom-w">H</span>erbs,</em>
             </span>
-            <span class="headline-line">Nepal’s Heritage.</span>
+            <span class="headline-line">Pure Holistic Wellness.</span>
           </h1>
 
           <!-- Subtitle Paragraph -->
           <p class="hero-desc">
-            Born in the heart of Nepal, our herbs carry the wisdom of generations.<br>
-            From the pure Himalayan landscapes to your everyday wellness,<br>
-            we bring nature’s finest gifts closer to you naturally, thoughtfully, and with<br>
-            purpose.
+            Harvested from the pristine heights of Nepal, our herbs carry generations of natural healing. From pure
+            wildcrafted Himalayan botanicals to your daily wellness ritual, we bring nature’s potent remedies closer to
+            you with authenticity and care.
           </p>
 
-          <!-- Buttons: Shop Nutraceuticals & Our approach -->
+          <!-- Buttons: Shop Category & Our approach -->
           <div class="hero-buttons">
-            <a class="btn-primary" id="hero-cta-btn" href="#nutraceutical" aria-label="Shop products">
+            {% if categories %}
+            <a class="btn-primary" id="hero-cta-btn" href="{% url 'our_products' %}?category={{ categories.0.slug }}" aria-label="Shop {{ categories.0.CATEGORY_NAME }}">
               <span class="btn-static-text">Shop</span>
               <span class="btn-rotator" aria-live="polite">
-                <span class="btn-rotator-item is-active" data-href="#nutraceutical">Nutraceuticals</span>
-                <span class="btn-rotator-item" data-href="#beverage">Beverages</span>
-                <span class="btn-rotator-item" data-href="#personal-care">Personal Care</span>
+                {% for cat in categories %}
+                <span class="btn-rotator-item {% if forloop.first %}is-active{% endif %}" data-href="{% url 'our_products' %}?category={{ cat.slug }}">{{ cat.CATEGORY_NAME }}</span>
+                {% endfor %}
               </span>
               <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -217,6 +219,16 @@
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
             </a>
+            {% else %}
+            <a class="btn-primary" id="hero-cta-btn" href="{% url 'our_products' %}?category=all" aria-label="Shop All Products">
+              <span class="btn-static-text">Shop All Products</span>
+              <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+            {% endif %}
             <a class="btn-approach" href="#approach">
               <span>Our approach</span>
               <span class="arrow">↗</span>
@@ -250,8 +262,65 @@
 
     </section>
 
-    <!-- WELLNESS BANNER SECTION (MATCHING SCREENSHOT) -->
+    <!-- CREATIVE HIMALAYAN RIDGE DIVIDER & SCROLL BRIDGE (Replaces hard center line) -->
+    <div class="hero-wellness-transition" aria-label="Transition to wellness philosophy">
+      <div class="transition-curve-wrap">
+        <svg class="transition-curve-svg" viewBox="0 0 1440 68" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="terroirGlowLine" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(245, 124, 0, 0)" />
+              <stop offset="22%" stop-color="rgba(245, 124, 0, 0.35)" />
+              <stop offset="45%" stop-color="rgba(255, 225, 160, 0.85)" />
+              <stop offset="50%" stop-color="#F57C00" />
+              <stop offset="55%" stop-color="rgba(255, 225, 160, 0.85)" />
+              <stop offset="78%" stop-color="rgba(245, 124, 0, 0.35)" />
+              <stop offset="100%" stop-color="rgba(245, 124, 0, 0)" />
+            </linearGradient>
+            <linearGradient id="terroirBgFill" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#3B3B8E" />
+              <stop offset="100%" stop-color="#3B3B8E" />
+            </linearGradient>
+          </defs>
+          <!-- Elegant organic mountain wave replacing the rigid horizontal line -->
+          <path d="M0,32 C360,56 540,16 720,36 C900,56 1080,16 1440,32 L1440,68 L0,68 Z" fill="url(#terroirBgFill)" />
+          <!-- Radiant golden-amber ridge accent line -->
+          <path d="M0,32 C360,56 540,16 720,36 C900,56 1080,16 1440,32" fill="none" stroke="url(#terroirGlowLine)" stroke-width="1.8" />
+        </svg>
+      </div>
+
+      <!-- Center Botanical Crest / Terroir Touchpoint -->
+      <div class="transition-center-anchor">
+        <a href="#approach" class="transition-terroir-pill" aria-label="Explore our philosophy and Himalayan botanicals">
+          <span class="terroir-pill-sparkle">✦</span>
+          <span class="terroir-pill-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+            </svg>
+          </span>
+          <span class="terroir-pill-text">Wildcrafted Himalayan Origin</span>
+          <span class="terroir-pill-arrow">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <!-- WELLNESS BANNER SECTION -->
     <section class="wellness-section" id="approach" aria-label="Our philosophy">
+      <!-- LAYER 1: Ambient background texture (large herb cluster, bottom-right) -->
+      <div class="wellness-herb-layer1 wellness-grass-decor decor-right" aria-hidden="true">
+        <img src="{% static 'Images/herbs_cluster_right.png' %}" alt="" class="wellness-layer1-img wellness-grass-img">
+      </div>
+
+      <!-- LAYER 2: Foreground accent (small sprig, bottom-left) -->
+      <div class="wellness-herb-layer2 wellness-grass-decor decor-left" aria-hidden="true">
+        <img src="{% static 'Images/herb_mint.png' %}" alt="" class="wellness-layer2-img wellness-grass-img">
+      </div>
+
       <div class="wellness-container">
         <!-- Left Column: Headline -->
         <div class="wellness-title-col">
@@ -358,276 +427,108 @@
           </p>
         </div>
 
-        <!-- 3-Column Living Botanical Cards Grid -->
+        <!-- Living Botanical Cards Grid (Dynamic from Database) -->
         <div class="categories-grid reveal-group">
-          <!-- Card 1: Nutraceuticals (Himalayan Forest Green Accent) -->
-          <article class="category-card botanical-card-leaf1" data-category="nutraceutical">
-            <!-- Floating Leaf Particles Swaying on Hover -->
-            <div class="card-particles-cluster" aria-hidden="true">
-              <span class="card-leaf-particle leaf-particle-1">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                </svg>
-              </span>
-              <span class="card-leaf-particle leaf-particle-2">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z" />
-                </svg>
-              </span>
-              <span class="card-leaf-particle leaf-particle-3">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                </svg>
-              </span>
-            </div>
-
-            <a class="category-card-inner" href="/products/?category=nutraceutical"
-              aria-label="Explore Nutraceuticals Category">
-              <div class="category-card-top">
-                <span class="category-pill">
-                  <!-- Rustling Leaf Bullet Icon -->
-                  <svg class="pill-leaf-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          {% for category in categories %}
+            {% cycle 'botanical-card-leaf1' 'botanical-card-leaf2' 'botanical-card-leaf3' as leaf_class silent %}
+            {% cycle 'nutraceutical' 'beverages' 'personal-care' as color_theme silent %}
+            <article class="category-card {{ leaf_class }}" data-category="{{ color_theme }}">
+              <!-- Floating Leaf Particles Swaying on Hover -->
+              <div class="card-particles-cluster" aria-hidden="true">
+                <span class="card-leaf-particle leaf-particle-1">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
-                      d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z" />
-                    <path d="M7,14 C9,11 12,9 15.5,7.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                      fill="none" />
+                      d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
                   </svg>
-                  <span class="pill-text">Health &amp; Immunity</span>
+                </span>
+                <span class="card-leaf-particle leaf-particle-2">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z" />
+                  </svg>
+                </span>
+                <span class="card-leaf-particle leaf-particle-3">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
+                  </svg>
                 </span>
               </div>
 
-              <!-- Product Image Stage with Category Glow & 3D Tilt Wrapper -->
-              <div class="category-image-stage">
-                <div class="category-glow-backdrop" aria-hidden="true"></div>
-                <div class="category-img-tilt-wrap">
-                  <img class="category-floating-img" src="{% static 'Images/NUTRACEUTICAL BG REMOVED.png' %}"
-                    alt="Holistic herbal nutraceutical supplements and wellness remedies" loading="lazy"
-                    decoding="async">
-                </div>
-              </div>
-
-              <!-- Information & Botanical Divider -->
-              <div class="category-meta-box">
-                <!-- Delicate Botanical Branch Divider -->
-                <div class="category-botanical-divider" aria-hidden="true">
-                  <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
-                    <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
-                    <circle cx="140" cy="7" r="2.5" fill="currentColor" />
-                    <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
-                    <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
-                  </svg>
-                </div>
-
-                <h3 class="category-title-wrap">
-                  <span class="category-title-text">Nutraceuticals</span>
-                  <span class="category-title-bar" aria-hidden="true"></span>
-                </h3>
-                <p class="category-description">
-                  Pure herbal capsules, multivitamin complexes, and natural vitality supplements for everyday wellbeing.
-                </p>
-
-                <div class="category-btn-wrap">
-                  <span class="category-action-btn">
-                    <span class="btn-vein-overlay" aria-hidden="true"></span>
-                    <span class="btn-label">Explore Nutraceuticals</span>
-                    <!-- Sprouting Leaf Icon Growing Next to Arrow on Hover -->
-                    <svg class="btn-sprout-leaf" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path d="M10,18 C10,18 10,11 6,8 C3,6 1.5,7 1,8 C1,10 2.5,13 5,14 C7,15 9.5,15.5 10,18 Z" />
+              <a class="category-card-inner" href="{% url 'our_products' %}?category={{ category.slug }}"
+                aria-label="Explore {{ category.CATEGORY_NAME }} Category">
+                <div class="category-card-top">
+                  <span class="category-pill">
+                    <!-- Rustling Leaf Bullet Icon -->
+                    <svg class="pill-leaf-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                       <path
-                        d="M10,14 C10.5,11.5 13,9 16,9 C18,9 19,7.5 19,6.5 C17,6 14,7 12,9 C10.5,10.5 10,12.5 10,14 Z" />
+                        d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z" />
+                      <path d="M7,14 C9,11 12,9 15.5,7.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
+                        fill="none" />
                     </svg>
-                    <svg class="category-btn-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                      aria-hidden="true">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <span class="pill-text">{{ category.CATEGORY_TAG|default:category.CATEGORY_NAME }}</span>
                   </span>
                 </div>
-              </div>
-            </a>
-          </article>
 
-          <!-- Card 2: Beverages (Sunlit Chamomile Amber-Gold Accent) -->
-          <article class="category-card botanical-card-leaf2" data-category="beverages">
-            <!-- Floating Leaf Particles Swaying on Hover -->
-            <div class="card-particles-cluster" aria-hidden="true">
-              <span class="card-leaf-particle leaf-particle-1">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                </svg>
-              </span>
-              <span class="card-leaf-particle leaf-particle-2">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z" />
-                </svg>
-              </span>
-              <span class="card-leaf-particle leaf-particle-3">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                </svg>
-              </span>
+                <!-- Product Image Stage with Category Glow & 3D Tilt Wrapper -->
+                <div class="category-image-stage">
+                  <div class="category-glow-backdrop" aria-hidden="true"></div>
+                  <div class="category-img-tilt-wrap">
+                    {% if category.CATEGORY_IMAGE %}
+                      <img class="category-floating-img" src="{{ category.CATEGORY_IMAGE.url }}"
+                        alt="{{ category.CATEGORY_NAME }}" loading="lazy" decoding="async">
+                    {% else %}
+                      <img class="category-floating-img" src="{% static 'Images/fresh_herbs_extracted.png' %}"
+                        alt="{{ category.CATEGORY_NAME }}" loading="lazy" decoding="async">
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Information & Botanical Divider -->
+                <div class="category-meta-box">
+                  <!-- Delicate Botanical Branch Divider -->
+                  <div class="category-botanical-divider" aria-hidden="true">
+                    <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
+                      <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                      <circle cx="140" cy="7" r="2.5" fill="currentColor" />
+                      <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
+                      <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
+                    </svg>
+                  </div>
+
+                  <h3 class="category-title-wrap">
+                    <span class="category-title-text">{{ category.CATEGORY_NAME }}</span>
+                    <span class="category-title-bar" aria-hidden="true"></span>
+                  </h3>
+
+                  <div class="category-btn-wrap">
+                    <span class="category-action-btn">
+                      <span class="btn-vein-overlay" aria-hidden="true"></span>
+                      <span class="btn-label">Explore {{ category.CATEGORY_NAME }}</span>
+                      <!-- Sprouting Leaf Icon Growing Next to Arrow on Hover -->
+                      <svg class="btn-sprout-leaf" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path d="M10,18 C10,18 10,11 6,8 C3,6 1.5,7 1,8 C1,10 2.5,13 5,14 C7,15 9.5,15.5 10,18 Z" />
+                        <path
+                          d="M10,14 C10.5,11.5 13,9 16,9 C18,9 19,7.5 19,6.5 C17,6 14,7 12,9 C10.5,10.5 10,12.5 10,14 Z" />
+                      </svg>
+                      <svg class="category-btn-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% empty %}
+            <div class="categories-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 48px 24px;">
+              <p style="font-family: var(--serif); font-size: 1.25rem; color: #5d6382; margin-bottom: 12px;">Categories coming soon.</p>
+              <a href="{% url 'our_products' %}?category=all" class="primary-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 99px; background: #1b4332; color: #ffffff; text-decoration: none; font-size: 0.95rem; font-weight: 500;">
+                Browse All Products
+              </a>
             </div>
-
-            <a class="category-card-inner" href="/products/?category=beverages" aria-label="Explore Beverages Category">
-              <div class="category-card-top">
-                <span class="category-pill">
-                  <!-- Rustling Leaf Bullet Icon -->
-                  <svg class="pill-leaf-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path
-                      d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z" />
-                    <path d="M7,14 C9,11 12,9 15.5,7.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                      fill="none" />
-                  </svg>
-                  <span class="pill-text">Teas &amp; Infusions</span>
-                </span>
-              </div>
-
-              <!-- Product Image Stage with Category Glow & 3D Tilt Wrapper -->
-              <div class="category-image-stage">
-                <div class="category-glow-backdrop" aria-hidden="true"></div>
-                <div class="category-img-tilt-wrap">
-                  <img class="category-floating-img" src="{% static 'Images/BEVEREGE BG REMOVED.png' %}"
-                    alt="Ayurvedic herbal teas, organic green teas, and botanical infusions" loading="lazy"
-                    decoding="async">
-                </div>
-              </div>
-
-              <!-- Information & Botanical Divider -->
-              <div class="category-meta-box">
-                <!-- Delicate Botanical Branch Divider -->
-                <div class="category-botanical-divider" aria-hidden="true">
-                  <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
-                    <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
-                    <circle cx="140" cy="7" r="2.5" fill="currentColor" />
-                    <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
-                    <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
-                  </svg>
-                </div>
-
-                <h3 class="category-title-wrap">
-                  <span class="category-title-text">Beverages</span>
-                  <span class="category-title-bar" aria-hidden="true"></span>
-                </h3>
-                <p class="category-description">
-                  Antioxidant-rich organic green teas, Chamrit wellness blends, and revitalizing botanical infusions.
-                </p>
-
-                <div class="category-btn-wrap">
-                  <span class="category-action-btn">
-                    <span class="btn-vein-overlay" aria-hidden="true"></span>
-                    <span class="btn-label">Explore Beverages</span>
-                    <!-- Sprouting Leaf Icon Growing Next to Arrow on Hover -->
-                    <svg class="btn-sprout-leaf" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path d="M10,18 C10,18 10,11 6,8 C3,6 1.5,7 1,8 C1,10 2.5,13 5,14 C7,15 9.5,15.5 10,18 Z" />
-                      <path
-                        d="M10,14 C10.5,11.5 13,9 16,9 C18,9 19,7.5 19,6.5 C17,6 14,7 12,9 C10.5,10.5 10,12.5 10,14 Z" />
-                    </svg>
-                    <svg class="category-btn-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                      aria-hidden="true">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </a>
-          </article>
-
-          <!-- Card 3: Personal Care (Ayurvedic Terracotta-Orange Accent) -->
-          <article class="category-card botanical-card-leaf3" data-category="personal-care">
-            <!-- Floating Leaf Particles Swaying on Hover -->
-            <div class="card-particles-cluster" aria-hidden="true">
-              <span class="card-leaf-particle leaf-particle-1">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                </svg>
-              </span>
-              <span class="card-leaf-particle leaf-particle-2">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z" />
-                </svg>
-              </span>
-              <span class="card-leaf-particle leaf-particle-3">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                </svg>
-              </span>
-            </div>
-
-            <a class="category-card-inner" href="/products/?category=personal-care"
-              aria-label="Explore Personal Care Category">
-              <div class="category-card-top">
-                <span class="category-pill">
-                  <!-- Rustling Leaf Bullet Icon -->
-                  <svg class="pill-leaf-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path
-                      d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z" />
-                    <path d="M7,14 C9,11 12,9 15.5,7.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                      fill="none" />
-                  </svg>
-                  <span class="pill-text">Ayurvedic Rituals</span>
-                </span>
-              </div>
-
-              <!-- Product Image Stage with Category Glow & 3D Tilt Wrapper -->
-              <div class="category-image-stage">
-                <div class="category-glow-backdrop" aria-hidden="true"></div>
-                <div class="category-img-tilt-wrap">
-                  <img class="category-floating-img" src="{% static 'Images/PERSONAL CARE BG REMOVED.png' %}"
-                    alt="Pure herbal personal care soaps, essential massage oils, and natural balms" loading="lazy"
-                    decoding="async">
-                </div>
-              </div>
-
-              <!-- Information & Botanical Divider -->
-              <div class="category-meta-box">
-                <!-- Delicate Botanical Branch Divider -->
-                <div class="category-botanical-divider" aria-hidden="true">
-                  <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
-                    <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
-                    <circle cx="140" cy="7" r="2.5" fill="currentColor" />
-                    <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
-                    <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
-                  </svg>
-                </div>
-
-                <h3 class="category-title-wrap">
-                  <span class="category-title-text">Personal Care</span>
-                  <span class="category-title-bar" aria-hidden="true"></span>
-                </h3>
-                <p class="category-description">
-                  Therapeutic pain relief massage oils, cold-pressed herbal bath soaps, and restorative body care.
-                </p>
-
-                <div class="category-btn-wrap">
-                  <span class="category-action-btn">
-                    <span class="btn-vein-overlay" aria-hidden="true"></span>
-                    <span class="btn-label">Explore Personal Care</span>
-                    <!-- Sprouting Leaf Icon Growing Next to Arrow on Hover -->
-                    <svg class="btn-sprout-leaf" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path d="M10,18 C10,18 10,11 6,8 C3,6 1.5,7 1,8 C1,10 2.5,13 5,14 C7,15 9.5,15.5 10,18 Z" />
-                      <path
-                        d="M10,14 C10.5,11.5 13,9 16,9 C18,9 19,7.5 19,6.5 C17,6 14,7 12,9 C10.5,10.5 10,12.5 10,14 Z" />
-                    </svg>
-                    <svg class="category-btn-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                      aria-hidden="true">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </a>
-          </article>
+          {% endfor %}
         </div>
       </div>
 
@@ -678,8 +579,8 @@
         <div class="featured-products-grid reveal-group" id="featured-products-grid">
           {% for product in products %}
           <article class="apothecary-card" tabindex="0">
-            <a class="apothecary-card-link" href="{{ product.detail_url }}"
-              aria-label="Explore details for {{ product.name }}"></a>
+            <a class="apothecary-card-link" href="{% url 'product_detail' slug=product.slug %}"
+              aria-label="Explore details for {{ product.PRODUCT_NAME }}"></a>
             <div class="apothecary-img-area">
               <svg class="apothecary-botanical-mark" width="18" height="18" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"
@@ -690,20 +591,25 @@
                 <path d="M12 17C8.5 16 7 12.5 7 12.5C9.5 12 12 15 12 17Z"></path>
               </svg>
               <div class="apothecary-img-stage">
-                <img class="apothecary-product-img" src="{{ product.image_url }}"
-                  alt="{{ product.name }}" loading="lazy" decoding="async">
+                {% if product.PRODUCT_IMAGE %}
+                  <img class="apothecary-product-img" src="{{ product.PRODUCT_IMAGE.url }}" alt="{{ product.PRODUCT_NAME }}"
+                    loading="lazy" decoding="async">
+                {% else %}
+                  <img class="apothecary-product-img" src="{% static 'Images/fresh_herbs_extracted.png' %}" alt="{{ product.PRODUCT_NAME }}"
+                    loading="lazy" decoding="async">
+                {% endif %}
               </div>
             </div>
             <div class="apothecary-divider"></div>
             <div class="apothecary-body">
-              <span class="apothecary-category">{{ product.category }}</span>
+              <span class="apothecary-category">{{ product.PRODUCT_CATEGORY.CATEGORY_NAME|default:"Herbal Remedy" }}</span>
               <h3 class="apothecary-name">
-                <a href="{{ product.detail_url }}">{{ product.name }}</a>
+                <a href="{% url 'product_detail' slug=product.slug %}">{{ product.PRODUCT_NAME }}</a>
               </h3>
-              <p class="apothecary-desc">{{ product.short_desc }}</p>
+              <p class="apothecary-desc">{{ product.PRODUCT_DESCRIPTION|striptags|truncatewords:14 }}</p>
 
               <div class="apothecary-explore-row">
-                <a class="apothecary-explore-link" href="{{ product.detail_url }}">
+                <a class="apothecary-explore-link" href="{% url 'product_detail' slug=product.slug %}">
                   <span>Explore more details</span>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -714,9 +620,11 @@
               </div>
 
               <div class="apothecary-footer">
-                <span class="apothecary-price">{{ product.price_display }}</span>
-                <button class="apothecary-add-btn" type="button" aria-label="Add {{ product.name }} to cart - {{ product.price_display }}"
-                  data-product-id="{{ product.slug }}">
+                <span class="apothecary-price">Rs {{ product.PRODUCT_PRICE|floatformat:"-2" }}</span>
+                <button class="apothecary-add-btn" type="button"
+                  aria-label="Add {{ product.PRODUCT_NAME }} to cart - Rs {{ product.PRODUCT_PRICE|floatformat:'-2' }}"
+                  data-product-slug="{{ product.slug }}"
+                  data-product-id="{{ product.id }}">
                   <svg class="apothecary-plus-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
                     aria-hidden="true">
@@ -729,7 +637,10 @@
             </div>
           </article>
           {% empty %}
-          <p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 48px;">No products currently available.</p>
+          <div class="products-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 56px 24px;">
+            <p style="font-family: var(--serif); font-size: 1.25rem; color: #5d6382; margin-bottom: 8px;">No products currently available.</p>
+            <p style="font-family: var(--sans); font-size: 0.95rem; color: #889098;">Our authentic herbal formulations are being prepared. Please check back shortly.</p>
+          </div>
           {% endfor %}
         </div>
 
@@ -767,7 +678,7 @@
         <div class="apothecary-news-grid">
           {% for item in news_list %}
           <article class="apothecary-news-item">
-            <a class="apothecary-news-entry" href="/news/{{ item.NEWS_SLUG }}/" aria-label="{{ item.NEWS_TITLE }}">
+            <a class="apothecary-news-entry" href="{% url 'news_detail' slug=item.NEWS_SLUG|default:item.slug %}" aria-label="{{ item.NEWS_TITLE }}">
               <!-- Date Treatment: Day number stacked over Abbreviated Month -->
               <div class="news-date-col">
                 <span class="news-date-day">{{ item.NEWS_CREATED_AT|date:"d" }}</span>
@@ -777,147 +688,199 @@
               <!-- Thin 0.5px vertical divider line -->
               <div class="news-v-divider" aria-hidden="true"></div>
 
-              <!-- Content Column: Category, Headline, Description & Link -->
+              <!-- Content Column: Optional Thumbnail + Category, Headline, Description & Link -->
               <div class="news-content-col">
-                <div class="news-meta-row">
-                  <span class="news-category-tag">{{ item.NEWS_TYPE }}</span>
+                <div class="news-body-row">
+                  {% if item.image_url %}
+                  <div class="news-thumb-wrap">
+                    <img class="news-thumbnail" src="{{ item.image_url }}" alt="{{ item.NEWS_TITLE }}" loading="lazy" decoding="async">
+                  </div>
+                  {% elif item.NEWS_IMAGE %}
+                  <div class="news-thumb-wrap">
+                    <img class="news-thumbnail" src="{{ item.NEWS_IMAGE.url }}" alt="{{ item.NEWS_TITLE }}" loading="lazy" decoding="async">
+                  </div>
+                  {% endif %}
+                  <div class="news-text-wrap">
+                    <div class="news-meta-row">
+                      <span class="news-category-tag">{{ item.get_NEWS_TYPE_display|default:item.NEWS_TYPE }}</span>
+                    </div>
+                    <h3 class="news-headline">{{ item.NEWS_TITLE }}</h3>
+                    <p class="news-description">{{ item.NEWS_DESCRIPTION|striptags|truncatewords:18 }}</p>
+                    <span class="news-view-link">View details</span>
+                  </div>
                 </div>
-                <h3 class="news-headline">{{ item.NEWS_TITLE }}</h3>
-                <p class="news-description">{{ item.NEWS_DESCRIPTION }}</p>
-                <span class="news-view-link">View details</span>
               </div>
             </a>
           </article>
           {% empty %}
-          <p class="apothecary-news-empty">No announcements posted at this time.</p>
+          <div class="apothecary-news-empty-wrap" style="grid-column: 1 / -1; text-align: center; padding: 44px 20px;">
+            <p class="apothecary-news-empty" style="font-family: var(--serif); font-size: 1.15rem; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">No announcements posted at this time.</p>
+            <p style="font-family: var(--sans); font-size: 0.9rem; color: rgba(255, 255, 255, 0.65);">Company updates and botanical releases will appear here.</p>
+          </div>
           {% endfor %}
         </div>
       </div>
     </section>
 
-    <!-- 3D GRAND CINEMA "PROCESS OF HERBS" THEATRE SECTION -->
-    <section class="apothecary-process-section" id="process" aria-label="Our Botanical Process in 3D Theatre">
-      <!-- Ambient Cinema Ceiling Projector Light Cone -->
-      <div class="theatre-projector-beam" aria-hidden="true"></div>
 
-      <div class="theatre-container">
-        <!-- Cinema Marquee Badge -->
-        <div class="theatre-marquee-header">
-          <span class="theatre-marquee-badge">
-            <span class="theatre-live-beacon"></span>
-            <span class="theatre-marquee-text">3D PANAVISION CINEMA • HIMALAYAN HERBARIUM CHRONICLE</span>
-          </span>
+
+    <!-- CLIENT ITEM RATINGS & REVIEWS SECTION: WHITE BACKGROUND WITH LEFT-TO-RIGHT SLIDESHOW -->
+    <section class="client-ratings-white-section" id="ratings" aria-label="Client Item Ratings and What Clients Say">
+      <div class="ratings-white-container">
+
+        <!-- Section Editorial Header -->
+        <div class="ratings-white-header">
+          <div class="ratings-white-badge">
+            <span class="badge-star">⭐</span>
+            <span class="badge-text">CLIENT RATINGS &amp; REVIEWS · ग्राहक मूल्याङ्कन</span>
+          </div>
+          <h2 class="ratings-white-title">
+            What Clients Say <span class="title-italic-accent">About Each Herbal Item</span>
+          </h2>
+          <p class="ratings-white-subtitle">
+            100% verified transparency. Explore genuine ratings, clinical results, and honest experiences shared by
+            clients across Nepal for each botanical remedy.
+          </p>
         </div>
 
-        <!-- 3D Curved Floating Cinema Screen Stage -->
-        <div class="theatre-screen-stage" id="theatre-screen-stage">
-          <div class="theatre-screen-ambient-glow" aria-hidden="true"></div>
-          
-          <div class="theatre-screen-bezel" id="theatre-screen-bezel">
-            <!-- Glass Specular Reflection Highlight -->
-            <div class="theatre-screen-specular" aria-hidden="true"></div>
-
-            <div class="process-video-wrapper">
-              <video
-                id="process-ambient-video"
-                class="process-bg-video"
-                poster="{% static 'video/Process_Poster.jpg' %}"
-                preload="metadata"
-                autoplay
-                muted
-                loop
-                playsinline
-                aria-label="Holistic Herbs traditional harvesting and formulation process"
-              >
-                <source src="{% static 'video/Process_of_Herbs.mp4' %}" type="video/mp4">
-                Your browser does not support HTML5 video.
-              </video>
-
-              <!-- Cinema Soft Radial Vignette Overlay -->
-              <div class="process-vignette-overlay" aria-hidden="true"></div>
-
-              <!-- Cinema Bottom Gradient Overlay -->
-              <div class="process-gradient-overlay" aria-hidden="true"></div>
-
-              <!-- Top-Right Expand-to-Fullscreen Button (Cinema Cockpit) -->
-              <button class="process-expand-btn" id="process-expand-btn" type="button" aria-label="Watch full screen in theatre mode" title="Expand Fullscreen Cinema">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <polyline points="9 21 3 21 3 15"></polyline>
-                  <line x1="21" y1="3" x2="14" y2="10"></line>
-                  <line x1="3" y1="21" x2="10" y2="14"></line>
+        <!-- SLIDESHOW / CAROUSEL CONTROLS BAR -->
+        <div class="ratings-slider-header-bar">
+          <div class="slider-title-group">
+            <h3 class="slider-title">Himalayan Remedies Showcase</h3>
+            <span class="slider-hint">Continuous stream from right to left · Hover over any item to stop and
+              inspect</span>
+          </div>
+          <div class="slider-navigation-actions">
+            <span class="slider-position-indicator" id="slider-position-indicator">NON-STOP · HOVER TO PAUSE</span>
+            <div class="slider-nav-arrows">
+              <button type="button" class="slider-nav-btn prev-btn" id="ratings-slider-prev"
+                aria-label="Previous herbal item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
-
-              <!-- Reduced-motion / Manual Play Trigger -->
-              <button class="process-manual-play-btn" id="process-manual-play-btn" type="button" aria-label="Play process video" style="display: none;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                </svg>
-              </button>
-
-              <!-- Bottom-Left Cinematic Title Overlay -->
-              <div class="process-text-overlay">
-                <span class="process-eyebrow">Now Screening • From Hand to Bottle</span>
-                <h2 class="process-headline">Wildcrafted at altitude, bottled by hand</h2>
-              </div>
-
-              <!-- Bottom-Right Audio Mute/Unmute Cinema Toggle -->
-              <button class="process-mute-toggle" id="process-mute-toggle" type="button" aria-label="Unmute process video">
-                <!-- Speaker Muted Icon (Default) -->
-                <svg class="process-mute-icon-muted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                  <line x1="23" y1="9" x2="17" y2="15"></line>
-                  <line x1="17" y1="9" x2="23" y2="15"></line>
-                </svg>
-                <!-- Speaker Unmuted Icon -->
-                <svg class="process-mute-icon-unmuted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: none;">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <button type="button" class="slider-nav-btn next-btn" id="ratings-slider-next"
+                aria-label="Next herbal item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </button>
             </div>
           </div>
+        </div>
 
-          <!-- Polished Cinema Stage Floor & Reflection Glow -->
-          <div class="theatre-stage-floor" aria-hidden="true">
-            <div class="theatre-floor-reflection"></div>
+        <!-- LEFT-TO-RIGHT SLIDESHOW VIEWPORT & CARDS TRACK -->
+        <div class="ratings-slider-viewport" id="ratings-slider-viewport">
+          <div class="ratings-slider-track" id="ratings-slider-track">
+            {% for prod in products %}
+            <!-- Slide {{ forloop.counter }}: {{ prod.name }} (Dynamic from Backend Admin) -->
+            <article class="item-rating-slide-card" data-slug="{{ prod.slug }}">
+              <!-- Creative Specimen Header with Sharp Modern Border -->
+              <div class="slide-specimen-header">
+                <span class="slide-specimen-index">SPECIMEN #{{ forloop.counter|stringformat:"02d" }}</span>
+                <span class="slide-specimen-cat">{{ prod.category|default:"Botanical Remedy" }}</span>
+              </div>
+
+              <!-- Product Visual & Header Info -->
+              <div class="slide-card-item-top">
+                <a href="/product/{{ prod.slug }}/" class="slide-item-img-box" aria-label="View {{ prod.name }}">
+                  <img src="{{ prod.image_url }}" alt="{{ prod.name }}" loading="lazy"
+                    onerror="this.onerror=null; this.src='/static/Images/HOLISTIC%20HERB%20REAL%20LOGO.png';">
+                  <span class="slide-img-stamp">PURE 100%</span>
+                </a>
+                <div class="slide-item-info">
+                  <h4 class="slide-item-name">
+                    <a href="/product/{{ prod.slug }}/">{{ prod.name }}</a>
+                  </h4>
+                  <div class="slide-item-rating-row">
+                    {% if prod.avg_rating %}
+                    <span class="slide-stars">{{ prod.avg_rating_stars }}</span>
+                    <strong class="slide-score">{{ prod.avg_rating|floatformat:1 }}</strong>
+                    {% else %}
+                    <span class="slide-no-rating" style="font-size: 0.82rem; color: var(--text-muted, #718096); font-style: italic;">No ratings yet</span>
+                    {% endif %}
+                  </div>
+                  <div class="slide-item-price-row">
+                    <span class="slide-item-price">{{ prod.price_display|default:prod.price_formatted }}</span>
+                    {% if prod.weight_or_size %}
+                    <span class="slide-item-contain">/ {{ prod.weight_or_size }}</span>
+                    {% elif prod.PRODUCT_UNIT %}
+                    <span class="slide-item-contain">/ {{ prod.PRODUCT_UNIT.UNIT_NAME }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item Description Block (backend description) -->
+              <div class="slide-description-block">
+                <span class="slide-desc-label">HERBAL ACTION · विवरण:</span>
+                <p class="slide-desc-text">
+                  {{ prod.short_desc|default:prod.english_desc|default:prod.nepali_desc|truncatewords:24 }}
+                </p>
+              </div>
+
+              <!-- Dedicated 'What Clients Say' section inside the box -->
+              {% with review=prod.showcase_review %}
+              {% if review %}
+              <div class="slide-what-clients-say">
+                <div class="clients-say-label-row">
+                  <span class="say-tag">💬 WHAT CLIENTS SAY</span>
+                  <span class="say-rating-stars">{{ review.rating_stars }} {{ review.PRODUCT_RATING_VALUE|floatformat:1 }}</span>
+                </div>
+                <blockquote class="say-quote-text">
+                  <span class="say-quote-eng">"{{ review.english_comment }}"</span>
+                  <span class="say-quote-nep" style="display: none;">"{{ review.nepali_comment }}"</span>
+                </blockquote>
+                <div class="say-author-footer">
+                  <div class="say-avatar">{{ review.reviewer_initials }}</div>
+                  <div class="say-author-info">
+                    <strong class="say-author-name">{{ review.reviewer_name }}</strong>
+                    <span class="say-author-location">📍 {{ review.reviewer_location }}</span>
+                  </div>
+                  {% if review.IS_VERIFIED %}
+                  <span class="say-verified-chip">✓ Verified Client</span>
+                  {% endif %}
+                </div>
+              </div>
+              {% else %}
+              <div class="slide-what-clients-say slide-what-clients-empty" style="background: rgba(0, 0, 0, 0.02); border: 1px dashed rgba(0, 0, 0, 0.1); padding: 18px 16px; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted, #718096); font-family: var(--sans);">No reviews yet — be the first to review this product.</p>
+              </div>
+              {% endif %}
+              {% endwith %}
+
+              <!-- View Item Action Link -->
+              <div class="slide-card-footer-action">
+                <a href="/product/{{ prod.slug }}/" class="slide-view-link">
+                  <span>Inspect Botanical Specs</span>
+                  <span class="link-arrow">→</span>
+                </a>
+              </div>
+            </article>
+            {% empty %}
+            <div class="slider-empty-state">
+              <p>No herbal items found in catalog.</p>
+            </div>
+            {% endfor %}
           </div>
         </div>
+
+        <!-- Dots Pagination Indicator -->
+        <div class="ratings-slider-dots" id="ratings-slider-dots" aria-label="Slideshow pagination"></div>
+
       </div>
     </section>
 
-    <!-- FULLSCREEN THEATRE LIGHTBOX OVERLAY -->
-    <div class="process-lightbox-modal" id="process-lightbox-modal" role="dialog" aria-modal="true" aria-label="Process of Herbs Full Screen Player" aria-hidden="true" style="display: none;">
-      <div class="process-lightbox-backdrop" id="process-lightbox-backdrop"></div>
-      <button class="process-lightbox-close" id="process-lightbox-close" type="button" aria-label="Close full screen view">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-      <div class="process-lightbox-content">
-        <video
-          id="process-lightbox-video"
-          class="process-lightbox-player"
-          controls
-          playsinline
-          preload="auto"
-          poster="{% static 'video/Process_Poster.jpg' %}"
-          aria-label="Holistic Herbs Process Video Player"
-        >
-          <source src="{% static 'video/Process_of_Herbs.mp4' %}" type="video/mp4">
-          Your browser does not support HTML5 video.
-        </video>
-      </div>
-    </div>
   </main>
 
   <!-- SITE FOOTER: Ultra-Premium Himalayan Apothecary Closing Note -->
   <footer class="apothecary-footer" id="site-footer" aria-label="Site footer">
     <!-- Top-Right Faint Watermark Botanical Mark (6-8% Opacity with gentle ambient drift) -->
     <div class="footer-watermark" aria-hidden="true">
-      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"
+        stroke-linejoin="round">
         <path d="M100,10 C100,60 100,150 100,190"></path>
         <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
         <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
@@ -933,7 +896,8 @@
         <div class="footer-brand-block">
           <div class="footer-brand-header-wrap">
             <a class="footer-logo-row" href="/" aria-label="Holistic Herbs Home">
-              <img class="footer-brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+              <img class="footer-brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}"
+                alt="Holistic Herbs Logo">
               <span class="footer-wordmark"><strong>Holistic</strong> <em>Herbs</em></span>
             </a>
 
@@ -966,7 +930,8 @@
           <!-- Live Atelier Provenance Status -->
           <div class="footer-atelier-status" aria-label="Atelier live provenance">
             <span class="atelier-pulse-dot" aria-hidden="true"></span>
-            <span class="atelier-status-text">Kathmandu Atelier • <time id="footer-kathmandu-clock">--:-- NPT</time> • Active Handcrafting</span>
+            <span class="atelier-status-text">Kathmandu Atelier • <time id="footer-kathmandu-clock">--:-- NPT</time> •
+              Active Handcrafting</span>
           </div>
         </div>
 
@@ -984,9 +949,9 @@
         <div class="footer-nav-col">
           <h4 class="footer-col-header">Company</h4>
           <ul class="footer-link-list">
-            <li><a class="footer-link" href="#news">News</a></li>
-            <li><a class="footer-link" href="#gallery">Gallery</a></li>
-            <li><a class="footer-link" href="#hospital">Holistic Hospital</a></li>
+            <li><a class="footer-link" href="{% url 'news_list' %}">News &amp; Advisories</a></li>
+            <li><a class="footer-link" href="{% url 'gallery' %}">Gallery</a></li>
+            <li><a class="footer-link" href="{% url 'hospital' %}">Holistic Hospital</a></li>
           </ul>
         </div>
 
@@ -1004,10 +969,11 @@
       <div class="footer-bottom-bar">
         <p class="footer-copyright">&copy; 2026 Holistic Herbs Pvt. Ltd.</p>
 
-        <!-- Ascend to Summit Back-to-Top Action -->
-        <button class="footer-ascend-btn" id="footer-ascend-btn" type="button" aria-label="Ascend to top of page">
-          <span>Ascend to Summit</span>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <!-- Scroll to Hero Section Upper Arrow Button -->
+        <button class="footer-ascend-btn" id="footer-ascend-btn" type="button" aria-label="Scroll to Hero section"
+          title="Scroll to Hero section">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="12" y1="19" x2="12" y2="5"></line>
             <polyline points="5 12 12 5 19 12"></polyline>
           </svg>
@@ -1015,21 +981,31 @@
 
         <div class="footer-social-group" aria-label="Social media channels">
           <!-- Facebook -->
-          <a class="footer-social-icon-link" href="https://www.youtube.com/channel/UCuDDs3Z0FlyJC5OpJfq2Swg?view_as=subscriber" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <a class="footer-social-icon-link"
+            href="https://www.youtube.com/channel/UCuDDs3Z0FlyJC5OpJfq2Swg?view_as=subscriber" target="_blank"
+            rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
               <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
             </svg>
           </a>
           <!-- YouTube -->
-          <a class="footer-social-icon-link" href="https://www.youtube.com/channel/UCuDDs3Z0FlyJC5OpJfq2Swg?view_as=subscriber" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z"></path>
+          <a class="footer-social-icon-link"
+            href="https://www.youtube.com/channel/UCuDDs3Z0FlyJC5OpJfq2Swg?view_as=subscriber" target="_blank"
+            rel="noopener noreferrer" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path
+                d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z">
+              </path>
               <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
             </svg>
           </a>
           <!-- Twitter / X -->
-          <a class="footer-social-icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter / X">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <a class="footer-social-icon-link" href="#" target="_blank" rel="noopener noreferrer"
+            aria-label="Twitter / X">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
               <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
               <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
             </svg>
@@ -1040,7 +1016,7 @@
   </footer>
 
   <!-- JavaScript -->
-  <script src="{% static 'js/main.js' %}?v=herbarium4.0"></script>
+  <script src="{% static 'js/main.js' %}?v=nonstop_ticker5.8"></script>
 </body>
 
 </html>

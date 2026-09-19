@@ -1,0 +1,1146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Holistic Nepal</title>
+  <link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+  <style>
+    :root {
+      --herb-green: #1f6f5c;
+      --herb-green-dark: #154c3e;
+      --herb-green-light: #e5f2ee;
+      --paper-cream: #fbfbf9;
+      --paper-card: #ffffff;
+      --border-subtle: #e6eae8;
+      --charcoal-ink: #1a221e;
+      --charcoal-muted: #5e6b66;
+    }
+
+    body {
+      background-color: var(--paper-cream);
+      color: var(--charcoal-ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .checkout-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .checkout-nav-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .checkout-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--charcoal-ink);
+    }
+    .checkout-logo img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+    .checkout-logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--herb-green);
+    }
+
+    .checkout-main {
+      max-width: 1240px;
+      margin: 40px auto 80px;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+
+    .checkout-breadcrumb {
+      font-size: 13px;
+      color: var(--charcoal-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .checkout-breadcrumb a {
+      color: var(--charcoal-muted);
+      text-decoration: none;
+    }
+    .checkout-breadcrumb a:hover {
+      color: var(--herb-green);
+    }
+    .checkout-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 700;
+      margin: 0 0 32px;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .checkout-card {
+      background: var(--paper-card);
+      border: 1px solid var(--border-subtle);
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      margin-bottom: 24px;
+    }
+    .checkout-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .auth-badge-tag {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--herb-green-light);
+      color: var(--herb-green-dark);
+      padding: 4px 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field-group {
+      margin-bottom: 18px;
+    }
+    .field-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--charcoal-ink);
+      margin-bottom: 6px;
+    }
+    .field-control {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border-subtle);
+      background: #fafcfb;
+      font-family: inherit;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .field-control:focus {
+      border-color: var(--herb-green);
+      background: #fff;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 10px;
+      background: #fafcfb;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+    .radio-option:hover {
+      border-color: var(--herb-green);
+    }
+    .radio-option input[type="radio"] {
+      accent-color: var(--herb-green);
+    }
+    .radio-info strong {
+      display: block;
+      font-size: 14px;
+      color: var(--charcoal-ink);
+    }
+    .radio-info span {
+      font-size: 12px;
+      color: var(--charcoal-muted);
+    }
+
+    /* Right column: Order overview */
+    .order-mini-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .order-mini-row:last-child {
+      border-bottom: none;
+    }
+    .order-mini-thumb {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      background: #f4f6f5;
+      padding: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+    .order-mini-meta {
+      flex: 1;
+    }
+    .order-mini-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin: 0 0 2px;
+    }
+    .order-mini-qty {
+      font-size: 12px;
+      color: var(--charcoal-muted);
+    }
+    .order-mini-price {
+      font-weight: 700;
+      color: var(--herb-green);
+      font-size: 14.5px;
+    }
+
+    .checkout-summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: var(--charcoal-muted);
+    }
+    .checkout-summary-line strong {
+      color: var(--charcoal-ink);
+    }
+    .checkout-summary-line.grand {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--charcoal-ink);
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 2px solid var(--border-subtle);
+    }
+    .checkout-summary-line.grand .grand-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      color: var(--herb-green);
+    }
+
+    .btn-place-order {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      background: var(--herb-green);
+      color: #fff;
+      text-align: center;
+      padding: 18px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+      box-sizing: border-box;
+    }
+    .btn-place-order:hover:not(:disabled) {
+      background: var(--herb-green-dark);
+      transform: translateY(-1px);
+    }
+    .btn-place-order:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    .back-cart-link {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--charcoal-muted);
+      text-decoration: none;
+    }
+    .back-cart-link:hover {
+      color: var(--herb-green);
+      text-decoration: underline;
+    }
+
+    /* ============================================================
+       NATIVE PL SVG RING LOADER ANIMATION (UIVERSE SPEC)
+       ============================================================ */
+    .pl {
+      width: 120px;
+      height: 120px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .pl--compact {
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .pl__ring {
+      animation: ringA 2s linear infinite;
+      transform-origin: 50% 50%;
+    }
+
+    .pl__ring--a {
+      stroke: #1f6f5c;
+    }
+
+    .pl__ring--b {
+      animation-name: ringB;
+      stroke: #d97706;
+    }
+
+    .pl__ring--c {
+      animation-name: ringC;
+      stroke: #383889;
+    }
+
+    .pl__ring--d {
+      animation-name: ringD;
+      stroke: #c85a38;
+    }
+
+    .pl--compact .pl__ring--a { stroke: #ffffff; }
+    .pl--compact .pl__ring--b { stroke: #ffd166; }
+    .pl--compact .pl__ring--c { stroke: #93c5fd; }
+    .pl--compact .pl__ring--d { stroke: #fda4af; }
+
+    @keyframes ringA {
+      from, 4% {
+        stroke-dasharray: 0 660;
+        stroke-width: 20;
+        stroke-dashoffset: -330;
+      }
+      12% {
+        stroke-dasharray: 60 600;
+        stroke-width: 30;
+        stroke-dashoffset: -335;
+      }
+      32% {
+        stroke-dasharray: 60 600;
+        stroke-width: 30;
+        stroke-dashoffset: -595;
+      }
+      40%, 54% {
+        stroke-dasharray: 0 660;
+        stroke-width: 20;
+        stroke-dashoffset: -660;
+      }
+      62% {
+        stroke-dasharray: 60 600;
+        stroke-width: 30;
+        stroke-dashoffset: -665;
+      }
+      82% {
+        stroke-dasharray: 60 600;
+        stroke-width: 30;
+        stroke-dashoffset: -925;
+      }
+      90%, to {
+        stroke-dasharray: 0 660;
+        stroke-width: 20;
+        stroke-dashoffset: -990;
+      }
+    }
+
+    @keyframes ringB {
+      from, 12% {
+        stroke-dasharray: 0 220;
+        stroke-width: 20;
+        stroke-dashoffset: -110;
+      }
+      20% {
+        stroke-dasharray: 20 200;
+        stroke-width: 30;
+        stroke-dashoffset: -115;
+      }
+      40% {
+        stroke-dasharray: 20 200;
+        stroke-width: 30;
+        stroke-dashoffset: -195;
+      }
+      48%, 62% {
+        stroke-dasharray: 0 220;
+        stroke-width: 20;
+        stroke-dashoffset: -220;
+      }
+      70% {
+        stroke-dasharray: 20 200;
+        stroke-width: 30;
+        stroke-dashoffset: -225;
+      }
+      90% {
+        stroke-dasharray: 20 200;
+        stroke-width: 30;
+        stroke-dashoffset: -305;
+      }
+      98%, to {
+        stroke-dasharray: 0 220;
+        stroke-width: 20;
+        stroke-dashoffset: -330;
+      }
+    }
+
+    @keyframes ringC {
+      from {
+        stroke-dasharray: 0 440;
+        stroke-width: 20;
+        stroke-dashoffset: 0;
+      }
+      8% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -5;
+      }
+      28% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -175;
+      }
+      36%, 58% {
+        stroke-dasharray: 0 440;
+        stroke-width: 20;
+        stroke-dashoffset: -220;
+      }
+      66% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -225;
+      }
+      86% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -395;
+      }
+      94%, to {
+        stroke-dasharray: 0 440;
+        stroke-width: 20;
+        stroke-dashoffset: -440;
+      }
+    }
+
+    @keyframes ringD {
+      from, 8% {
+        stroke-dasharray: 0 440;
+        stroke-width: 20;
+        stroke-dashoffset: 0;
+      }
+      16% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -5;
+      }
+      36% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -175;
+      }
+      44%, 50% {
+        stroke-dasharray: 0 440;
+        stroke-width: 20;
+        stroke-dashoffset: -220;
+      }
+      58% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -225;
+      }
+      78% {
+        stroke-dasharray: 40 400;
+        stroke-width: 30;
+        stroke-dashoffset: -395;
+      }
+      86%, to {
+        stroke-dasharray: 0 440;
+        stroke-width: 20;
+        stroke-dashoffset: -440;
+      }
+    }
+
+    /* Checkout Modal Overlay */
+    .checkout-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 20, 0.68);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .checkout-modal-overlay.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .checkout-modal-container {
+      background: #ffffff;
+      border-radius: 20px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(31, 111, 92, 0.15);
+      padding: 36px 30px;
+      text-align: center;
+      position: relative;
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+
+    .checkout-modal-overlay.is-active .checkout-modal-container {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Processing State */
+    .modal-processing-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    .modal-loader-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .processing-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--charcoal-ink);
+      margin: 0 0 8px;
+    }
+
+    .processing-sub {
+      font-size: 14px;
+      color: var(--charcoal-muted);
+      max-width: 380px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Success State */
+    .modal-success-state {
+      display: none;
+      text-align: center;
+      animation: fadeInModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-badge-circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--herb-green-light);
+      border: 2px solid var(--herb-green);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--herb-green);
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--herb-green-dark);
+      margin: 0 0 4px;
+      line-height: 1.2;
+    }
+
+    .success-subheading {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--herb-green);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    /* Demo Mode Notice Box */
+    .demo-mode-alert-card {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #d97706;
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-align: left;
+      margin: 0 0 20px;
+    }
+
+    .demo-alert-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #92400e;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .demo-mode-alert-card p {
+      margin: 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #78350f;
+    }
+
+    /* Receipt Details */
+    .order-simulation-receipt {
+      background: #fbfbf9;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed #e6eae8;
+    }
+
+    .receipt-row:last-child {
+      border-bottom: none;
+      padding-top: 8px;
+      margin-top: 4px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--herb-green-dark);
+    }
+
+    .receipt-label {
+      color: var(--charcoal-muted);
+    }
+
+    .receipt-value {
+      color: var(--charcoal-ink);
+      font-weight: 600;
+    }
+
+    .modal-actions-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .btn-modal-primary {
+      flex: 1;
+      background: var(--herb-green);
+      color: #fff;
+      padding: 13px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-modal-primary:hover {
+      background: var(--herb-green-dark);
+    }
+
+    .btn-modal-secondary {
+      flex: 1;
+      background: #f0f4f2;
+      color: var(--herb-green);
+      padding: 13px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-modal-secondary:hover {
+      background: #e2ece8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="checkout-nav">
+    <div class="checkout-nav-inner">
+      <a href="{% url 'home' %}" class="checkout-logo">
+        <img src="{% static 'Images/Holistic Logo.png' %}" alt="Holistic Nepal Logo">
+        <span class="checkout-logo-text">HOLISTIC NEPAL</span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="{% url 'cart' %}" class="cart-nav-link">&larr; Return to Botanical Basket</a>
+        {% include 'pages/user/nav_account_icon.html' %}
+      </div>
+    </div>
+  </header>
+
+  <main class="checkout-main">
+    <div class="checkout-breadcrumb">
+      <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp; <a href="{% url 'cart' %}">Basket</a> &nbsp;/&nbsp; <span>Secure Checkout</span>
+    </div>
+    <h1 class="checkout-h1">Complete Your Remedy Order</h1>
+
+    <div class="checkout-grid">
+      <!-- Left: Customer Details & Shipping -->
+      <div>
+        <div class="checkout-card">
+          <div class="checkout-card-title">
+            <span>1. Client Information</span>
+            <span class="auth-badge-tag">Verified User</span>
+          </div>
+
+          <div class="field-group">
+            <label>Full Name</label>
+            <input type="text" class="field-control" id="checkout-full-name" value="{{ user.PUBLIC_USER_FULL_NAME }}" required>
+          </div>
+
+          <div class="field-group">
+            <label>Email Address</label>
+            <input type="email" class="field-control" id="checkout-email" value="{{ user.PUBLIC_USER_EMAIL }}" required>
+          </div>
+
+          <div class="field-group">
+            <label>Mobile Number (For dispatch courier)</label>
+            <input type="text" class="field-control" id="checkout-mobile" value="{{ user.PUBLIC_USER_MOBILE_NO }}" required>
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <div class="checkout-card-title">
+            <span>2. Delivery Address</span>
+          </div>
+
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+          <div class="field-group">
+            <label>Detailed Address (Street / Area / City)</label>
+            <textarea class="field-control" id="checkout-address" rows="3" required>{{ user.PUBLIC_USER_ADDRESS }}</textarea>
+          </div>
+
+          <div class="field-group">
+            <label>Delivery Instructions (Optional)</label>
+            <input type="text" class="field-control" id="checkout-instructions" placeholder="E.g., Call before delivery, landmark near temple...">
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <div class="checkout-card-title">
+            <span>3. Payment Selection</span>
+          </div>
+
+          <label class="radio-option">
+            <input type="radio" name="payment_method" value="COD" checked>
+            <div class="radio-info">
+              <strong>Cash on Delivery (COD)</strong>
+              <span>Pay in cash upon physical doorstep delivery anywhere in Nepal.</span>
+            </div>
+          </label>
+
+          <label class="radio-option">
+            <input type="radio" name="payment_method" value="ESEWA">
+            <div class="radio-info">
+              <strong>eSewa / Khalti / Digital Wallet</strong>
+              <span>Fast online wallet settlement upon order confirmation.</span>
+            </div>
+          </label>
+
+          <label class="radio-option">
+            <input type="radio" name="payment_method" value="BANK">
+            <div class="radio-info">
+              <strong>Direct Bank Transfer</strong>
+              <span>Settle directly into Holistic Nepal corporate bank account.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Right: Order Overview -->
+      <div>
+        <div class="checkout-card" style="position: sticky; top: 96px;">
+          <div class="checkout-card-title">
+            <span>Order Summary</span>
+            <span style="font-size: 13px; font-weight: 500; color: var(--charcoal-muted);">{{ total_items }} items</span>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            {% for item in cart_items %}
+              <div class="order-mini-row">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="order-mini-thumb">
+                <div class="order-mini-meta">
+                  <div class="order-mini-name">{{ item.name }}</div>
+                  <div class="order-mini-qty">{{ item.contain }} &times; {{ item.quantity }}</div>
+                </div>
+                <div class="order-mini-price">{{ item.subtotal_formatted }}</div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="checkout-summary-line">
+            <span>Items Subtotal</span>
+            <strong>{{ subtotal_formatted }}</strong>
+          </div>
+
+          <div class="checkout-summary-line">
+            <span>Nepal Standard Shipping</span>
+            <strong>{{ shipping_fee_formatted }}</strong>
+          </div>
+
+          <div class="checkout-summary-line grand">
+            <span>Payable Amount</span>
+            <span class="grand-val">{{ grand_total_formatted }}</span>
+          </div>
+
+          <!-- Inline Error Container -->
+          <div id="checkout-inline-error" style="display: none; background: #fff5f5; border: 1px solid #fed7d7; border-left: 4px solid #e53e3e; color: #9b2c2c; padding: 12px 14px; border-radius: 6px; font-size: 13.5px; margin-top: 14px; line-height: 1.4; text-align: left;"></div>
+
+          <button type="button" class="btn-place-order" id="btn-submit-order">
+            <span id="btn-order-text">Confirm &amp; Place Order &rarr;</span>
+            <span id="btn-order-loader" style="display: none; align-items: center; justify-content: center; gap: 8px;">
+              <svg viewBox="0 0 240 240" height="22" width="22" class="pl pl--compact" aria-hidden="true">
+                <circle stroke-linecap="round" stroke-dashoffset="-330" stroke-dasharray="0 660" stroke-width="20" stroke="#000" fill="none" r="105" cy="120" cx="120" class="pl__ring pl__ring--a"></circle>
+                <circle stroke-linecap="round" stroke-dashoffset="-110" stroke-dasharray="0 220" stroke-width="20" stroke="#000" fill="none" r="35" cy="120" cx="120" class="pl__ring pl__ring--b"></circle>
+                <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="85" class="pl__ring pl__ring--c"></circle>
+                <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="155" class="pl__ring pl__ring--d"></circle>
+              </svg>
+              <span>Securing Order...</span>
+            </span>
+          </button>
+
+          <a href="{% url 'cart' %}" class="back-cart-link">&larr; Edit Basket Items</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Dedicated Checkout Processing & Payment Confirmation Modal -->
+  <div class="checkout-modal-overlay" id="checkout-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-status-title">
+    <div class="checkout-modal-container">
+      
+      <!-- STAGE 1: Realtime Processing Animation -->
+      <div class="modal-processing-state" id="modal-processing-state">
+        <div class="modal-loader-stage">
+          <svg viewBox="0 0 240 240" height="240" width="240" class="pl" aria-hidden="true">
+            <circle stroke-linecap="round" stroke-dashoffset="-330" stroke-dasharray="0 660" stroke-width="20" stroke="#000" fill="none" r="105" cy="120" cx="120" class="pl__ring pl__ring--a"></circle>
+            <circle stroke-linecap="round" stroke-dashoffset="-110" stroke-dasharray="0 220" stroke-width="20" stroke="#000" fill="none" r="35" cy="120" cx="120" class="pl__ring pl__ring--b"></circle>
+            <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="85" class="pl__ring pl__ring--c"></circle>
+            <circle stroke-linecap="round" stroke-dasharray="0 440" stroke-width="20" stroke="#000" fill="none" r="70" cy="120" cx="155" class="pl__ring pl__ring--d"></circle>
+          </svg>
+        </div>
+        <h2 class="processing-title" id="modal-status-title">अर्डर प्रशोधन हुँदैछ...</h2>
+        <p class="processing-sub">
+          Verifying Ayurvedic formulation inventory and securing dispatch settlement...
+        </p>
+      </div>
+
+      <!-- STAGE 2: Payment Complete UI & Real Order Confirmation -->
+      <div class="modal-success-state" id="modal-success-state">
+        <div class="success-badge-circle">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </div>
+
+        <h2 class="success-title">भुक्तानी तथा अर्डर सम्पन्न भयो!</h2>
+        <span class="success-subheading">Botanical Formulation Order Confirmed</span>
+
+        <!-- Real Order Confirmation Notice Box -->
+        <div class="order-confirmed-alert-card" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; border-radius: 8px; padding: 14px 16px; text-align: left; margin: 0 0 20px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-size: 13px; font-weight: 700; color: #166534; display: flex; align-items: center; gap: 6px;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              ORDER RECORDED IN SYSTEM
+            </span>
+            <span id="summary-order-badge" style="font-family: monospace; font-weight: 700; background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-size: 13px;">#ORD-PENDING</span>
+          </div>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #14532d;">
+            तपाईंको अर्डर सुरक्षित गरिएको छ र हाम्रो क्लिनिकल डिस्प्याच टोलीले तयारी सुरु गरेको छ। अर्डर विवरणहरू तपाईंको ड्यासबोर्डमा सुरक्षित छन्।
+          </p>
+        </div>
+
+        <!-- Order Summary Card -->
+        <div class="order-simulation-receipt">
+          <div class="receipt-row">
+            <span class="receipt-label">Order Reference</span>
+            <span class="receipt-value" id="summary-order-id" style="font-family: monospace; color: var(--herb-green-dark); font-weight: 700;">#ORD-000000</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Client Name</span>
+            <span class="receipt-value" id="summary-client-name">{{ user.PUBLIC_USER_FULL_NAME }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Payment Method</span>
+            <span class="receipt-value" id="summary-payment-method">Cash on Delivery (COD)</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Delivery Destination</span>
+            <span class="receipt-value" id="summary-delivery-addr" style="max-width: 220px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ user.PUBLIC_USER_ADDRESS|truncatechars:35 }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Order Status</span>
+            <span class="receipt-value" style="color: #1f6f5c; display: inline-flex; align-items: center; gap: 5px;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+              Confirmed (Pending Dispatch)
+            </span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Payable Amount</span>
+            <span class="receipt-value" id="summary-payable-amount" style="color: #154c3e; font-size: 16px;">{{ grand_total_formatted }}</span>
+          </div>
+        </div>
+
+        <div class="modal-actions-row">
+          <a href="{% url 'user_orders' %}" id="btn-view-order-dashboard" class="btn-modal-primary">View in My Orders Dashboard &rarr;</a>
+          <a href="{% url 'home' %}" class="btn-modal-secondary">Return to Home</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Checkout Interactivity Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var btnSubmit = document.getElementById("btn-submit-order");
+      var btnText = document.getElementById("btn-order-text");
+      var btnLoader = document.getElementById("btn-order-loader");
+      var modalOverlay = document.getElementById("checkout-modal-overlay");
+      var modalProcessing = document.getElementById("modal-processing-state");
+      var modalSuccess = document.getElementById("modal-success-state");
+      var inlineError = document.getElementById("checkout-inline-error");
+
+      var summaryOrderBadge = document.getElementById("summary-order-badge");
+      var summaryOrderId = document.getElementById("summary-order-id");
+      var summaryClientName = document.getElementById("summary-client-name");
+      var summaryPaymentMethod = document.getElementById("summary-payment-method");
+      var summaryDeliveryAddr = document.getElementById("summary-delivery-addr");
+      var summaryPayableAmount = document.getElementById("summary-payable-amount");
+      var btnViewOrderDashboard = document.getElementById("btn-view-order-dashboard");
+
+      if (!btnSubmit) return;
+
+      function showError(msg) {
+        if (inlineError) {
+          inlineError.textContent = msg;
+          inlineError.style.display = "block";
+          inlineError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          alert(msg);
+        }
+      }
+
+      function hideError() {
+        if (inlineError) {
+          inlineError.style.display = "none";
+          inlineError.textContent = "";
+        }
+      }
+
+      btnSubmit.addEventListener("click", function(e) {
+        e.preventDefault();
+        hideError();
+
+        // Validate required inputs
+        var nameInput = document.getElementById("checkout-full-name");
+        var emailInput = document.getElementById("checkout-email");
+        var addressInput = document.getElementById("checkout-address");
+        var mobileInput = document.getElementById("checkout-mobile");
+        var instructionsInput = document.getElementById("checkout-instructions");
+
+        var fullName = nameInput ? nameInput.value.trim() : "";
+        var email = emailInput ? emailInput.value.trim() : "";
+        var address = addressInput ? addressInput.value.trim() : "";
+        var mobile = mobileInput ? mobileInput.value.trim() : "";
+        var instructions = instructionsInput ? instructionsInput.value.trim() : "";
+
+        if (!fullName) {
+          showError("Please provide your full name for order dispatch.");
+          if (nameInput) nameInput.focus();
+          return;
+        }
+        if (!mobile) {
+          showError("Please provide your contact mobile number for courier delivery.");
+          if (mobileInput) mobileInput.focus();
+          return;
+        }
+        if (!address) {
+          showError("Please provide your detailed delivery address.");
+          if (addressInput) addressInput.focus();
+          return;
+        }
+
+        // Extract selected payment method label
+        var selectedPayment = document.querySelector('input[name="payment_method"]:checked');
+        var paymentMethod = selectedPayment ? selectedPayment.value : "COD";
+        var paymentLabel = "Cash on Delivery (COD)";
+        if (paymentMethod === "ESEWA") {
+          paymentLabel = "eSewa / Khalti / Digital Wallet";
+        } else if (paymentMethod === "BANK") {
+          paymentLabel = "Direct Bank Transfer";
+        }
+
+        // 1. Enter button loading state
+        btnSubmit.disabled = true;
+        if (btnText) btnText.style.display = "none";
+        if (btnLoader) btnLoader.style.display = "inline-flex";
+
+        // 2. Open processing modal with PL SVG ring loader
+        if (modalOverlay) modalOverlay.classList.add("is-active");
+        if (modalProcessing) modalProcessing.style.display = "flex";
+        if (modalSuccess) modalSuccess.style.display = "none";
+
+        // 3. POST data to real checkout endpoint
+        var csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        var csrfToken = csrfInput ? csrfInput.value : "";
+
+        fetch("{% url 'checkout' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          body: JSON.stringify({
+            full_name: fullName,
+            email: email,
+            mobile_no: mobile,
+            address: address,
+            delivery_instructions: instructions,
+            payment_method: paymentMethod
+          })
+        })
+        .then(function(res) {
+          return res.json().then(function(data) {
+            return { ok: res.ok, status: res.status, data: data };
+          }).catch(function() {
+            return { ok: res.ok, status: res.status, data: { status: 'error', message: 'Unexpected server response.' } };
+          });
+        })
+        .then(function(result) {
+          if (!result.ok || !result.data || result.data.status !== "success") {
+            // Dismiss modal and restore button
+            if (modalOverlay) modalOverlay.classList.remove("is-active");
+            btnSubmit.disabled = false;
+            if (btnText) btnText.style.display = "inline";
+            if (btnLoader) btnLoader.style.display = "none";
+
+            if (result.status === 401 && result.data && result.data.redirect_url) {
+              window.location.href = result.data.redirect_url;
+              return;
+            }
+
+            var errMessage = (result.data && result.data.message) ? result.data.message : "Order placement failed. Please review your details and try again.";
+            showError(errMessage);
+            return;
+          }
+
+          var orderData = result.data;
+
+          // Populate real confirmation fields
+          if (summaryOrderBadge) summaryOrderBadge.textContent = "#" + orderData.order_id;
+          if (summaryOrderId) summaryOrderId.textContent = "#" + orderData.order_id;
+          if (summaryClientName) summaryClientName.textContent = orderData.client_name || fullName;
+          if (summaryPaymentMethod) summaryPaymentMethod.textContent = paymentLabel;
+          if (summaryDeliveryAddr) {
+            var fullAddr = orderData.delivery_address || address;
+            summaryDeliveryAddr.textContent = fullAddr.length > 35 ? fullAddr.substring(0, 32) + "..." : fullAddr;
+            summaryDeliveryAddr.title = fullAddr;
+          }
+          if (summaryPayableAmount && orderData.total_amount_formatted) {
+            summaryPayableAmount.textContent = orderData.total_amount_formatted;
+          }
+          if (btnViewOrderDashboard && orderData.redirect_url) {
+            btnViewOrderDashboard.href = orderData.redirect_url;
+          }
+
+          // Update header cart badge counter to 0 immediately
+          var cartBadge = document.querySelector(".cart-badge, .cart-nav-badge");
+          if (cartBadge) cartBadge.textContent = "0";
+
+          // Transition modal from processing to success
+          setTimeout(function() {
+            if (modalProcessing) modalProcessing.style.display = "none";
+            if (modalSuccess) modalSuccess.style.display = "block";
+
+            // Reset submit button state
+            btnSubmit.disabled = false;
+            if (btnText) btnText.style.display = "inline";
+            if (btnLoader) btnLoader.style.display = "none";
+          }, 700);
+        })
+        .catch(function(err) {
+          if (modalOverlay) modalOverlay.classList.remove("is-active");
+          btnSubmit.disabled = false;
+          if (btnText) btnText.style.display = "inline";
+          if (btnLoader) btnLoader.style.display = "none";
+          showError("A network error occurred while placing your order. Please check your connection and try again.");
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

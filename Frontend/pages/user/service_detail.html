@@ -1,0 +1,525 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-lang="eng">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ service.name_en }} ({{ service.name_np }}) · Holistic Hospital &amp; Research Center</title>
+  <meta name="description" content="{{ service.summary_en }} Physician-supervised clinical naturopathy and rehabilitation at Holistic Hospital, Kathmandu.">
+  <link rel="icon" type="image/x-icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}">
+
+  <!-- Google Fonts: Newsreader / Fraunces, DM Sans, Mukta -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Mukta:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=sanctuary3.0">
+</head>
+
+<body class="product-detail-body hospital-page-wrapper">
+  <!-- Top Navigation Header (Preserved Site Navbar) -->
+  <header class="catalog-header">
+    <div class="header-inner">
+      <!-- Brand Logo -->
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="/" data-i18n="nav_home">Home page</a>
+        <a href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a class="active" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+      </nav>
+
+      <!-- Right Side Actions: Language Switcher, Cart Button & Profile -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="hospital-lang-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="hospital-lang-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart" id="header-cart-btn">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="global-cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
+        </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-toggle" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay"></div>
+  <aside class="mobile-drawer" aria-label="Mobile menu">
+    <div class="drawer-header">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+      <button class="drawer-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="drawer-menu">
+      <a href="/" data-i18n="nav_home">Home page</a>
+      <a href="/products/" data-i18n="nav_products">Our Products</a>
+      <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+      <a class="active" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+    </nav>
+  </aside>
+
+  <main id="main-content">
+    <!-- Breadcrumb: Home / Holistic Hospital / Services / [Service Name] -->
+    <nav class="sanct-breadcrumb-bar" aria-label="Breadcrumb">
+      <div class="sanct-container">
+        <ol class="sanct-breadcrumb-list">
+          <li>
+            <a href="/">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span data-i18n="breadcrumb_home">Home</span>
+            </a>
+          </li>
+          <li class="sanct-breadcrumb-sep">/</li>
+          <li>
+            <a href="{% url 'hospital' %}">
+              <span data-i18n="breadcrumb_hospital">Holistic Hospital</span>
+            </a>
+          </li>
+          <li class="sanct-breadcrumb-sep">/</li>
+          <li>
+            <a href="{% url 'hospital' %}#services">
+              <span data-i18n="breadcrumb_services">Services</span>
+            </a>
+          </li>
+          <li class="sanct-breadcrumb-sep">/</li>
+          <li class="sanct-breadcrumb-current" aria-current="page">
+            <span class="lang-eng">{{ service.name_en }}</span>
+            <span class="lang-nep">{{ service.name_np }}</span>
+          </li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- ============================================================
+         1. SERVICE HERO SECTION
+         ============================================================ -->
+    <section class="service-detail-hero" aria-labelledby="serviceTitle">
+      <div class="sanct-container">
+        <div class="service-detail-hero-grid">
+          <div class="service-detail-hero-content">
+            <div class="service-detail-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>Clinical Therapy #{{ service.order|stringformat:"02d" }}</span>
+            </div>
+
+            <h1 class="service-detail-title" id="serviceTitle">
+              <span class="lang-eng">{{ service.name_en }}</span>
+              <span class="lang-nep">{{ service.name_np }}</span>
+            </h1>
+
+            <span class="service-detail-subtitle">
+              <span class="lang-eng">{{ service.summary_en }}</span>
+              <span class="lang-nep">{{ service.summary_np }}</span>
+            </span>
+
+            <p class="service-detail-lead">
+              <span class="lang-eng">{{ service.hero_description_en }}</span>
+              <span class="lang-nep">{{ service.hero_description_np }}</span>
+            </p>
+
+            <div class="service-detail-actions">
+              <a href="tel:014115830" class="btn-sanct-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span>Call Front Desk: 01-4115830</span>
+              </a>
+
+              <a href="https://wa.me/9779851088497" target="_blank" rel="noopener noreferrer" class="btn-sanct-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.57 4.183 1.564 5.938l-1.564 5.719 5.877-1.542c1.678.917 3.603 1.441 5.655 1.441 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
+                <span>WhatsApp: 9851088497</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Botanical Motif Card -->
+          <div class="service-detail-visual">
+            <div class="service-detail-visual-icon" aria-hidden="true">
+              {% if service.icon == 'droplet' %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+              {% elif service.icon == 'nutrition' %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-10 10c0 4.4 2.9 8.2 7 9.5V14a3 3 0 0 1 6 0v7.5c4.1-1.3 7-5.1 7-9.5A10 10 0 0 0 12 2z"></path></svg>
+              {% elif service.icon == 'lotus' %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8c-2 2-2 6 0 8 2-2 2-6 0-8z"></path></svg>
+              {% elif service.icon == 'herb' %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+              {% elif service.icon == 'joint' or service.icon == 'needle' %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v7m0 6v7m-7-10h7m6 0h-7"></path></svg>
+              {% elif service.icon == 'hands' %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>
+              {% else %}
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+              {% endif %}
+            </div>
+
+            <h3 class="sanct-botanical-fill-title">
+              <span class="lang-eng">Physician-Supervised Regimen</span>
+              <span class="lang-nep">चिकित्सकीय निगरानीमा उपचार</span>
+            </h3>
+            <p style="font-size: 13.5px; color: var(--sanct-text-muted); line-height: 1.6; margin: 8px 0 20px;">
+              <span class="lang-eng">Conducted inside our Kathmandu clinical sanctuary with natural Himalayan therapeutic principles.</span>
+              <span class="lang-nep">काठमाडौंको ठूलो खरीबोट मार्गस्थित हाम्रो अस्पतालमा प्राकृतिक विधिद्वारा सुरक्षित उपचार।</span>
+            </p>
+
+            <div style="display: flex; justify-content: space-around; padding-top: 16px; border-top: 1px solid var(--sanct-border); font-size: 12.5px;">
+              <div>
+                <strong style="display: block; color: var(--sanct-forest);">100%</strong>
+                <span style="color: var(--sanct-text-muted);">Non-Invasive</span>
+              </div>
+              <div>
+                <strong style="display: block; color: var(--sanct-forest);">OPD</strong>
+                <span style="color: var(--sanct-text-muted);">8am – 7pm</span>
+              </div>
+              <div>
+                <strong style="display: block; color: var(--sanct-forest);">IPD</strong>
+                <span style="color: var(--sanct-text-muted);">30+ Beds</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         2. SESSION DETAILS INFO-STRIP
+         ============================================================ -->
+    <section class="service-session-details-strip" aria-label="Session Details">
+      <div class="sanct-container">
+        <div class="session-strip-grid">
+          <div class="session-strip-item">
+            <span class="session-strip-label" data-i18n="spec_action">Physiological Action</span>
+            <span class="session-strip-value">
+              <span class="lang-eng">{{ service.physiological_action_en }}</span>
+              <span class="lang-nep">{{ service.physiological_action_np }}</span>
+            </span>
+          </div>
+          <div class="session-strip-item">
+            <span class="session-strip-label" data-i18n="spec_indication">Primary Indication</span>
+            <span class="session-strip-value">
+              <span class="lang-eng">{{ service.primary_indication_en }}</span>
+              <span class="lang-nep">{{ service.primary_indication_np }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3. WHAT IT TREATS (CONDITIONS LIST)
+         ============================================================ -->
+    <section class="sanct-section" aria-labelledby="treatsTitle">
+      <div class="sanct-container">
+        <div class="section-header-editorial">
+          <div class="section-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+            <span data-i18n="service_what_it_treats">What It Treats</span>
+          </div>
+          <h2 class="section-title" id="treatsTitle">
+            <span class="lang-eng">Clinical Indications &amp; <em class="serif-forest-italic">Target Conditions</em></span>
+            <span class="lang-nep">उपचार गरिने मुख्य <em class="serif-forest-italic">रोग तथा समस्याहरू</em></span>
+          </h2>
+          <p class="section-subtitle" data-i18n="service_what_it_treats_sub">
+            Conditions and clinical pathologies successfully managed through this specialized therapy protocol.
+          </p>
+        </div>
+
+        <!-- English Conditions List -->
+        <div class="conditions-treat-grid lang-eng">
+          {% for condition in service.conditions_treated_en %}
+          <div class="condition-treat-card">
+            <div class="condition-treat-bullet" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span class="condition-treat-text">{{ condition }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Nepali Conditions List -->
+        <div class="conditions-treat-grid lang-nep">
+          {% for condition in service.conditions_treated_np %}
+          <div class="condition-treat-card">
+            <div class="condition-treat-bullet" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span class="condition-treat-text">{{ condition }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. HOW IT WORKS (3-4 STEP PROCESS)
+         ============================================================ -->
+    <section class="sanct-section sanct-section-alt" aria-labelledby="stepsTitle">
+      <div class="sanct-container">
+        <div class="section-header-editorial">
+          <div class="section-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M12 2C10 6 6 10 2 12C6 14 10 18 12 22C14 18 18 14 22 12C18 10 14 6 12 2Z"/></svg>
+            <span data-i18n="service_how_it_works">How It Works</span>
+          </div>
+          <h2 class="section-title" id="stepsTitle">
+            <span class="lang-eng">Our Four-Step <em class="serif-forest-italic">Clinical Procedure</em></span>
+            <span class="lang-nep">वैज्ञानिक उपचारका <em class="serif-forest-italic">चार मुख्य चरणहरू</em></span>
+          </h2>
+          <p class="section-subtitle" data-i18n="service_how_it_works_sub">
+            Our physician-directed multi-step clinical procedure designed for maximum safety, comfort, and efficacy.
+          </p>
+        </div>
+
+        <div class="service-steps-grid">
+          {% for step in service.how_it_works %}
+          <div class="service-step-card">
+            <span class="service-step-number">0{{ step.step|default:forloop.counter }}</span>
+            <h3 class="service-step-title">
+              <span class="lang-eng">{{ step.title_en }}</span>
+              <span class="lang-nep">{{ step.title_np }}</span>
+            </h3>
+            <p class="service-step-desc">
+              <span class="lang-eng">{{ step.desc_en }}</span>
+              <span class="lang-nep">{{ step.desc_np }}</span>
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. RELATED SERVICES (CROSS-LINKING)
+         ============================================================ -->
+    {% if service.related_services.all %}
+    <section class="sanct-section" aria-labelledby="relatedTitle">
+      <div class="sanct-container">
+        <div class="section-header-editorial">
+          <div class="section-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+            <span data-i18n="service_related_title">Related Clinical Services</span>
+          </div>
+          <h2 class="section-title" id="relatedTitle">
+            <span class="lang-eng">Synergistic &amp; <em class="serif-forest-italic">Complementary Care</em></span>
+            <span class="lang-nep">थप प्रभावकारी नतिजाका लागि <em class="serif-forest-italic">सम्बन्धित सेवाहरू</em></span>
+          </h2>
+          <p class="section-subtitle" data-i18n="service_related_sub">
+            Complementary therapies frequently combined to accelerate recovery and enhance therapeutic synergy.
+          </p>
+        </div>
+
+        <div class="services-cards-grid">
+          {% for rel in service.related_services.all %}
+          <a href="{% url 'service_detail' slug=rel.slug %}" class="service-grid-card">
+            <div>
+              <div class="service-card-top">
+                <div class="service-card-icon-wrap" aria-hidden="true">
+                  {% if rel.icon == 'droplet' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                  {% elif rel.icon == 'nutrition' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 0-10 10c0 4.4 2.9 8.2 7 9.5V14a3 3 0 0 1 6 0v7.5c4.1-1.3 7-5.1 7-9.5A10 10 0 0 0 12 2z"></path></svg>
+                  {% elif rel.icon == 'lotus' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8c-2 2-2 6 0 8 2-2 2-6 0-8z"></path></svg>
+                  {% elif rel.icon == 'herb' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                  {% else %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path></svg>
+                  {% endif %}
+                </div>
+                <span class="service-card-order">#{{ rel.order|stringformat:"02d" }}</span>
+              </div>
+
+              <h3 class="service-card-title">
+                <span class="lang-eng">{{ rel.name_en }}</span>
+                <span class="lang-nep">{{ rel.name_np }}</span>
+              </h3>
+
+              <p class="service-card-desc">
+                <span class="lang-eng">{{ rel.summary_en }}</span>
+                <span class="lang-nep">{{ rel.summary_np }}</span>
+              </p>
+            </div>
+
+            <div class="service-card-cta">
+              <span data-i18n="service_learn_more">Learn More →</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- ============================================================
+         6. CONSULTATION CALL TO ACTION & HELPLINE
+         ============================================================ -->
+    <section class="sanct-booking-bar-section" aria-labelledby="bookingBarTitle">
+      <div class="sanct-container">
+        <div class="booking-cta-box">
+          <div class="booking-cta-text">
+            <h3 id="bookingBarTitle">
+              <span class="lang-eng">Begin Your Recovery with {{ service.name_en }}</span>
+              <span class="lang-nep">{{ service.name_np }} मार्फत स्वास्थ्य लाभ सुरु गर्नुहोस्</span>
+            </h3>
+            <p>
+              <span class="lang-eng">Consult with our licensed doctors and specialists. We welcome outpatient consultations and residential recovery admissions at our Kathmandu sanctuary.</span>
+              <span class="lang-nep">काठमाडौंको ठूलो खरीबोट मार्गमा अवस्थित हाम्रो अस्पतालमा विशेषज्ञ डाक्टरहरूसँग परामर्श वा भर्नाका लागि सम्पर्क गर्नुहोस् ।</span>
+            </p>
+          </div>
+
+          <div class="booking-cta-actions">
+            <a href="tel:014115830" class="btn-sanct-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <span>Call Front Desk: 01-4115830</span>
+            </a>
+            <a href="https://wa.me/9779851088497" target="_blank" rel="noopener noreferrer" class="btn-sanct-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.57 4.183 1.564 5.938l-1.564 5.719 5.877-1.542c1.678.917 3.603 1.441 5.655 1.441 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
+              <span>WhatsApp: 9851088497</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statutory Medical Disclaimer -->
+    <div class="sanct-medical-disclaimer" role="contentinfo" aria-label="Medical Disclaimer">
+      <div class="sanct-container">
+        <p style="margin: 0;">
+          <strong>Medical Disclaimer / चिकित्सासम्बन्धी सूचना:</strong>
+          <span class="lang-eng">The clinical services and botanical preparations at Holistic Hospital &amp; Research Center are administered under the direction of licensed medical doctors. Outcomes vary based on individual diagnosis and constitutional severity.</span>
+          <span class="lang-nep">होलिस्टिक हस्पिटल एण्ड रिसर्च सेन्टरमा प्रदान गरिने क्लिनिकल सेवा तथा औषधिहरू विशेषज्ञ चिकित्सकहरूको प्रत्यक्ष निगरानीमा सञ्चालन गरिन्छ । नतिजा बिरामीको व्यक्तिगत अवस्था अनुसार फरक पर्न सक्छ ।</span>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Premium Botanical Apothecary Footer (Matching All Site Pages) -->
+  <footer class="catalog-site-footer">
+    <!-- Background Botanical Leaf Plants Foliage Left & Right -->
+    <img src="{% static 'Images/herbs_decor_left.png' %}" class="footer-plants-decor footer-plants-left" alt="" aria-hidden="true">
+    <img src="{% static 'Images/herbs_decor_right.png' %}" class="footer-plants-decor footer-plants-right" alt="" aria-hidden="true">
+
+    <!-- Faint Center Botanical Leaf Watermark -->
+    <div class="footer-botanical-watermark" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100,10 C100,60 100,150 100,190"></path>
+        <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
+        <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
+        <path d="M100,115 C75,105 60,82 60,82 C80,78 100,98 100,115 Z"></path>
+        <path d="M100,150 C125,140 140,115 140,115 C120,110 100,132 100,150 Z"></path>
+        <path d="M100,45 L78,28 M100,80 L122,62 M100,115 L74,94 M100,150 L126,128"></path>
+      </svg>
+    </div>
+
+    <div class="footer-content-wrap">
+      <!-- Brand Header -->
+      <a class="footer-brand-crest" href="/" aria-label="Holistic Herbs Home">
+        <img class="footer-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="footer-brand-title">Holistic Herbs Nepal</span>
+      </a>
+      <p class="footer-brand-tagline">
+        Pure Wildcrafted Himalayan Botanicals &amp; Herbal Apothecary · Rooted in Ayurvedic Healing.
+      </p>
+
+      <!-- Terroir Quality Badges with Sprout Leaves -->
+      <div class="footer-terroir-row">
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+          100% Wildcrafted Botanicals
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z"/></svg>
+          Pristine Himalayan Terroir
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Ethically Handcrafted in Nepal
+        </span>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="footer-nav-links" aria-label="Footer Navigation">
+        <a class="footer-nav-link" href="/" data-i18n="nav_home">Home</a>
+        <a class="footer-nav-link" href="/products/" data-i18n="nav_products">Our Products</a>
+        <a class="footer-nav-link" href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a class="footer-nav-link" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a class="footer-nav-link" href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+      </nav>
+
+      <!-- Dedicated Hospital Landline Hotline Below Holistic Hospital -->
+      <div class="footer-hospital-hotline-bar">
+        <a href="tel:014115830" class="footer-hospital-hotline-pill" title="Call Holistic Hospital Reception">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span class="lang-eng">Holistic Hospital Landline:</span>
+          <span class="lang-nep">हस्पिटल ल्याण्डलाइन:</span>
+          <strong>01-4115830</strong>
+        </a>
+      </div>
+
+      <!-- Delicate Botanical Leaf Divider -->
+      <div class="footer-leaf-divider" aria-hidden="true">
+        <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
+          <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+          <circle cx="140" cy="7" r="2.5" fill="currentColor" />
+          <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
+          <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
+        </svg>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-line">
+        <span>&copy; 2026 Holistic Herbs Nepal Pvt. Ltd. All rights reserved.</span>
+        <a class="footer-home-return-btn" href="/">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span data-i18n="footer_return_home">Return to Home</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bilingual Engine Script -->
+  <script src="{% static 'js/hospital-i18n.js' %}?v=3.0"></script>
+</body>
+
+</html>

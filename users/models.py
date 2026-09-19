@@ -25,6 +25,31 @@ class PublicUserProfile(models.Model):
     def __str__(self):
         return self.PUBLIC_USER_FULL_NAME
 
+    @property
+    def avatar_initial(self):
+        if self.PUBLIC_USER_FULL_NAME:
+            return self.PUBLIC_USER_FULL_NAME.strip()[:1].upper()
+        return "U"
+
+    @property
+    def avatar_url(self):
+        if self.PUBLIC_USER_PROFILE_IMAGE:
+            try:
+                return self.PUBLIC_USER_PROFILE_IMAGE.url
+            except Exception:
+                return f"/media/{self.PUBLIC_USER_PROFILE_IMAGE}"
+        return None
+
+    @property
+    def FULL_NAME(self):
+        return self.PUBLIC_USER_FULL_NAME
+
+    @property
+    def CITY(self):
+        if self.PUBLIC_USER_ADDRESS:
+            return self.PUBLIC_USER_ADDRESS.split(',')[0].strip()
+        return "Nepal"
+
 
 #!--- EMPLOYEE SETUP MODEL ------- 
 class EmployeeSetup(models.Model):
@@ -48,3 +73,21 @@ class EmployeeSetup(models.Model):
 
     def __str__(self):
         return self.EMPLOYEE_FULL_NAME
+
+
+#!--- USER CART ITEM MODEL -------
+class UserCartItem(models.Model):
+    user = models.ForeignKey(PublicUserProfile, on_delete=models.CASCADE, related_name="cart_items")
+    product = models.ForeignKey('admin_panel.ProductSetup', on_delete=models.CASCADE, related_name="user_cart_items")
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "USER CART ITEM"
+        unique_together = ('user', 'product')
+        verbose_name = "User Cart Item"
+        verbose_name_plural = "User Cart Items"
+
+    def __str__(self):
+        return f"{self.user.PUBLIC_USER_FULL_NAME} - {self.product.PRODUCT_NAME} ({self.quantity})"

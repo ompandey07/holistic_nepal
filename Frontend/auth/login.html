@@ -427,14 +427,19 @@
       return;
     }
 
+    var urlParams = new URLSearchParams(window.location.search);
+    var nextParam = urlParams.get('next') || '';
+
     var payload = {
       email: emailInput.value.trim(),
-      password: passwordInput.value
+      password: passwordInput.value,
+      next: nextParam
     };
 
     var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]') ? form.querySelector('[name=csrfmiddlewaretoken]').value : '';
+    var loginEndpoint = "{% url 'login' %}" + (window.location.search || '');
 
-    fetch("{% url 'login' %}", {
+    fetch(loginEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -447,15 +452,11 @@
       .then(function(result){
         setLoading(false);
         if (result.ok){
-          if (result.data.message === 'i am public' || result.data.role === 'PUBLIC_USER'){
-            showToast('success', 'Public User', result.data.message);
-          } else {
-            showToast('success', 'Welcome back', result.data.message || 'You are being signed in…');
-            if (result.data.redirect_url){
-              setTimeout(function(){
-                window.location.href = result.data.redirect_url;
-              }, 600);
-            }
+          showToast('success', 'Welcome back', result.data.message || 'You are being signed in…');
+          if (result.data.redirect_url){
+            setTimeout(function(){
+              window.location.href = result.data.redirect_url;
+            }, 600);
           }
         } else {
           showToast('error', 'Login failed', result.data.message || 'Incorrect email or password.');

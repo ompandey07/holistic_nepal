@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Announcements &amp; News · Holistic Herbs Nepal</title>
+  <meta name="description" content="Stay updated with authentic Ayurvedic research, organic certifications, Himalayan wildcraft harvests, and news from Holistic Herbs Nepal.">
+  <link rel="icon" type="image/x-icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}">
+
+  <!-- Google Fonts: Inter & Newsreader/Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=newslist1.0">
+</head>
+
+<body class="product-detail-body">
+  <!-- Top Navigation Header -->
+  <header class="catalog-header">
+    <div class="header-inner">
+      <!-- Brand Logo -->
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="/">Home page</a>
+        <a href="/products/">Our Products</a>
+        <a class="active" href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
+      </nav>
+
+      <!-- Right Side Actions: Language Switcher & Cart Button -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="news-list-lang-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="news-list-lang-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart" id="header-cart-btn">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="global-cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
+        </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-toggle" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay"></div>
+  <aside class="mobile-drawer" aria-label="Mobile menu">
+    <div class="drawer-header">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+      <button class="drawer-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="drawer-menu">
+      <a href="/">Home page</a>
+      <a href="/products/">Our Products</a>
+      <a class="active" href="{% url 'news_list' %}">News</a>
+      <a href="{% url 'hospital' %}">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}">Gallery</a>
+    </nav>
+  </aside>
+
+  <main class="news-listing-page" id="main-content">
+    <!-- Breadcrumb -->
+    <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+      <div class="pdp-container">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="breadcrumb-sep">/</li>
+          <li class="breadcrumb-current" aria-current="page">News &amp; Announcements</li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <section class="news-list-hero">
+      <div class="pdp-container">
+        <span class="news-list-eyebrow">CHRONICLES &amp; ADVISORIES · समाचार तथा जानकारी</span>
+        <h1 class="news-list-title">Company Announcements &amp; Botanical News</h1>
+        <p class="news-list-subtitle">
+          Authentic dispatches on clinical advancements, wildcrafting harvests, national GMP certifications, and wellness events from Holistic Herbs Nepal.
+        </p>
+
+        <!-- Category Filters -->
+        <div class="news-category-filter-bar">
+          <a href="{% url 'news_list' %}" class="news-filter-chip {% if selected_category == 'ALL' or not selected_category %}is-active{% endif %}">
+            All ({{ total_count }})
+          </a>
+          {% for n_type in news_types %}
+          <a href="{% url 'news_list' %}?category={{ n_type }}" class="news-filter-chip {% if selected_category == n_type %}is-active{% endif %}">
+            {{ n_type }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- News Grid Section -->
+    <section class="news-grid-section">
+      <div class="pdp-container">
+        {% if news_list %}
+        <div class="news-cards-grid">
+          {% for item in news_list %}
+          <article class="news-card-item">
+            <a href="{% url 'news_detail' slug=item.NEWS_SLUG|default:item.slug %}" class="news-card-link" aria-label="{{ item.NEWS_TITLE }}">
+              <div class="news-card-image-wrap">
+                {% if item.image_url %}
+                  <img src="{{ item.image_url }}" alt="{{ item.NEWS_TITLE }}" class="news-card-img" loading="lazy">
+                {% else %}
+                  <div class="news-card-placeholder-img">
+                    <span>🌿 Holistic Herbs</span>
+                  </div>
+                {% endif %}
+                <span class="news-card-type-badge">{{ item.NEWS_TYPE }}</span>
+              </div>
+
+              <div class="news-card-content">
+                <div class="news-card-meta-row">
+                  <span class="news-card-date">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    {{ item.NEWS_CREATED_AT|date:"M j, Y" }}
+                  </span>
+                </div>
+
+                <h2 class="news-card-title">{{ item.NEWS_TITLE }}</h2>
+                <p class="news-card-desc">{{ item.NEWS_DESCRIPTION|striptags|truncatewords:24 }}</p>
+
+                <div class="news-card-cta">
+                  <span>Read full story</span>
+                  <span class="cta-arrow">&rarr;</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="news-empty-state">
+          <div class="news-empty-icon">📰</div>
+          <h3>No announcements found in this category</h3>
+          <p>Please check back shortly or explore other categories.</p>
+          <a href="{% url 'news_list' %}" class="news-empty-btn">View All Announcements</a>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+
+  <!-- Botanical Apothecary Footer with Natural Leaf Plants -->
+  <footer class="catalog-site-footer">
+    <!-- Background Botanical Leaf Plants Foliage Left & Right -->
+    <img src="{% static 'Images/herbs_decor_left.png' %}" class="footer-plants-decor footer-plants-left" alt="" aria-hidden="true">
+    <img src="{% static 'Images/herbs_decor_right.png' %}" class="footer-plants-decor footer-plants-right" alt="" aria-hidden="true">
+
+    <!-- Faint Center Botanical Leaf Watermark -->
+    <div class="footer-botanical-watermark" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100,10 C100,60 100,150 100,190"></path>
+        <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
+        <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
+        <path d="M100,115 C75,105 60,82 60,82 C80,78 100,98 100,115 Z"></path>
+        <path d="M100,150 C125,140 140,115 140,115 C120,110 100,132 100,150 Z"></path>
+        <path d="M100,45 L78,28 M100,80 L122,62 M100,115 L74,94 M100,150 L126,128"></path>
+      </svg>
+    </div>
+
+    <div class="footer-content-wrap">
+      <!-- Brand Header -->
+      <a class="footer-brand-crest" href="/" aria-label="Holistic Herbs Home">
+        <img class="footer-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="footer-brand-title">Holistic Herbs Nepal</span>
+      </a>
+      <p class="footer-brand-tagline">
+        Pure Wildcrafted Himalayan Botanicals &amp; Herbal Apothecary · Rooted in Ayurvedic Healing.
+      </p>
+
+      <!-- Terroir Quality Badges with Sprout Leaves -->
+      <div class="footer-terroir-row">
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+          100% Wildcrafted Botanicals
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z"/></svg>
+          Pristine Himalayan Terroir
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Ethically Handcrafted in Nepal
+        </span>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="footer-nav-links" aria-label="Footer Navigation">
+        <a class="footer-nav-link" href="/">Home</a>
+        <a class="footer-nav-link" href="/products/">Our Products</a>
+        <a class="footer-nav-link" href="{% url 'news_list' %}">News</a>
+        <a class="footer-nav-link" href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a class="footer-nav-link" href="{% url 'gallery' %}">Gallery</a>
+      </nav>
+
+      <!-- Dedicated Hospital Landline Hotline Below Holistic Hospital -->
+      <div class="footer-hospital-hotline-bar">
+        <a href="tel:014115830" class="footer-hospital-hotline-pill" title="Call Holistic Hospital Reception">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>Holistic Hospital Landline:</span>
+          <strong>01-4115830</strong>
+        </a>
+      </div>
+
+      <!-- Delicate Botanical Leaf Divider -->
+      <div class="footer-leaf-divider" aria-hidden="true">
+        <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
+          <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+          <circle cx="140" cy="7" r="2.5" fill="currentColor" />
+          <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
+          <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
+        </svg>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-line">
+        <span>&copy; 2026 Holistic Herbs Nepal Pvt. Ltd. All rights reserved.</span>
+        <a class="footer-home-return-btn" href="/">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Return to Home</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

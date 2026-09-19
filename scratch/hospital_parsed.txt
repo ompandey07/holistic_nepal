@@ -1,0 +1,25 @@
+=== 8 SERVICES GRID ===
+HOT STONE -> images/uploaded/service2_1000.jpeg
+MUD THERAPY -> images/uploaded/Mude1.jpeg
+SIRODHARA -> images/uploaded/Sigligh.jpeg
+KATI BASTI -> images/uploaded/kati123.jpeg
+ACUPUNCTURE -> images/uploaded/Untitled-7.jpeg
+FOOTBATH -> images/uploaded/Untitled-5.jpeg
+PHYSIOTHERAPY -> images/uploaded/viber_image_2020-12-02_12-57-22_1000.jpeg
+CUPPING -> images/uploaded/viber_image_2020-12-02_12-57-49_1000.jpeg
+
+=== BULLETED SERVICES LIST ===
+- Hydrotherapy-हाइड्रोथेरापी
+- Diet Therapy- डाइट थेरापी
+- Relaxation-विश्राम
+- Herbal Therapy-हर्बल थेरापी
+- Integrated Treatment-एकिकृत उपचार
+- Lifestyle Management-जीवनशैली व्यवस्थापन
+- Mantal Health and Counsiling-मानसिक परामर्श
+- Physiotherapy-फिजियोथेरापी
+- Acupunture/Acupresure-अकुपंचर
+- Reflexology-रिफ्लेक्साेलाेजी
+- Manipulation-मसाज
+
+=== HERO / TOP IMAGES ===
+Top img: images/thumbs/0000136_Untitled-1.jpeg

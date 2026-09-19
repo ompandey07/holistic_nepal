@@ -14,8 +14,6 @@ PRODUCTS_CATALOG = {
         "price": 990,
         "price_formatted": "Rs 990.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-005",
-        "rating": 5.0,
-        "reviews_count": 14,
         "short_desc": "Maintains liver health, improves digestion and strengthens natural immunity.",
         "image": "Medicine/Herbs Aloe Vera.png",
         "gallery_images": [
@@ -47,8 +45,6 @@ PRODUCTS_CATALOG = {
         "price": 1490,
         "price_formatted": "Rs 1,490.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-012",
-        "rating": 4.9,
-        "reviews_count": 19,
         "short_desc": "Reduces joint pain, repairs cartilage and strengthens bone flexibility.",
         "image": "Medicine/Herbs Glucosamine.jpeg",
         "gallery_images": [
@@ -78,8 +74,6 @@ PRODUCTS_CATALOG = {
         "price": 2150,
         "price_formatted": "Rs 2,150.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-009",
-        "rating": 5.0,
-        "reviews_count": 23,
         "short_desc": "Protects brain health, enhances memory focus, and fights depression and migraines.",
         "image": "Medicine/Herbs Gingko Biloba.png",
         "gallery_images": [
@@ -109,8 +103,6 @@ PRODUCTS_CATALOG = {
         "price": 3200,
         "price_formatted": "Rs 3,200.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-017",
-        "rating": 4.8,
-        "reviews_count": 16,
         "short_desc": "Natural weight care formulation, burns body fat and accelerates metabolism.",
         "image": "Medicine/Herbs Green Coffee Beans.png",
         "gallery_images": [
@@ -140,8 +132,6 @@ PRODUCTS_CATALOG = {
         "price": 540,
         "price_formatted": "Rs 540.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-021",
-        "rating": 4.9,
-        "reviews_count": 28,
         "short_desc": "Cleanses blood, flushes bodily toxins and aids everyday digestion.",
         "image": "Medicine/Herbs Green Tea.jpeg",
         "gallery_images": [
@@ -171,8 +161,6 @@ PRODUCTS_CATALOG = {
         "price": 1000,
         "price_formatted": "Rs 1,000.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-024",
-        "rating": 5.0,
-        "reviews_count": 31,
         "short_desc": "Relieves stress, eliminates fatigue and sustains physical stamina.",
         "image": "Medicine/Herbs Black Coffee.jpeg",
         "gallery_images": [
@@ -202,8 +190,6 @@ PRODUCTS_CATALOG = {
         "price": 170,
         "price_formatted": "Rs 170.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-032",
-        "rating": 4.9,
-        "reviews_count": 22,
         "short_desc": "Protects enamel, stops gum bleeding and permanently cures bad breath.",
         "image": "Medicine/Herbs Toothpaste 50 Gm.png",
         "gallery_images": [
@@ -233,8 +219,6 @@ PRODUCTS_CATALOG = {
         "price": 440,
         "price_formatted": "Rs 440.00",
         "dftqc_no": "DFTQC No.: 01-25-76-18-036",
-        "rating": 5.0,
-        "reviews_count": 26,
         "short_desc": "Reduces joint stiffness, backache, and deep muscle pain.",
         "image": "Medicine/Herbs Massage Oil.jpeg",
         "gallery_images": [
@@ -257,6 +241,8 @@ PRODUCTS_CATALOG = {
 }
 
 
+
+
 def get_all_products():
     """
     Return a list of all products from the backend database (ProductSetup),
@@ -273,8 +259,10 @@ def get_all_products():
     if not db_products:
         # Fallback to static catalog
         products = []
-        for p in PRODUCTS_CATALOG.values():
+        for idx, (p_slug, p) in enumerate(PRODUCTS_CATALOG.items(), start=1):
             p_copy = dict(p)
+            p_copy['id'] = p_copy.get('id', idx)
+            p_copy['db_id'] = p_copy.get('db_id', idx)
             if 'gallery_images' not in p_copy or not p_copy['gallery_images']:
                 p_copy['gallery_images'] = [p_copy['image']]
             img = p_copy.get('image', '')
@@ -288,7 +276,7 @@ def get_all_products():
     products = []
     seen_slugs = set()
     for db_p in db_products:
-        base_slug = slugify(db_p.PRODUCT_NAME) or f"product-{db_p.id}"
+        base_slug = getattr(db_p, 'PRODUCT_SLUG', None) or slugify(db_p.PRODUCT_NAME) or f"product-{db_p.id}"
         catalog_meta = {}
         for cat_slug, cat_val in PRODUCTS_CATALOG.items():
             if cat_val.get('name', '').strip().lower() == db_p.PRODUCT_NAME.strip().lower() or cat_slug == base_slug:
@@ -339,17 +327,27 @@ def get_all_products():
         unit_symbol = db_p.PRODUCT_UNIT.UNIT_SYMBOL if db_p.PRODUCT_UNIT else ''
         contain = catalog_meta.get('contain') or (f"{unit_symbol} ({unit_name})" if unit_symbol else unit_name)
 
-        # Descriptions
+        # Descriptions (strip all HTML tags)
+        import html
+        import re
+        from django.utils.html import strip_tags
         raw_desc = db_p.PRODUCT_DESCRIPTION or catalog_meta.get('short_desc') or catalog_meta.get('english_desc') or ''
-        short_desc = catalog_meta.get('short_desc') or (raw_desc[:110] + ('...' if len(raw_desc) > 110 else ''))
-        english_desc = catalog_meta.get('english_desc') or raw_desc
-        nepali_desc = catalog_meta.get('nepali_desc') or raw_desc
+        clean_desc = html.unescape(strip_tags(raw_desc)).replace('\xa0', ' ').strip()
+        short_desc = getattr(db_p, 'short_desc', None) or catalog_meta.get('short_desc') or (clean_desc[:110] + ('...' if len(clean_desc) > 110 else ''))
+        english_desc = short_desc or clean_desc
+        nepali_desc = short_desc or clean_desc
 
-        # Highlights
+        # Highlights (extract clean action bullets, stripping all HTML)
         highlights = catalog_meta.get('highlights')
         if not highlights:
-            lines = [l.strip(' -*•') for l in raw_desc.split('\n') if l.strip()]
-            highlights = lines[:4] if lines else [
+            feat_source = getattr(db_p, 'PRODUCT_KEY_FEATURES', None) or raw_desc
+            if feat_source:
+                formatted_feat = re.sub(r'</?(?:p|li|div|br\s*/?|h[1-6])[^>]*>', '\n', feat_source, flags=re.IGNORECASE)
+                clean_feat = html.unescape(strip_tags(formatted_feat)).replace('\xa0', ' ')
+                lines = [l.strip(' -*•\r\t') for l in clean_feat.split('\n') if l.strip(' -*•\r\t')]
+            else:
+                lines = []
+            highlights = lines[:5] if lines else [
                 "100% Pure authentic Himalayan herbal formulation",
                 "Processed under strict traditional Ayurvedic standards",
                 "Lab verified for chemical purity and active botanicals",
@@ -368,8 +366,9 @@ def get_all_products():
             "price_formatted": price_formatted,
             "price_display": price_display,
             "dftqc_no": catalog_meta.get('dftqc_no', 'DFTQC Verified Formulation'),
-            "rating": catalog_meta.get('rating', 5.0),
-            "reviews_count": catalog_meta.get('reviews_count', 16),
+            "rating": db_p.avg_rating,
+            "reviews_count": getattr(db_p, 'reviews_count', 0),
+            "avg_rating_stars": db_p.avg_rating_stars,
             "short_desc": short_desc,
             "english_desc": english_desc,
             "nepali_desc": nepali_desc,
