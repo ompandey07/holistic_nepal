@@ -97,6 +97,24 @@ class News(models.Model):
             return s
         return f"news-{self.id or 'item'}"
 
+    @property
+    def image_url(self):
+        if self.NEWS_IMAGE:
+            try:
+                return self.NEWS_IMAGE.url
+            except Exception:
+                return f"/media/{self.NEWS_IMAGE}"
+        try:
+            first_img = self.NEWS_IMAGES.first()
+            if first_img and first_img.IMAGE:
+                try:
+                    return first_img.IMAGE.url
+                except Exception:
+                    return f"/media/{first_img.IMAGE}"
+        except Exception:
+            pass
+        return ""
+
 
 # !--- NEWS MULTIPLE IMAGES MODEL -------
 class NewsImage(models.Model):
@@ -109,6 +127,15 @@ class NewsImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.NEWS.NEWS_TITLE}"
+
+    @property
+    def image_url(self):
+        if self.IMAGE:
+            try:
+                return self.IMAGE.url
+            except Exception:
+                return f"/media/{self.IMAGE}"
+        return ""
 
 
 
@@ -218,7 +245,10 @@ class ProductSetup(models.Model):
     @property
     def short_desc(self):
         if self.PRODUCT_DESCRIPTION:
-            return self.PRODUCT_DESCRIPTION[:140] + ("..." if len(self.PRODUCT_DESCRIPTION) > 140 else "")
+            from django.utils.html import strip_tags
+            import html
+            clean = html.unescape(strip_tags(self.PRODUCT_DESCRIPTION)).replace('\xa0', ' ').strip()
+            return clean[:140] + ("..." if len(clean) > 140 else "")
         return ""
 
     @property
@@ -412,6 +442,8 @@ class ProductOrder(models.Model):
 
     @property
     def order_amount(self):
+        if hasattr(self, '_order_amount') and self._order_amount is not None:
+            return float(self._order_amount)
         if self.TOTAL_AMOUNT and float(self.TOTAL_AMOUNT) > 0:
             return float(self.TOTAL_AMOUNT)
         if self.PRODUCT_ORDER_PRODUCT and self.PRODUCT_ORDER_QTY:
@@ -420,6 +452,20 @@ class ProductOrder(models.Model):
             except Exception:
                 return 0.0
         return 0.0
+
+    @order_amount.setter
+    def order_amount(self, value):
+        self._order_amount = value
+
+    @property
+    def customer_display_name(self):
+        if self.SHIPPING_NAME:
+            return self.SHIPPING_NAME
+        if self.CUSTOMER and hasattr(self.CUSTOMER, 'PUBLIC_USER_FULL_NAME') and self.CUSTOMER.PUBLIC_USER_FULL_NAME:
+            return self.CUSTOMER.PUBLIC_USER_FULL_NAME
+        if self.PRODUCT_ORDER_USER and hasattr(self.PRODUCT_ORDER_USER, 'EMPLOYEE_FULL_NAME') and self.PRODUCT_ORDER_USER.EMPLOYEE_FULL_NAME:
+            return self.PRODUCT_ORDER_USER.EMPLOYEE_FULL_NAME
+        return "Customer"
 
     @property
     def product_display_name(self):

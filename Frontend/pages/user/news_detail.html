@@ -9,10 +9,10 @@
   <meta name="description" content="{{ news.NEWS_DESCRIPTION|striptags|truncatewords:25 }}">
   <link rel="icon" type="image/x-icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}">
 
-  <!-- Google Fonts: Inter & Newsreader/Playfair Display -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{% static 'css/index.css' %}?v=news2.0">
 </head>
@@ -136,6 +136,10 @@
           <div class="news-article-featured-image-wrap">
             <img src="{{ news.image_url }}" alt="{{ news.NEWS_TITLE }}" class="news-article-featured-img">
           </div>
+          {% elif news.NEWS_IMAGE %}
+          <div class="news-article-featured-image-wrap">
+            <img src="{{ news.NEWS_IMAGE.url }}" alt="{{ news.NEWS_TITLE }}" class="news-article-featured-img">
+          </div>
           {% endif %}
 
           <!-- Clean Formatted Real Description (Safe rendering, stripped of raw leaking tags) -->
@@ -144,7 +148,7 @@
           </div>
 
           <!-- Additional Gallery Images if uploaded in admin -->
-          {% if news.NEWS_IMAGES.all.count > 1 %}
+          {% if news.NEWS_IMAGES.all.count > 0 %}
           <div class="news-article-gallery">
             <h3 class="news-gallery-title">Photo Documentation · फोटो तथा तस्विरहरू</h3>
             <div class="news-gallery-grid">
@@ -188,6 +192,10 @@
                     {% if item.image_url %}
                     <div class="news-thumb-wrap">
                       <img src="{{ item.image_url }}" alt="{{ item.NEWS_TITLE }}" class="news-thumbnail" loading="lazy">
+                    </div>
+                    {% elif item.NEWS_IMAGE %}
+                    <div class="news-thumb-wrap">
+                      <img src="{{ item.NEWS_IMAGE.url }}" alt="{{ item.NEWS_TITLE }}" class="news-thumbnail" loading="lazy">
                     </div>
                     {% endif %}
                     <div class="news-text-wrap">

@@ -9,10 +9,10 @@
   <meta name="description" content="Stay updated with authentic Ayurvedic research, organic certifications, Himalayan wildcraft harvests, and news from Holistic Herbs Nepal.">
   <link rel="icon" type="image/x-icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}">
 
-  <!-- Google Fonts: Inter & Newsreader/Playfair Display -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{% static 'css/index.css' %}?v=newslist1.0">
 </head>
@@ -145,6 +145,8 @@
               <div class="news-card-image-wrap">
                 {% if item.image_url %}
                   <img src="{{ item.image_url }}" alt="{{ item.NEWS_TITLE }}" class="news-card-img" loading="lazy">
+                {% elif item.NEWS_IMAGE %}
+                  <img src="{{ item.NEWS_IMAGE.url }}" alt="{{ item.NEWS_TITLE }}" class="news-card-img" loading="lazy">
                 {% else %}
                   <div class="news-card-placeholder-img">
                     <span>🌿 Holistic Herbs</span>

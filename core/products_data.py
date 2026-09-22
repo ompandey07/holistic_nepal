@@ -334,6 +334,8 @@ def get_all_products():
         raw_desc = db_p.PRODUCT_DESCRIPTION or catalog_meta.get('short_desc') or catalog_meta.get('english_desc') or ''
         clean_desc = html.unescape(strip_tags(raw_desc)).replace('\xa0', ' ').strip()
         short_desc = getattr(db_p, 'short_desc', None) or catalog_meta.get('short_desc') or (clean_desc[:110] + ('...' if len(clean_desc) > 110 else ''))
+        if short_desc:
+            short_desc = html.unescape(strip_tags(short_desc)).replace('\xa0', ' ').strip()
         english_desc = short_desc or clean_desc
         nepali_desc = short_desc or clean_desc
 

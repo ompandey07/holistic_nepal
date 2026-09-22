@@ -7,12 +7,22 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.files.storage import default_storage
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.conf import settings
+from django.core.cache import cache
 import json
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 #!- IMPORT USERS MODELS AND SECURITY WRAPPERS
 from users.models import EmployeeSetup, PublicUserProfile
 from users.wrapper import advance_security_wrapper, check_suspicious_input, get_client_ip, sanitize_input_string
+
 
 
 #!- PASSWORD VERIFICATION HELPER
@@ -300,3 +310,224 @@ class PublicRegisterView(View):
             'message': 'Registration successful! Redirecting to login…',
             'redirect_url': reverse('login')
         })
+
+
+# ==============================================================================
+# -- PASSWORD RESET TOKEN GENERATOR (SCOPED STRICTLY TO PublicUserProfile) -----
+# ==============================================================================
+class PublicUserPasswordResetTokenGenerator(PasswordResetTokenGenerator):
+    """
+    Subclassed from Django's built-in PasswordResetTokenGenerator.
+    Specifically keyed to PublicUserProfile's primary key, password hash,
+    and update timestamp for secure one-time usage and automatic expiration.
+    """
+    def _make_hash_value(self, user, timestamp):
+        updated_ts = ''
+        if hasattr(user, 'PUBLIC_USER_UPDATED_AT') and user.PUBLIC_USER_UPDATED_AT:
+            updated_ts = str(user.PUBLIC_USER_UPDATED_AT.timestamp())
+        return f"{user.pk}{user.PUBLIC_USER_PASSWORD}{updated_ts}{timestamp}"
+
+public_user_token_generator = PublicUserPasswordResetTokenGenerator()
+
+
+def check_password_reset_rate_limit(ip, email, limit=5, timeout=3600):
+    """
+    Rate limiting: max `limit` requests per IP and per email per `timeout` seconds (default: 5/hr).
+    Returns True if rate limit is exceeded, False otherwise.
+    """
+    clean_email = (email or '').strip().lower()
+    ip_key = f"pwd_reset_rate_ip:{ip}"
+    email_key = f"pwd_reset_rate_email:{clean_email}"
+
+    ip_count = cache.get(ip_key, 0)
+    email_count = cache.get(email_key, 0) if clean_email else 0
+
+    if ip_count >= limit or email_count >= limit:
+        return True
+
+    cache.set(ip_key, ip_count + 1, timeout)
+    if clean_email:
+        cache.set(email_key, email_count + 1, timeout)
+    return False
+
+
+class PasswordResetRequestView(View):
+    """
+    Customer password reset request view.
+    Accepts GET (renders form) and POST (handles email submission).
+    Rate-limited to 5 requests per IP/email per hour.
+    Scoped STRICTLY to PublicUserProfile.
+    """
+    def get(self, request):
+        return render(request, 'auth/password_reset.html')
+
+    def post(self, request):
+        email = ''
+        if request.content_type == 'application/json' or request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                data = json.loads(request.body.decode('utf-8')) if request.body else {}
+                email = data.get('email', '')
+            except Exception:
+                pass
+        if not email:
+            email = request.POST.get('email', '')
+
+        email = email.strip().lower()
+        client_ip = get_client_ip(request)
+
+        # 1. Rate limiting check
+        if check_password_reset_rate_limit(client_ip, email, limit=5, timeout=3600):
+            msg = "Too many password reset attempts. Please wait an hour before trying again."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'error', 'message': msg}, status=429)
+            messages.error(request, msg)
+            return render(request, 'auth/password_reset.html', {'error': msg})
+
+        if not email:
+            msg = "Please enter a valid email address."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'error', 'message': msg}, status=400)
+            return render(request, 'auth/password_reset.html', {'error': msg})
+
+        # 2. STRICTLY search PublicUserProfile (staff/admin accounts intentionally excluded)
+        public_user = PublicUserProfile.objects.filter(PUBLIC_USER_EMAIL__iexact=email).first()
+
+        if public_user:
+            try:
+                uidb64 = urlsafe_base64_encode(force_bytes(public_user.pk))
+                token = public_user_token_generator.make_token(public_user)
+                reset_path = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+                reset_url = request.build_absolute_uri(reset_path)
+
+                subject = "Reset your Holistic Nepal account password"
+                message_text = (
+                    f"Hello {public_user.PUBLIC_USER_FULL_NAME},\n\n"
+                    f"We received a request to reset the password for your Holistic Nepal customer account.\n\n"
+                    f"Click the link below to set a new password:\n{reset_url}\n\n"
+                    f"This link is valid for 1 hour and can only be used once.\n"
+                    f"If you did not make this request, you can safely ignore this email.\n\n"
+                    f"Warm regards,\nHolistic Nepal Team"
+                )
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'Holistic Nepal <noreply@holisticnepal.com>')
+                send_mail(
+                    subject,
+                    message_text,
+                    from_email,
+                    [public_user.PUBLIC_USER_EMAIL],
+                    fail_silently=False
+                )
+            except Exception as e:
+                logger.error(f"Failed to send password reset email: {e}")
+
+        # Always return success to prevent email enumeration attacks
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return JsonResponse({
+                'status': 'success',
+                'message': 'If an account exists with that email address, instructions have been sent.',
+                'redirect_url': reverse('password_reset_done')
+            })
+
+        return redirect('password_reset_done')
+
+
+class PasswordResetSentView(View):
+    """
+    Renders password reset instructions dispatched confirmation page.
+    """
+    def get(self, request):
+        return render(request, 'auth/password_reset_done.html')
+
+
+class PasswordResetConfirmView(View):
+    """
+    Validates token and handles new password submission for PublicUserProfile.
+    """
+    def _get_user(self, uidb64):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            return PublicUserProfile.objects.filter(pk=uid).first()
+        except Exception:
+            return None
+
+    def get(self, request, uidb64, token):
+        user = self._get_user(uidb64)
+        validlink = bool(user and public_user_token_generator.check_token(user, token))
+        return render(request, 'auth/password_reset_confirm.html', {
+            'validlink': validlink,
+            'uidb64': uidb64,
+            'token': token,
+        })
+
+    def post(self, request, uidb64, token):
+        user = self._get_user(uidb64)
+        if not user or not public_user_token_generator.check_token(user, token):
+            msg = "This password reset link is invalid or has expired."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'error', 'message': msg}, status=400)
+            return render(request, 'auth/password_reset_confirm.html', {'validlink': False})
+
+        new_password = ''
+        confirm_password = ''
+        if request.content_type == 'application/json' or request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                data = json.loads(request.body.decode('utf-8')) if request.body else {}
+                new_password = data.get('password', '')
+                confirm_password = data.get('confirm_password', '')
+            except Exception:
+                pass
+        if not new_password:
+            new_password = request.POST.get('password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+
+        if not new_password or len(new_password) < 6:
+            err = "Password must be at least 6 characters long."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'error', 'message': err}, status=400)
+            return render(request, 'auth/password_reset_confirm.html', {
+                'validlink': True,
+                'uidb64': uidb64,
+                'token': token,
+                'error': err
+            })
+
+        if new_password != confirm_password:
+            err = "Passwords do not match."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return JsonResponse({'status': 'error', 'message': err}, status=400)
+            return render(request, 'auth/password_reset_confirm.html', {
+                'validlink': True,
+                'uidb64': uidb64,
+                'token': token,
+                'error': err
+            })
+
+        # Update PublicUserProfile hashed password
+        user.PUBLIC_USER_PASSWORD = make_password(new_password)
+        user.save()
+
+        # Also synchronize customer Django auth User if one exists
+        try:
+            django_user = User.objects.filter(email__iexact=user.PUBLIC_USER_EMAIL).first()
+            if django_user:
+                django_user.set_password(new_password)
+                django_user.save()
+        except Exception as e:
+            logger.warning(f"Could not synchronize Django User password: {e}")
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Password reset successful! Redirecting...',
+                'redirect_url': reverse('password_reset_complete')
+            })
+
+        return redirect('password_reset_complete')
+
+
+class PasswordResetCompleteView(View):
+    """
+    Renders password reset complete success page with login button.
+    """
+    def get(self, request):
+        return render(request, 'auth/password_reset_complete.html')
+

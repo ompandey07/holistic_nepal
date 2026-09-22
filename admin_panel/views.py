@@ -1,5 +1,5 @@
 from .models import UnitSetup, ProductCategory, ProductSetup, ProductImage, ProductOrder, News, NewsImage, Gallery, GalleryImage
-from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper
+from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper, Case, When
 from django.utils.decorators import method_decorator
 from users.wrapper import advance_security_wrapper
 from django.db.models.functions import TruncMonth
@@ -27,9 +27,13 @@ class AdminDashboardView(View):
         COMPUTE ALL DASHBOARD AGGREGATIONS IN MINIMAL DB ROUND-TRIPS.
         CACHED FOR _CACHE_TTL SECONDS SO LAKH-SCALE DATA DOESN'T HAMMER THE DB ON EVERY REQUEST.
         """
-        #!- REVENUE EXPRESSION: QTY X PRICE - REUSED ACROSS ALL REVENUE QUERIES
-        revenue_expr = ExpressionWrapper(
-            F('PRODUCT_ORDER_QTY') * F('PRODUCT_ORDER_PRODUCT__PRODUCT_PRICE'),
+        #!- REVENUE EXPRESSION: USE TOTAL_AMOUNT IF GREATER THAN 0, ELSE QTY X PRICE
+        revenue_expr = Case(
+            When(TOTAL_AMOUNT__gt=0, then=F('TOTAL_AMOUNT')),
+            default=ExpressionWrapper(
+                F('PRODUCT_ORDER_QTY') * F('PRODUCT_ORDER_PRODUCT__PRODUCT_PRICE'),
+                output_field=DecimalField()
+            ),
             output_field=DecimalField()
         )
 
@@ -119,20 +123,20 @@ class AdminDashboardView(View):
         #!- RECENT 10 ORDERS - ONLY FETCH COLUMNS NEEDED FOR THE TABLE (AVOIDS LOADING HEAVY FIELDS)
         recent_orders = (
             ProductOrder.objects
-            .select_related('PRODUCT_ORDER_PRODUCT', 'PRODUCT_ORDER_USER')
+            .select_related('PRODUCT_ORDER_PRODUCT', 'PRODUCT_ORDER_USER', 'CUSTOMER')
             .only(
                 'PRODUCT_ORDER_ID',
                 'PRODUCT_ORDER_QTY',
                 'PRODUCT_ORDER_STATUS',
                 'PRODUCT_ORDER_CREATED_AT',
+                'TOTAL_AMOUNT',
+                'SHIPPING_NAME',
+                'ORDER_ITEMS_DATA',
                 'PRODUCT_ORDER_USER__EMPLOYEE_FULL_NAME',
+                'CUSTOMER__PUBLIC_USER_FULL_NAME',
                 'PRODUCT_ORDER_PRODUCT__PRODUCT_NAME',
                 'PRODUCT_ORDER_PRODUCT__PRODUCT_PRICE',
             )
-            .annotate(order_amount=ExpressionWrapper(
-                F('PRODUCT_ORDER_QTY') * F('PRODUCT_ORDER_PRODUCT__PRODUCT_PRICE'),
-                output_field=DecimalField()
-            ))
             .order_by('-PRODUCT_ORDER_CREATED_AT')[:10]
         )
 

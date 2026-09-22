@@ -9,18 +9,16 @@
   <meta name="description" content="Holistic Herbs — Himalayan Herbs, Pure Holistic Wellness." />
   <title>Holistic Herbs Himalayan Herbs, Pure Holistic Wellness</title>
 
-  <!-- Google Fonts: DM Sans & Newsreader & Courier Prime (Archival Typewriter Mono) -->
+  <!-- Google Fonts: Inter & Mukta -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Favicon -->
   <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=nonstop_ticker5.7">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=mobile_toggle6.3">
 
   <!-- Prevent scroll restoration glitch on refresh/load -->
   <script>
@@ -159,8 +157,7 @@
       <a href="{% url 'hospital' %}">Holistic Hospital</a>
       <a href="{% url 'gallery' %}">Gallery</a>
     </nav>
-    <div
-      style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between;">
+    <div class="drawer-bottom-row">
       <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;">Language / भाषा:</span>
       <div class="nav-lang-switch" role="group" aria-label="Language selection">
         <button type="button" class="nav-lang-btn is-active" data-lang="eng" aria-pressed="true">ENG</button>
@@ -229,7 +226,7 @@
               </svg>
             </a>
             {% endif %}
-            <a class="btn-approach" href="#approach">
+            <a class="btn-approach" href="{% url 'hospital' %}" aria-label="Explore Holistic Hospital & Research Center">
               <span>Our approach</span>
               <span class="arrow">↗</span>
             </a>
@@ -337,7 +334,7 @@
             rituals that feel good to return to.
           </p>
           <div class="wellness-action">
-            <a class="btn-approach-link" href="#approach">
+            <a class="btn-approach-link" href="{% url 'hospital' %}" aria-label="Explore Holistic Hospital & Research Center">
               <span>Meet our approach</span>
               <span class="arrow-orange">↗</span>
             </a>
@@ -817,7 +814,7 @@
               <div class="slide-description-block">
                 <span class="slide-desc-label">HERBAL ACTION · विवरण:</span>
                 <p class="slide-desc-text">
-                  {{ prod.short_desc|default:prod.english_desc|default:prod.nepali_desc|truncatewords:24 }}
+                  {{ prod.short_desc|default:prod.english_desc|default:prod.nepali_desc|striptags|truncatewords:24 }}
                 </p>
               </div>
 
@@ -905,7 +902,7 @@
             <div class="footer-heritage-seal" title="Certified Himalayan Botanical Atelier" aria-hidden="true">
               <svg class="seal-svg" viewBox="0 0 100 100">
                 <path id="seal-text-path" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
-                <text font-size="8.2" font-family="'DM Sans', sans-serif" letter-spacing="2.2" fill="currentColor">
+                <text font-size="8.2" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" letter-spacing="2.2" fill="currentColor">
                   <textPath href="#seal-text-path" startOffset="50%" text-anchor="middle">
                     • HIMALAYAN ATELIER • EST. 2026 • PURITY •
                   </textPath>
@@ -927,11 +924,10 @@
             <span class="terroir-chip">Hand-Bottled</span>
           </div>
 
-          <!-- Live Atelier Provenance Status -->
-          <div class="footer-atelier-status" aria-label="Atelier live provenance">
+          <!-- Live Nepal Time Provenance Status -->
+          <div class="footer-atelier-status" aria-label="Nepal Time">
             <span class="atelier-pulse-dot" aria-hidden="true"></span>
-            <span class="atelier-status-text">Kathmandu Atelier • <time id="footer-kathmandu-clock">--:-- NPT</time> •
-              Active Handcrafting</span>
+            <span class="atelier-status-text">Nepal Time • <time id="footer-kathmandu-clock">--:-- NPT</time></span>
           </div>
         </div>
 

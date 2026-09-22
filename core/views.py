@@ -703,4 +703,18 @@ class CheckoutPageView:
             'grand_total_formatted': f"Rs {int(grand_total):,}" if float(grand_total).is_integer() else f"Rs {grand_total:,.2f}",
         }
         return render(request, 'pages/user/checkout.html', context)
+
+
+# ==============================================================================
+# -- CUSTOM ERROR HANDLERS (404 & 500) -----------------------------------------
+# ==============================================================================
+def custom_404_view(request, exception=None):
+    """Custom 404 error view rendering branded 404 template with HTTP 404 status."""
+    return render(request, '404.html', status=404)
+
+
+def custom_500_view(request):
+    """Custom 500 error view rendering branded 500 template with HTTP 500 status."""
+    return render(request, '500.html', status=500)
+
 

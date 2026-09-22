@@ -7,7 +7,7 @@
 <title>Dashboard</title>
 <link rel="icon" href="{% static 'Images/Holistic Logo.png' %}" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#121820;
@@ -27,7 +27,7 @@
   *{box-sizing:border-box; border-radius:0 !important;}
   html,body{margin:0;padding:0;}
   body{
-    font-family:'Inter',sans-serif;
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background:var(--paper);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
@@ -105,7 +105,7 @@
     padding:18px 18px 16px;
   }
   .kpi-card .label{font-size:12.5px; color:var(--text-muted); font-weight:500;}
-  .kpi-card .value{font-size:25px; font-weight:700; margin:6px 0 4px; font-family:'Space Grotesk',sans-serif;}
+  .kpi-card .value{font-size:25px; font-weight:700; margin:6px 0 4px; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;}
   .kpi-card .delta{font-size:12.5px; font-weight:500;}
   .delta.up{color:var(--accent);}
   .delta.down{color:var(--warn);}
@@ -316,9 +316,9 @@
             {% for order in recent_orders %}
             <tr>
               <td>{{ order.PRODUCT_ORDER_ID }}</td>
-              <td>{{ order.PRODUCT_ORDER_USER.EMPLOYEE_FULL_NAME }}</td>
-              <td>{{ order.PRODUCT_ORDER_PRODUCT.PRODUCT_NAME }}</td>
-              <td>{{ order.PRODUCT_ORDER_QTY }}</td>
+              <td>{{ order.customer_display_name }}</td>
+              <td>{{ order.product_display_name }}</td>
+              <td>{{ order.items_count_or_qty }}</td>
               <td>{{ order.order_amount|floatformat:2 }}</td>
               <td>
                 <span class="status {{ order.PRODUCT_ORDER_STATUS|lower }}">
@@ -380,7 +380,7 @@
     var gridColor  = '#e4e7eb';
     var palette    = ['#1f6f5c','#4c9c88','#a9d4c8','#6db8a4','#c2e0d8','#e4e7eb'];
 
-    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     Chart.defaults.color = muted;
 
     // Revenue trend – line chart
