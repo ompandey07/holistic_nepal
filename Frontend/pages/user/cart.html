@@ -621,9 +621,20 @@
         <a href="{% url 'our_products' %}" class="btn-checkout-gate" style="display:inline-block; width:auto; padding:14px 28px;">
           Explore Herbal Formulations &rarr;
         </a>
-      </div>
-    {% endif %}
   </main>
+
+  <!-- Botanical Site Footer -->
+  <footer class="cart-site-footer" style="background:#f4f7f4; border-top:1px solid #e1ebe5; padding:28px 20px; font-size:13.5px; color:#556b60; margin-top:56px;">
+    <div style="max-width:1160px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">
+      <p style="margin:0;">&copy; 2026 Holistic Herbs Nepal &bull; Nature's Wisdom, Nepal's Heritage.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:18px; align-items:center;">
+        <a href="{% url 'our_products' %}" style="color:#1f6f5c; text-decoration:none; font-weight:500;">Our Products</a>
+        <a href="{% url 'track_order' %}" style="color:#1f6f5c; text-decoration:none; font-weight:600;">
+          <span class="lang-eng">Track My Order</span><span class="lang-nep">अर्डर ट्र्याक गर्नुहोस्</span>
+        </a>
+      </div>
+    </div>
+  </footer>
 
   <script>
     function getCookie(name) {

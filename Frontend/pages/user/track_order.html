@@ -1,0 +1,1807 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-lang="eng">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track My Order · Holistic Herbs Nepal</title>
+  <meta name="description" content="Check the realtime status, preparation progress, and dispatch details of your Holistic Herbs botanical remedy order.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Base Stylesheet -->
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+  <style>
+    /* ==========================================================================
+       DEDICATED ORDER TRACKING PAGE BOTANICAL STYLING
+       ========================================================================== */
+    :root {
+      --trk-forest: #154c3e;
+      --trk-emerald: #1f6f5c;
+      --trk-sage: #8fa89b;
+      --trk-sage-light: #eef5f1;
+      --trk-cream: #faf9f6;
+      --trk-card-bg: #ffffff;
+      --trk-border: #e1ede6;
+      --trk-text: #24302a;
+      --trk-text-muted: #5e7368;
+      --trk-gold: #c29546;
+      --trk-crimson: #c53030;
+      --trk-shadow: 0 4px 20px rgba(21, 76, 62, 0.06);
+      --trk-shadow-lg: 0 10px 30px rgba(21, 76, 62, 0.1);
+    }
+
+    body {
+      background-color: var(--trk-cream) !important;
+      color: var(--trk-text) !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tracking-page-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Container */
+    .trk-container {
+      width: 100%;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Hero / Search Section */
+    .trk-hero-section {
+      padding: 56px 0 36px;
+      text-align: center;
+      position: relative;
+    }
+
+    .trk-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 0;
+      background: var(--trk-sage-light);
+      border: 1px solid #d4e7dd;
+      color: var(--trk-forest);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .trk-hero-title {
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--trk-forest);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .trk-hero-subtitle {
+      font-size: 15.5px;
+      color: var(--trk-text-muted);
+      max-width: 620px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* Search Box Card */
+    .trk-search-card {
+      background: var(--trk-card-bg);
+      border: 1px solid var(--trk-border);
+      border-radius: 0;
+      box-shadow: var(--trk-shadow-lg);
+      padding: 32px 36px;
+      max-width: 620px;
+      margin: 0 auto 48px;
+      text-align: left;
+    }
+
+    .trk-form-group {
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 680px) {
+      .trk-search-card {
+        padding: 24px 20px;
+      }
+      .trk-hero-title {
+        font-size: 26px;
+      }
+    }
+
+    .trk-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .trk-input-label {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--trk-forest);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .trk-input-label span.req {
+      color: #e53e3e;
+      margin-left: 3px;
+    }
+
+    .trk-input-field {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      border: 1.5px solid #cfe0d7;
+      border-radius: 0;
+      font-size: 14.5px;
+      color: var(--trk-text);
+      background: #fafcfb;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .trk-input-field:focus {
+      outline: none;
+      border-color: var(--trk-emerald);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(31, 111, 92, 0.12);
+    }
+
+    .trk-input-hint {
+      font-size: 11.5px;
+      color: var(--trk-text-muted);
+      line-height: 1.4;
+    }
+
+    .trk-btn-submit {
+      width: 100%;
+      height: 50px;
+      background: var(--trk-emerald);
+      color: #ffffff;
+      font-size: 15.5px;
+      font-weight: 600;
+      border-radius: 0;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(31, 111, 92, 0.2);
+    }
+
+    .trk-btn-submit:hover {
+      background: var(--trk-forest);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(21, 76, 62, 0.28);
+    }
+
+    .trk-btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Alert / Error Box */
+    .trk-alert-error {
+      background: #fff8f8;
+      border: 1px solid #fecaca;
+      border-left: 4px solid var(--trk-crimson);
+      border-radius: 0;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--trk-shadow);
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .trk-alert-icon {
+      color: var(--trk-crimson);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .trk-alert-content h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--trk-crimson);
+    }
+
+    .trk-alert-content p {
+      margin: 0;
+      font-size: 13.5px;
+      color: #7f1d1d;
+      line-height: 1.5;
+    }
+
+    /* Onboarding / Empty State Hint */
+    .trk-empty-guide {
+      background: #ffffff;
+      border: 1px solid var(--trk-border);
+      border-radius: 0;
+      padding: 36px 32px;
+      max-width: 740px;
+      margin: 0 auto 56px;
+      box-shadow: var(--trk-shadow);
+      text-align: center;
+    }
+
+    .trk-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .trk-guide-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+    }
+
+    .trk-guide-card {
+      padding: 18px 14px;
+      background: var(--trk-cream);
+      border-radius: 0;
+      border: 1px solid #e7efe9;
+    }
+
+    .trk-guide-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 0;
+      background: #ffffff;
+      border: 1px solid #d4e7dd;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--trk-emerald);
+      margin-bottom: 12px;
+    }
+
+    .trk-guide-card h5 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--trk-forest);
+      margin: 0 0 6px;
+    }
+
+    .trk-guide-card p {
+      font-size: 12.5px;
+      color: var(--trk-text-muted);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    /* ==========================================================================
+       ORDER DETAILS & TIMELINE STATE
+       ========================================================================== */
+    .trk-results-wrapper {
+      max-width: 980px;
+      margin: 0 auto 64px;
+    }
+
+    /* Top Summary Header */
+    .trk-status-header-card {
+      background: #ffffff;
+      border: 1px solid var(--trk-border);
+      border-radius: 0;
+      padding: 24px 28px;
+      box-shadow: var(--trk-shadow);
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .trk-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .trk-order-id-badge {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--trk-forest);
+      letter-spacing: -0.01em;
+    }
+
+    .trk-order-date {
+      font-size: 13px;
+      color: var(--trk-text-muted);
+      margin-top: 2px;
+    }
+
+    /* Status Pills */
+    .trk-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 0;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .trk-status-pill.pending {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .trk-status-pill.confirmed {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .trk-status-pill.processing {
+      background: #e6f4ea;
+      color: #137333;
+      border: 1px solid #ceead6;
+    }
+
+    .trk-status-pill.shipped {
+      background: #ede9fe;
+      color: #6d28d9;
+      border: 1px solid #ddd6fe;
+    }
+
+    .trk-status-pill.delivered {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .trk-status-pill.cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .trk-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseAnim 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Visual Stepper / Progress Timeline */
+    .trk-timeline-card {
+      background: #ffffff;
+      border: 1px solid var(--trk-border);
+      border-radius: 0;
+      padding: 32px 28px;
+      box-shadow: var(--trk-shadow);
+      margin-bottom: 24px;
+    }
+
+    .trk-timeline-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--trk-forest);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .trk-timeline-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    /* Connecting Line */
+    .trk-timeline-steps::before {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 36px;
+      right: 36px;
+      height: 4px;
+      background: #e2ede7;
+      z-index: 1;
+    }
+
+    .trk-timeline-bar-fill {
+      position: absolute;
+      top: 22px;
+      left: 36px;
+      height: 4px;
+      background: var(--trk-emerald);
+      z-index: 2;
+      transition: width 0.6s ease;
+    }
+
+    .trk-step-node {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+    }
+
+    .trk-step-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 0;
+      background: #ffffff;
+      border: 2.5px solid #cfe0d7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--trk-text-muted);
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .trk-step-node.completed .trk-step-circle {
+      background: var(--trk-emerald);
+      border-color: var(--trk-emerald);
+      color: #ffffff;
+    }
+
+    .trk-step-node.current .trk-step-circle {
+      background: #ffffff;
+      border-color: var(--trk-emerald);
+      color: var(--trk-emerald);
+      box-shadow: 0 0 0 4px rgba(31, 111, 92, 0.2);
+    }
+
+    .trk-step-label {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--trk-text);
+      margin-bottom: 3px;
+    }
+
+    .trk-step-node.completed .trk-step-label,
+    .trk-step-node.current .trk-step-label {
+      color: var(--trk-forest);
+      font-weight: 700;
+    }
+
+    .trk-step-node.pending .trk-step-label {
+      color: #8da397;
+    }
+
+    .trk-step-sub {
+      font-size: 11.5px;
+      color: var(--trk-text-muted);
+      max-width: 140px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 680px) {
+      .trk-timeline-steps {
+        flex-direction: column;
+        gap: 20px;
+        padding-left: 20px;
+      }
+      .trk-timeline-steps::before {
+        top: 20px;
+        bottom: 20px;
+        left: 41px;
+        width: 4px;
+        height: auto;
+        right: auto;
+      }
+      .trk-timeline-bar-fill {
+        display: none;
+      }
+      .trk-step-node {
+        flex-direction: row;
+        text-align: left;
+        gap: 16px;
+      }
+      .trk-step-circle {
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+      .trk-step-sub {
+        max-width: none;
+      }
+    }
+
+    /* Cancelled Notice Card */
+    .trk-cancelled-card {
+      background: #fff5f5;
+      border: 1.5px solid #fed7d7;
+      border-left: 6px solid #e53e3e;
+      border-radius: 0;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .trk-cancelled-icon {
+      color: #e53e3e;
+      flex-shrink: 0;
+    }
+
+    .trk-cancelled-card h4 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #9b2c2c;
+    }
+
+    .trk-cancelled-card p {
+      margin: 0;
+      font-size: 13.5px;
+      color: #742a2a;
+      line-height: 1.5;
+    }
+
+    /* Two-column Detail Grid */
+    .trk-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .trk-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trk-card {
+      background: #ffffff;
+      border: 1px solid var(--trk-border);
+      border-radius: 0;
+      padding: 24px;
+      box-shadow: var(--trk-shadow);
+    }
+
+    .trk-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--trk-forest);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #edf4f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trk-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .trk-info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .trk-info-label {
+      color: var(--trk-text-muted);
+      font-weight: 500;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .trk-info-val {
+      color: var(--trk-text);
+      font-weight: 600;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    /* Ordered Items Table / List */
+    .trk-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f2;
+    }
+
+    .trk-item-row:last-child {
+      border-bottom: none;
+    }
+
+    .trk-item-thumb {
+      width: 46px;
+      height: 46px;
+      border-radius: 0;
+      object-fit: cover;
+      background: #f0f4f1;
+      border: 1px solid #dfe9e3;
+      flex-shrink: 0;
+    }
+
+    .trk-item-info {
+      flex: 1;
+    }
+
+    .trk-item-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--trk-forest);
+      margin-bottom: 2px;
+    }
+
+    .trk-item-meta {
+      font-size: 12px;
+      color: var(--trk-text-muted);
+    }
+
+    .trk-item-subtotal {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--trk-forest);
+      white-space: nowrap;
+    }
+
+    /* Financial Calculation Block */
+    .trk-totals-block {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1.5px dashed #dfebe4;
+    }
+
+    .trk-total-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+      color: var(--trk-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .trk-total-line.grand {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--trk-forest);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #edf4f0;
+    }
+
+    /* Read-Only Notice Badge */
+    .trk-readonly-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #f7faf8;
+      border: 1px solid #e1ece6;
+      border-radius: 0;
+      padding: 14px 20px;
+      font-size: 13px;
+      color: var(--trk-text-muted);
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .trk-reset-bar {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .trk-btn-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 0;
+      background: #ffffff;
+      border: 1.5px solid #cfe0d7;
+      color: var(--trk-forest);
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .trk-btn-reset:hover {
+      background: var(--trk-sage-light);
+      border-color: var(--trk-emerald);
+    }
+
+    /* ==========================================================================
+       PREMIUM BOTANICAL APOTHECARY FOOTER (MATCHING ALL SITE PAGES EXACTLY)
+       ========================================================================== */
+    .catalog-site-footer {
+      position: relative !important;
+      background: linear-gradient(180deg, #fafcfa 0%, #f1f6ef 52%, #e6efe4 100%) !important;
+      color: #1b3527 !important;
+      padding: 56px 24px 30px !important;
+      overflow: hidden !important;
+      border-top: 1.5px solid #d4e2d2 !important;
+      font-family: inherit !important;
+      width: 100% !important;
+      margin-top: auto !important;
+    }
+
+    /* Background Botanical Leaf Plants Foliage */
+    .footer-plants-decor {
+      position: absolute !important;
+      bottom: 0 !important;
+      pointer-events: none !important;
+      z-index: 1 !important;
+      user-select: none !important;
+    }
+
+    .footer-plants-left {
+      left: -20px !important;
+      height: clamp(140px, 18vw, 220px) !important;
+      opacity: 0.46 !important;
+      transform-origin: bottom left !important;
+    }
+
+    .footer-plants-right {
+      right: -20px !important;
+      height: clamp(140px, 18vw, 220px) !important;
+      opacity: 0.46 !important;
+      transform-origin: bottom right !important;
+    }
+
+    /* Faint Center Botanical Leaves Watermark */
+    .footer-botanical-watermark {
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: clamp(260px, 32vw, 420px) !important;
+      height: clamp(260px, 32vw, 420px) !important;
+      opacity: 0.055 !important;
+      color: #2d6a4f !important;
+      pointer-events: none !important;
+      z-index: 1 !important;
+    }
+
+    .footer-botanical-watermark svg {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .footer-content-wrap {
+      position: relative !important;
+      z-index: 2 !important;
+      max-width: 1080px !important;
+      margin: 0 auto !important;
+      text-align: center !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+
+    /* Brand Header */
+    .footer-brand-crest {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin-bottom: 12px !important;
+      text-decoration: none !important;
+    }
+
+    .footer-brand-logo {
+      width: 44px !important;
+      height: 44px !important;
+      object-fit: contain !important;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08)) !important;
+    }
+
+    .footer-brand-title {
+      font-size: 24px !important;
+      font-weight: 600 !important;
+      color: #142e20 !important;
+      letter-spacing: -0.01em !important;
+    }
+
+    .footer-brand-tagline {
+      font-size: 14px !important;
+      color: #3f594a !important;
+      max-width: 600px !important;
+      line-height: 1.55 !important;
+      margin: 0 0 20px 0 !important;
+    }
+
+    /* Terroir Chips */
+    .footer-terroir-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-wrap: wrap !important;
+      gap: 10px !important;
+      margin-bottom: 24px !important;
+    }
+
+    .footer-terroir-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 5px 14px !important;
+      border-radius: 20px !important;
+      background: rgba(45, 106, 79, 0.08) !important;
+      border: 1px solid rgba(45, 106, 79, 0.2) !important;
+      color: #1e5238 !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.02em !important;
+    }
+
+    .footer-terroir-pill svg {
+      width: 13px !important;
+      height: 13px !important;
+      color: #2d6a4f !important;
+    }
+
+    /* Quick Navigation Links */
+    .footer-nav-links {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-wrap: wrap !important;
+      gap: 18px 26px !important;
+      margin-bottom: 26px !important;
+    }
+
+    .footer-nav-link {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #2b543e !important;
+      text-decoration: none !important;
+      transition: color 180ms ease, transform 180ms ease !important;
+    }
+
+    .footer-nav-link:hover {
+      color: #d97706 !important;
+      transform: translateY(-1px) !important;
+    }
+
+    /* Dedicated Hospital Landline Pill in Footer */
+    .footer-hospital-hotline-bar {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin-top: -12px !important;
+      margin-bottom: 24px !important;
+      width: 100% !important;
+    }
+
+    .footer-hospital-hotline-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      background: rgba(31, 77, 54, 0.08) !important;
+      border: 1px solid rgba(31, 77, 54, 0.2) !important;
+      padding: 6px 16px !important;
+      border-radius: 999px !important;
+      font-size: 13px !important;
+      color: #1f4d36 !important;
+      text-decoration: none !important;
+      transition: all 200ms ease !important;
+      box-shadow: 0 2px 8px rgba(31, 77, 54, 0.05) !important;
+    }
+
+    .footer-hospital-hotline-pill:hover {
+      background: rgba(31, 77, 54, 0.14) !important;
+      border-color: #1f4d36 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(31, 77, 54, 0.1) !important;
+    }
+
+    .footer-hospital-hotline-pill svg {
+      color: #a9713f !important;
+      flex-shrink: 0 !important;
+    }
+
+    .footer-hospital-hotline-pill span {
+      color: #355342 !important;
+      font-weight: 500 !important;
+    }
+
+    .footer-hospital-hotline-pill strong {
+      color: #1f4d36 !important;
+      font-weight: 700 !important;
+      font-size: 13.5px !important;
+      letter-spacing: 0.5px !important;
+    }
+
+    /* Delicate Botanical Leaf Divider */
+    .footer-leaf-divider {
+      width: 100% !important;
+      max-width: 480px !important;
+      height: 14px !important;
+      color: #799a86 !important;
+      opacity: 0.45 !important;
+      margin-bottom: 22px !important;
+    }
+
+    .footer-leaf-divider svg {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+    }
+
+    /* Bottom Copyright & Return Home */
+    .footer-bottom-line {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 18px !important;
+      flex-wrap: wrap !important;
+      font-size: 12.5px !important;
+      color: #557062 !important;
+      width: 100% !important;
+    }
+
+    .footer-home-return-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      color: #c2410c !important;
+      font-weight: 600 !important;
+      text-decoration: none !important;
+      padding: 5px 12px !important;
+      border-radius: 12px !important;
+      background: rgba(194, 65, 12, 0.08) !important;
+      transition: all 180ms ease !important;
+    }
+
+    .footer-home-return-btn:hover {
+      background: rgba(194, 65, 12, 0.16) !important;
+      color: #9a3412 !important;
+    }
+
+    @media (max-width: 768px) {
+      .footer-plants-left,
+      .footer-plants-right {
+        opacity: 0.28 !important;
+        height: 110px !important;
+      }
+      .catalog-site-footer {
+        padding: 44px 16px 24px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="tracking-page-wrapper">
+
+  <!-- ============================================================
+       CATALOG HEADER (PRESERVED NAVBAR WITH CONTROLS)
+       ============================================================ -->
+  <header class="catalog-header" id="catalogHeader">
+    <div class="header-inner">
+      <!-- Brand Identity -->
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="/" data-i18n="nav_home">Home page</a>
+        <a href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+      </nav>
+
+      <!-- Right Side Actions: Language Switcher, Cart Button & Profile -->
+      <div class="header-right-actions">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" id="track-lang-eng" data-lang="eng" aria-pressed="true">ENG</button>
+          <button type="button" class="nav-lang-btn" id="track-lang-nep" data-lang="nep" aria-pressed="false">नेपाली</button>
+        </div>
+
+        <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart" id="header-cart-btn">
+          <svg class="nav-cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="global-cart-badge" aria-live="polite">{{ cart_total_count|default:0 }}</span>
+        </a>
+
+        {% include 'pages/user/nav_account_icon.html' %}
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-toggle" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay"></div>
+  <aside class="mobile-drawer" aria-label="Mobile menu">
+    <div class="drawer-header">
+      <a class="brand" href="/" aria-label="Holistic Herbs Home">
+        <img class="brand-logo-img" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="brand-name">
+          <strong>Holistic</strong>
+          <em>Herbs</em>
+        </span>
+      </a>
+      <button class="drawer-close" aria-label="Close menu">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <nav class="drawer-nav">
+        <a href="/">Home</a>
+        <a href="/products/">Our Products</a>
+        <a href="{% url 'news_list' %}">News</a>
+        <a href="{% url 'hospital' %}">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}">Gallery</a>
+        <a href="{% url 'track_order' %}" class="active">
+          <span class="lang-eng">Track My Order</span>
+          <span class="lang-nep">अर्डर ट्र्याक गर्नुहोस्</span>
+        </a>
+      </nav>
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;">Language / भाषा:</span>
+        <div class="nav-lang-switch" style="margin-top: 10px;" role="group" aria-label="Language selection">
+          <button type="button" class="nav-lang-btn is-active" data-lang="eng">ENG</button>
+          <button type="button" class="nav-lang-btn" data-lang="nep">नेपाली</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN CONTENT: TRACKING FORM & STATUS DISPLAY
+       ============================================================ -->
+  <main class="trk-container">
+
+    <!-- Hero Header -->
+    <section class="trk-hero-section">
+      <div class="trk-pill-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span class="lang-eng">Realtime Himalayan Dispatch Tracking</span>
+        <span class="lang-nep">प्रत्यक्ष अर्डर स्थिति ट्र्याकिङ</span>
+      </div>
+
+      <h1 class="trk-hero-title">
+        <span class="lang-eng">Track Your Botanical Order</span>
+        <span class="lang-nep">तपाईंको अर्डर ट्र्याक गर्नुहोस्</span>
+      </h1>
+
+      <p class="trk-hero-subtitle">
+        <span class="lang-eng">Enter your order identifier (#ORD-000005) below to view live preparation, packaging, and courier dispatch milestones.</span>
+        <span class="lang-nep">तपाईंको अर्डर नम्बर (#ORD-000005) प्रविष्ट गरी अर्डरको तयारी, प्याकेजिङ तथा डेलिभरी विवरण हेर्नुहोस्।</span>
+      </p>
+
+      <!-- Search Card Form -->
+      <div class="trk-search-card">
+        <form method="POST" action="{% url 'track_order' %}" id="orderTrackingForm">
+          {% csrf_token %}
+          <div class="trk-form-group">
+            <!-- Order Number Field -->
+            <div class="trk-input-group">
+              <label class="trk-input-label" for="track_order_id">
+                <span>
+                  <span class="lang-eng">Order Number</span>
+                  <span class="lang-nep">अर्डर नम्बर</span>
+                  <span class="req">*</span>
+                </span>
+              </label>
+              <input 
+                type="text" 
+                id="track_order_id" 
+                name="order_id" 
+                class="trk-input-field" 
+                placeholder="e.g. #ORD-000005 or 000005" 
+                value="{{ order_id_query|default:'' }}" 
+                required 
+                autocomplete="off"
+              >
+              <span class="trk-input-hint">
+                <span class="lang-eng">Accepts #ORD-000005, ORD-000005, or order ID</span>
+                <span class="lang-nep">#ORD-000005, ORD-000005 वा अर्डर आईडी मान्य छ</span>
+              </span>
+            </div>
+          </div>
+
+          <button type="submit" class="trk-btn-submit" id="btnTrackSubmit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span class="lang-eng">Track Order Status &rarr;</span>
+            <span class="lang-nep">अर्डर स्थिति हेर्नुहोस् &rarr;</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- UNIFORM ERROR MESSAGE (NO ENUMERATION LEAKAGE) -->
+    {% if error_message %}
+      <div class="trk-alert-error" role="alert">
+        <svg class="trk-alert-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="trk-alert-content">
+          <h4>
+            <span class="lang-eng">Order Not Found</span>
+            <span class="lang-nep">अर्डर फेला परेन</span>
+          </h4>
+          <p>
+            <span class="lang-eng">Please check your order number. If you need assistance, please contact our helpline at <strong>01-4115830</strong>.</span>
+            <span class="lang-nep">कृपया आफ्नो अर्डर नम्बर पुन: जाँच गर्नुहोस्। सहायता चाहिएमा हाम्रो हेल्पलाइन <strong>०१-४११५८३०</strong> मा सम्पर्क गर्नुहोस्।</span>
+          </p>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- ONBOARDING GUIDE (SHOWN WHEN NO SEARCH CONDUCTED YET) -->
+    {% if not searched and not order %}
+      <div class="trk-empty-guide">
+        <h3 style="font-size: 20px; font-weight: 700; color: var(--trk-forest); margin-bottom: 8px;">
+          <span class="lang-eng">How Botanical Order Tracking Works</span>
+          <span class="lang-nep">अर्डर ट्र्याकिङ कसरी काम गर्छ?</span>
+        </h3>
+        <p style="font-size: 14px; color: var(--trk-text-muted); max-width: 580px; margin: 0 auto;">
+          <span class="lang-eng">Every Ayurvedic formulation and herbal remedy is freshly prepared and tracked with highest care from our Kathmandu dispensary.</span>
+          <span class="lang-nep">प्रत्येक आयुर्वेदिक औषधि तथा जडीबुटी होलिस्टिक नेपालको काठमाडौं संकलन केन्द्रबाट उच्च गुणस्तरका साथ तयार गरी पठाइन्छ।</span>
+        </p>
+
+        <div class="trk-guide-grid">
+          <div class="trk-guide-card">
+            <div class="trk-guide-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <h5>
+              <span class="lang-eng">1. Check Confirmation</span>
+              <span class="lang-nep">१. अर्डर पुष्टि</span>
+            </h5>
+            <p>
+              <span class="lang-eng">Locate your #ORD-XXXXXX code from your checkout receipt or SMS notification.</span>
+              <span class="lang-nep">तपाईंको चेकआउट रसिद वा सन्देशबाट #ORD-XXXXXX कोड पत्ता लगाउनुहोस्।</span>
+            </p>
+          </div>
+
+          <div class="trk-guide-card">
+            <div class="trk-guide-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h5>
+              <span class="lang-eng">2. Realtime Preparation</span>
+              <span class="lang-nep">२. प्रत्यक्ष तयारी</span>
+            </h5>
+            <p>
+              <span class="lang-eng">Monitor formulation blending, quality packaging, and seal verification in realtime.</span>
+              <span class="lang-nep">जडीबुटी मिश्रण, गुणस्तरीय प्याकेजिङ र सिल प्रमाणीकरणको प्रत्यक्ष स्थिति हेर्नुहोस्।</span>
+            </p>
+          </div>
+
+          <div class="trk-guide-card">
+            <div class="trk-guide-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            </div>
+            <h5>
+              <span class="lang-eng">3. Courier Handover</span>
+              <span class="lang-nep">३. कुरियर डेलिभरी</span>
+            </h5>
+            <p>
+              <span class="lang-eng">Receive direct handover across Kathmandu Valley and nationwide Nepal destinations.</span>
+              <span class="lang-nep">काठमाडौं उपत्यका तथा देशभर सुरक्षित कुरियर मार्फत सिधै प्राप्त गर्नुहोस्।</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- ============================================================
+         ORDER DETAILS DISPLAY (WHEN MATCH IS FOUND)
+         ============================================================ -->
+    {% if order %}
+      <div class="trk-results-wrapper">
+
+        <!-- Status Summary Header Card -->
+        <div class="trk-status-header-card">
+          <div class="trk-header-left">
+            <div>
+              <span class="trk-order-id-badge">#{{ order.PRODUCT_ORDER_ID }}</span>
+              <div class="trk-order-date">
+                <span class="lang-eng">Placed on: {{ order.PRODUCT_ORDER_CREATED_AT|date:"M d, Y, h:i A" }}</span>
+                <span class="lang-nep">अर्डर मिति: {{ order.PRODUCT_ORDER_CREATED_AT|date:"Y-m-d, h:i A" }}</span>
+                {% if order.PRODUCT_ORDER_MODIFIED_AT %}
+                  &bull; 
+                  <span class="lang-eng">Updated: {{ order.PRODUCT_ORDER_MODIFIED_AT|date:"M d, Y" }}</span>
+                  <span class="lang-nep">अपडेट: {{ order.PRODUCT_ORDER_MODIFIED_AT|date:"Y-m-d" }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Status Pill -->
+          <div>
+            {% if is_cancelled %}
+              <span class="trk-status-pill cancelled">
+                <span class="trk-pulse-dot"></span>
+                <span class="lang-eng">Cancelled</span>
+                <span class="lang-nep">रद्द गरिएको</span>
+              </span>
+            {% elif order.PRODUCT_ORDER_STATUS == "CONFIRMED" %}
+              <span class="trk-status-pill confirmed">
+                <span class="trk-pulse-dot"></span>
+                <span class="lang-eng">Confirmed</span>
+                <span class="lang-nep">पुष्टि भयो</span>
+              </span>
+            {% elif order.PRODUCT_ORDER_STATUS == "PROCESSING" %}
+              <span class="trk-status-pill processing">
+                <span class="trk-pulse-dot"></span>
+                <span class="lang-eng">Processing &amp; Packaging</span>
+                <span class="lang-nep">प्याकेजिङ हुँदै</span>
+              </span>
+            {% elif order.PRODUCT_ORDER_STATUS == "SHIPPED" or order.PRODUCT_ORDER_STATUS == "DISPATCHED" %}
+              <span class="trk-status-pill shipped">
+                <span class="trk-pulse-dot"></span>
+                <span class="lang-eng">Dispatched / In Transit</span>
+                <span class="lang-nep">पठाइयो / मार्गमा</span>
+              </span>
+            {% elif order.PRODUCT_ORDER_STATUS == "DELIVERED" %}
+              <span class="trk-status-pill delivered">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span class="lang-eng">Delivered</span>
+                <span class="lang-nep">डेलिभर गरियो</span>
+              </span>
+            {% else %}
+              <span class="trk-status-pill pending">
+                <span class="trk-pulse-dot"></span>
+                <span class="lang-eng">Pending Confirmation</span>
+                <span class="lang-nep">विचाराधीन</span>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- SPECIAL CANCELLED ALERT (IF CANCELLED) -->
+        {% if is_cancelled %}
+          <div class="trk-cancelled-card">
+            <svg class="trk-cancelled-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <div>
+              <h4>
+                <span class="lang-eng">Order Cancelled</span>
+                <span class="lang-nep">यो अर्डर रद्द गरिएको छ</span>
+              </h4>
+              <p>
+                <span class="lang-eng">This botanical remedy order has been cancelled. If this cancellation was made in error or you require assistance regarding payment refund, please contact our dispensary support desk at <strong>01-4115830</strong> or <strong>info@holisticherbsnepal.com</strong>.</span>
+                <span class="lang-nep">यो जडीबुटी अर्डर रद्द गरिएको छ। यदि तपाईंलाई यस सम्बन्धमा थप जानकारी वा भुक्तानी फिर्ता सम्बन्धी सहयोग आवश्यक छ भने, कृपया हाम्रो हेल्पलाइन <strong>०१-४११५८३०</strong> वा <strong>info@holisticherbsnepal.com</strong> मा सम्पर्क गर्नुहोस्।</span>
+              </p>
+            </div>
+          </div>
+        {% else %}
+          <!-- 5-STEP TIMELINE STEPPER -->
+          <div class="trk-timeline-card">
+            <div class="trk-timeline-title">
+              <span>
+                <span class="lang-eng">Dispatch &amp; Delivery Progress</span>
+                <span class="lang-nep">डेलिभरी प्रगति विवरण</span>
+              </span>
+              <span style="font-size: 13px; font-weight: 500; color: var(--trk-text-muted);">
+                <span class="lang-eng">Step {{ status_step }} of 5</span>
+                <span class="lang-nep">चरण {{ status_step }} / ५</span>
+              </span>
+            </div>
+
+            <div class="trk-timeline-steps">
+              <!-- Progress fill line for desktop -->
+              <div class="trk-timeline-bar-fill" style="width: {% if status_step == 1 %}0%{% elif status_step == 2 %}25%{% elif status_step == 3 %}50%{% elif status_step == 4 %}75%{% elif status_step >= 5 %}100%{% endif %};"></div>
+
+              <!-- Step 1: Placed -->
+              <div class="trk-step-node {% if status_step > 1 %}completed{% elif status_step == 1 %}current{% else %}pending{% endif %}">
+                <div class="trk-step-circle">
+                  {% if status_step > 1 %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  {% else %}
+                    1
+                  {% endif %}
+                </div>
+                <div class="trk-step-label">
+                  <span class="lang-eng">Order Placed</span>
+                  <span class="lang-nep">अर्डर प्राप्त</span>
+                </div>
+                <div class="trk-step-sub">
+                  <span class="lang-eng">Received at dispensary</span>
+                  <span class="lang-nep">प्रणालीमा दर्ता भयो</span>
+                </div>
+              </div>
+
+              <!-- Step 2: Confirmed -->
+              <div class="trk-step-node {% if status_step > 2 %}completed{% elif status_step == 2 %}current{% else %}pending{% endif %}">
+                <div class="trk-step-circle">
+                  {% if status_step > 2 %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  {% else %}
+                    2
+                  {% endif %}
+                </div>
+                <div class="trk-step-label">
+                  <span class="lang-eng">Confirmed</span>
+                  <span class="lang-nep">पुष्टि भयो</span>
+                </div>
+                <div class="trk-step-sub">
+                  <span class="lang-eng">Inventory secured</span>
+                  <span class="lang-nep">औषधि मौज्दात सुनिश्चित</span>
+                </div>
+              </div>
+
+              <!-- Step 3: Processing -->
+              <div class="trk-step-node {% if status_step > 3 %}completed{% elif status_step == 3 %}current{% else %}pending{% endif %}">
+                <div class="trk-step-circle">
+                  {% if status_step > 3 %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  {% else %}
+                    3
+                  {% endif %}
+                </div>
+                <div class="trk-step-label">
+                  <span class="lang-eng">Processing</span>
+                  <span class="lang-nep">प्याकेजिङ</span>
+                </div>
+                <div class="trk-step-sub">
+                  <span class="lang-eng">Botanical inspection</span>
+                  <span class="lang-nep">सुरक्षित प्याकिङ जारी</span>
+                </div>
+              </div>
+
+              <!-- Step 4: Shipped / Dispatched -->
+              <div class="trk-step-node {% if status_step > 4 %}completed{% elif status_step == 4 %}current{% else %}pending{% endif %}">
+                <div class="trk-step-circle">
+                  {% if status_step > 4 %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  {% else %}
+                    4
+                  {% endif %}
+                </div>
+                <div class="trk-step-label">
+                  <span class="lang-eng">Dispatched</span>
+                  <span class="lang-nep">पठाइयो</span>
+                </div>
+                <div class="trk-step-sub">
+                  <span class="lang-eng">Handed to courier</span>
+                  <span class="lang-nep">डेलिभरी मार्गमा छ</span>
+                </div>
+              </div>
+
+              <!-- Step 5: Delivered -->
+              <div class="trk-step-node {% if status_step >= 5 %}completed{% else %}pending{% endif %}">
+                <div class="trk-step-circle">
+                  {% if status_step >= 5 %}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  {% else %}
+                    5
+                  {% endif %}
+                </div>
+                <div class="trk-step-label">
+                  <span class="lang-eng">Delivered</span>
+                  <span class="lang-nep">वितरण सम्पन्न</span>
+                </div>
+                <div class="trk-step-sub">
+                  <span class="lang-eng">Delivered to recipient</span>
+                  <span class="lang-nep">हातमा प्राप्त भयो</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- TWO-COLUMN DETAILS GRID -->
+        <div class="trk-details-grid">
+
+          <!-- Left Column: Shipping & Payment Details -->
+          <div class="trk-card">
+            <h3 class="trk-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span class="lang-eng">Delivery &amp; Courier Details</span>
+              <span class="lang-nep">डेलिभरी तथा ठेगाना विवरण</span>
+            </h3>
+
+            <div class="trk-info-row">
+              <span class="trk-info-label">
+                <span class="lang-eng">Recipient Name:</span>
+                <span class="lang-nep">प्राप्तकर्ताको नाम:</span>
+              </span>
+              <span class="trk-info-val">{{ order.SHIPPING_NAME|default:order.customer_display_name }}</span>
+            </div>
+
+            <div class="trk-info-row">
+              <span class="trk-info-label">
+                <span class="lang-eng">Delivery Address:</span>
+                <span class="lang-nep">डेलिभरी ठेगाना:</span>
+              </span>
+              <span class="trk-info-val" style="max-width: 250px;">{{ order.SHIPPING_ADDRESS|default:"Kathmandu Valley" }}</span>
+            </div>
+
+            <div class="trk-info-row">
+              <span class="trk-info-label">
+                <span class="lang-eng">Contact Phone:</span>
+                <span class="lang-nep">सम्पर्क फोन:</span>
+              </span>
+              <span class="trk-info-val">{{ order.SHIPPING_PHONE }}</span>
+            </div>
+
+            {% if order.DELIVERY_INSTRUCTIONS %}
+              <div class="trk-info-row">
+                <span class="trk-info-label">
+                  <span class="lang-eng">Delivery Notes:</span>
+                  <span class="lang-nep">डेलिभरी निर्देशन:</span>
+                </span>
+                <span class="trk-info-val" style="font-weight: 500; font-style: italic;">{{ order.DELIVERY_INSTRUCTIONS }}</span>
+              </div>
+            {% endif %}
+
+            <div style="margin: 18px 0; border-top: 1px solid #edf4f0;"></div>
+
+            <div class="trk-info-row">
+              <span class="trk-info-label">
+                <span class="lang-eng">Payment Method:</span>
+                <span class="lang-nep">भुक्तानी विधि:</span>
+              </span>
+              <span class="trk-info-val">
+                {% if order.PAYMENT_METHOD == "COD" %}
+                  Cash on Delivery (COD)
+                {% elif order.PAYMENT_METHOD == "ESEWA" %}
+                  eSewa / Digital Wallet
+                {% elif order.PAYMENT_METHOD == "KHALTI" %}
+                  Khalti Digital Wallet
+                {% elif order.PAYMENT_METHOD == "BANK" %}
+                  Direct Bank Transfer
+                {% else %}
+                  {{ order.PAYMENT_METHOD }}
+                {% endif %}
+              </span>
+            </div>
+
+            <div class="trk-info-row">
+              <span class="trk-info-label">
+                <span class="lang-eng">Payment Status:</span>
+                <span class="lang-nep">भुक्तानी स्थिति:</span>
+              </span>
+              <span class="trk-info-val" style="{% if order.IS_PAID %}color: #15803d;{% else %}color: #b45309;{% endif %}">
+                {% if order.IS_PAID %}
+                  ✓ 
+                  <span class="lang-eng">Paid Online</span>
+                  <span class="lang-nep">भुक्तानी सम्पन्न</span>
+                {% else %}
+                  &bull; 
+                  <span class="lang-eng">Payable Upon Delivery</span>
+                  <span class="lang-nep">सामान प्राप्त भएपछि भुक्तानी</span>
+                {% endif %}
+              </span>
+            </div>
+          </div>
+
+          <!-- Right Column: Itemized Remedies & Totals -->
+          <div class="trk-card">
+            <h3 class="trk-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span class="lang-eng">Formulations Ordered</span>
+              <span class="lang-nep">अर्डर गरिएका सामग्रीहरू</span>
+            </h3>
+
+            <!-- Item List -->
+            <div>
+              {% for itm in items_list %}
+                <div class="trk-item-row">
+                  {% if itm.image_url %}
+                    <img src="{{ itm.image_url }}" alt="{{ itm.name }}" class="trk-item-thumb">
+                  {% else %}
+                    <div class="trk-item-thumb" style="display:flex;align-items:center;justify-content:center;color:#8fa89b;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                  {% endif %}
+
+                  <div class="trk-item-info">
+                    <div class="trk-item-name">{{ itm.name }}</div>
+                    <div class="trk-item-meta">
+                      {{ itm.price_formatted }} &times; {{ itm.quantity }}
+                      {% if itm.contain %} &bull; {{ itm.contain }}{% endif %}
+                    </div>
+                  </div>
+
+                  <div class="trk-item-subtotal">{{ itm.subtotal_formatted }}</div>
+                </div>
+              {% empty %}
+                <div class="trk-item-row">
+                  <div class="trk-item-info">
+                    <div class="trk-item-name">{{ order.product_display_name }}</div>
+                    <div class="trk-item-meta">Quantity: {{ order.items_count_or_qty }}</div>
+                  </div>
+                  <div class="trk-item-subtotal">Rs {{ order.TOTAL_AMOUNT }}</div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <!-- Financial Totals -->
+            <div class="trk-totals-block">
+              <div class="trk-total-line">
+                <span>
+                  <span class="lang-eng">Shipping &amp; Courier Handling:</span>
+                  <span class="lang-nep">कुरियर तथा डेलिभरी शुल्क:</span>
+                </span>
+                <span style="font-weight: 600;">
+                  {% if order.SHIPPING_FEE and order.SHIPPING_FEE > 0 %}
+                    Rs {{ order.SHIPPING_FEE }}
+                  {% else %}
+                    <span style="color: #15803d; font-weight: 700;">FREE</span>
+                  {% endif %}
+                </span>
+              </div>
+
+              <div class="trk-total-line grand">
+                <span>
+                  <span class="lang-eng">Total Payable Amount:</span>
+                  <span class="lang-nep">जम्मा भुक्तानी रकम:</span>
+                </span>
+                <span>Rs {{ order.TOTAL_AMOUNT }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- READ-ONLY DISCLAIMER BANNER -->
+        <div class="trk-readonly-badge">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>
+            <span class="lang-eng">This public portal is strictly read-only for verification. To request address changes or dispatch inquiries, call our dispensary hotline at <strong>01-4115830</strong>.</span>
+            <span class="lang-nep">यो पोर्टल अर्डर स्थिति अवलोकनका लागि मात्र हो। ठेगाना परिवर्तन वा डेलिभरी सम्बन्धी जानकारीका लागि हाम्रो हेल्पलाइन <strong>०१-४११५८३०</strong> मा सम्पर्क गर्नुहोस्।</span>
+          </span>
+        </div>
+
+        <!-- Track Another Order Button -->
+        <div class="trk-reset-bar">
+          <a href="{% url 'track_order' %}" class="trk-btn-reset">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            <span class="lang-eng">Track Another Order</span>
+            <span class="lang-nep">अर्को अर्डर ट्र्याक गर्नुहोस्</span>
+          </a>
+        </div>
+
+      </div>
+    {% endif %}
+
+  </main>
+
+  <!-- ============================================================
+       PREMIUM BOTANICAL APOTHECARY FOOTER (MATCHING ALL SITE PAGES EXACTLY)
+       ============================================================ -->
+  <footer class="catalog-site-footer">
+    <!-- Background Botanical Leaf Plants Foliage Left & Right -->
+    <img src="{% static 'Images/herbs_decor_left.png' %}" class="footer-plants-decor footer-plants-left" alt="" aria-hidden="true">
+    <img src="{% static 'Images/herbs_decor_right.png' %}" class="footer-plants-decor footer-plants-right" alt="" aria-hidden="true">
+
+    <!-- Faint Center Botanical Leaf Watermark -->
+    <div class="footer-botanical-watermark" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100,10 C100,60 100,150 100,190"></path>
+        <path d="M100,45 C80,38 65,18 65,18 C82,14 100,32 100,45 Z"></path>
+        <path d="M100,80 C120,72 135,50 135,50 C118,46 100,66 100,80 Z"></path>
+        <path d="M100,115 C75,105 60,82 60,82 C80,78 100,98 100,115 Z"></path>
+        <path d="M100,150 C125,140 140,115 140,115 C120,110 100,132 100,150 Z"></path>
+        <path d="M100,45 L78,28 M100,80 L122,62 M100,115 L74,94 M100,150 L126,128"></path>
+      </svg>
+    </div>
+
+    <div class="footer-content-wrap">
+      <!-- Brand Header -->
+      <a class="footer-brand-crest" href="/" aria-label="Holistic Herbs Home">
+        <img class="footer-brand-logo" src="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" alt="Holistic Herbs Logo">
+        <span class="footer-brand-title">Holistic Herbs Nepal</span>
+      </a>
+      <p class="footer-brand-tagline">
+        Pure Wildcrafted Himalayan Botanicals &amp; Herbal Apothecary · Rooted in Ayurvedic Healing.
+      </p>
+
+      <!-- Terroir Quality Badges with Sprout Leaves -->
+      <div class="footer-terroir-row">
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.5,3 C16.5,3 10.5,3.5 6.5,8 C3.5,11.5 3.5,15 4,16.5 C5.5,17 9,17 12.5,14 C17,10 17.5,4 17.5,4 L16.5,3 Z"/></svg>
+          100% Wildcrafted Botanicals
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M12,2C10,6 6,10 2,12C6,14 10,18 12,22C14,18 18,14 22,12C18,10 14,6 12,2Z"/></svg>
+          Pristine Himalayan Terroir
+        </span>
+        <span class="footer-terroir-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Ethically Handcrafted in Nepal
+        </span>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="footer-nav-links" aria-label="Footer Navigation">
+        <a class="footer-nav-link" href="/" data-i18n="nav_home">Home</a>
+        <a class="footer-nav-link" href="/products/" data-i18n="nav_products">Our Products</a>
+        <a class="footer-nav-link" href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a class="footer-nav-link" href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a class="footer-nav-link" href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
+        <a class="footer-nav-link" href="{% url 'track_order' %}"><span class="lang-eng">Track My Order</span><span class="lang-nep">अर्डर ट्र्याक गर्नुहोस्</span></a>
+      </nav>
+
+      <!-- Dedicated Hospital Landline Hotline Below Holistic Hospital -->
+      <div class="footer-hospital-hotline-bar">
+        <a href="tel:014115830" class="footer-hospital-hotline-pill" title="Call Holistic Hospital Reception">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span class="lang-eng">Holistic Hospital Landline:</span>
+          <span class="lang-nep">हस्पिटल ल्याण्डलाइन:</span>
+          <strong>01-4115830</strong>
+        </a>
+      </div>
+
+      <!-- Delicate Botanical Leaf Divider -->
+      <div class="footer-leaf-divider" aria-hidden="true">
+        <svg viewBox="0 0 280 14" fill="none" preserveAspectRatio="none">
+          <path d="M0,7 L110,7 M170,7 L280,7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+          <circle cx="140" cy="7" r="2.5" fill="currentColor" />
+          <path d="M125,7 C128,3 135,3 138,7 C135,11 128,11 125,7 Z" fill="currentColor" />
+          <path d="M142,7 C145,3 152,3 155,7 C152,11 145,11 142,7 Z" fill="currentColor" />
+        </svg>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-line">
+        <span>&copy; 2026 Holistic Herbs Nepal Pvt. Ltd. All rights reserved.</span>
+        <a class="footer-home-return-btn" href="/">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span class="lang-eng">Return to Home</span>
+          <span class="lang-nep">गृहपृष्ठ फर्कनुहोस्</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- Scripts -->
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+  // Bilingual synchronization for Track My Order page
+  document.addEventListener("DOMContentLoaded", function() {
+    function setTrackingLanguage(lang) {
+      document.documentElement.setAttribute("data-lang", lang);
+      document.querySelectorAll(".nav-lang-btn").forEach(function(btn) {
+        if (btn.getAttribute("data-lang") === lang) {
+          btn.classList.add("is-active");
+          btn.setAttribute("aria-pressed", "true");
+        } else {
+          btn.classList.remove("is-active");
+          btn.setAttribute("aria-pressed", "false");
+        }
+      });
+
+      var isNep = (lang === "nep");
+      document.querySelectorAll(".lang-eng").forEach(function(el) {
+        el.style.display = isNep ? "none" : "";
+      });
+      document.querySelectorAll(".lang-nep").forEach(function(el) {
+        el.style.display = isNep ? "" : "none";
+      });
+
+      try {
+        localStorage.setItem("site_lang", lang);
+      } catch (e) {}
+    }
+
+    // Attach click handlers to any language buttons
+    document.querySelectorAll(".nav-lang-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var lang = btn.getAttribute("data-lang") || "eng";
+        setTrackingLanguage(lang);
+      });
+    });
+
+    // Initialize with saved language or default
+    var initialLang = "eng";
+    try {
+      initialLang = localStorage.getItem("site_lang") || "eng";
+    } catch(e) {}
+    setTrackingLanguage(initialLang);
+
+    // Mobile Drawer Open/Close
+    var mobileToggle = document.querySelector(".mobile-toggle");
+    var mobileDrawer = document.querySelector(".mobile-drawer");
+    var drawerOverlay = document.querySelector(".drawer-overlay");
+    var drawerClose = document.querySelector(".drawer-close");
+
+    if (mobileToggle && mobileDrawer && drawerOverlay) {
+      mobileToggle.addEventListener("click", function() {
+        mobileDrawer.classList.add("is-open");
+        drawerOverlay.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+      });
+
+      function closeDrawer() {
+        mobileDrawer.classList.remove("is-open");
+        drawerOverlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+      }
+
+      if (drawerClose) drawerClose.addEventListener("click", closeDrawer);
+      drawerOverlay.addEventListener("click", closeDrawer);
+    }
+  });
+</script>
+</body>
+</html>

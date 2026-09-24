@@ -706,6 +706,140 @@ class CheckoutPageView:
 
 
 # ==============================================================================
+# -- DEDICATED PUBLIC ORDER TRACKING VIEW --------------------------------------
+# ==============================================================================
+class TrackOrderPageView(TemplateView):
+    """
+    Public order tracking page.
+    Allows guests and authenticated users to track the status of an order using
+    the Order Number (#ORD-000005, ORD-000005, 000005) plus phone or email verification.
+    """
+    template_name = 'pages/user/track_order.html'
+
+    def get(self, request, *args, **kwargs):
+        order_id = request.GET.get('order_id', '').strip()
+        return self._handle_lookup(request, order_id, is_post=False)
+
+    def post(self, request, *args, **kwargs):
+        order_id = request.POST.get('order_id', '').strip()
+        return self._handle_lookup(request, order_id, is_post=True)
+
+    def _handle_lookup(self, request, raw_order_id, is_post):
+        import re
+        searched = bool(raw_order_id or is_post)
+        order = None
+        error_message = None
+        items_list = []
+        status_step = 1
+        is_cancelled = False
+
+        if searched:
+            if not raw_order_id:
+                error_message = "Please enter your order number."
+            else:
+                order = self._find_order(raw_order_id)
+                if not order:
+                    error_message = "Order not found — check your order number."
+                else:
+                    items_list = self._get_items_list(order)
+                    st = (order.PRODUCT_ORDER_STATUS or "PENDING").upper()
+                    if st == "CANCELLED":
+                        is_cancelled = True
+                        status_step = 0
+                    elif st == "CONFIRMED":
+                        status_step = 2
+                    elif st == "PROCESSING":
+                        status_step = 3
+                    elif st in ["SHIPPED", "DISPATCHED"]:
+                        status_step = 4
+                    elif st == "DELIVERED":
+                        status_step = 5
+                    else: # PENDING or default
+                        status_step = 1
+
+        context = {
+            'searched': searched,
+            'order_id_query': raw_order_id,
+            'order': order,
+            'items_list': items_list,
+            'error_message': error_message,
+            'status_step': status_step,
+            'is_cancelled': is_cancelled,
+        }
+        return render(request, self.template_name, context)
+
+    def _find_order(self, raw_order_id):
+        import re
+        cleaned = raw_order_id.strip().upper().lstrip('#').strip()
+        candidates = [cleaned]
+
+        digits = re.findall(r'\d+', cleaned)
+        if digits:
+            num_val = int(digits[-1])
+            candidates.append(f"ORD-{num_val:06d}")
+            candidates.append(f"ORD-{num_val}")
+            candidates.append(f"{num_val:06d}")
+            candidates.append(str(num_val))
+
+        order = None
+        for cand in candidates:
+            order = ProductOrder.objects.filter(PRODUCT_ORDER_ID__iexact=cand).first()
+            if order:
+                break
+
+        if not order and digits and digits[-1].isdigit():
+            order = ProductOrder.objects.filter(id=int(digits[-1])).first()
+
+        return order
+
+    def _get_items_list(self, order):
+        items = []
+        if order.ORDER_ITEMS_DATA and isinstance(order.ORDER_ITEMS_DATA, list):
+            for it in order.ORDER_ITEMS_DATA:
+                try:
+                    price = float(it.get('price', 0))
+                except Exception:
+                    price = 0.0
+                try:
+                    qty = int(it.get('quantity', 1))
+                except Exception:
+                    qty = 1
+                try:
+                    subtotal = float(it.get('subtotal', price * qty))
+                except Exception:
+                    subtotal = price * qty
+                items.append({
+                    'name': it.get('name', 'Ayurvedic Formulation'),
+                    'slug': it.get('slug', ''),
+                    'quantity': qty,
+                    'price': price,
+                    'price_formatted': f"Rs {int(price):,}" if price.is_integer() else f"Rs {price:,.2f}",
+                    'subtotal': subtotal,
+                    'subtotal_formatted': f"Rs {int(subtotal):,}" if subtotal.is_integer() else f"Rs {subtotal:,.2f}",
+                    'image_url': it.get('image_url', ''),
+                    'contain': it.get('contain', ''),
+                })
+        elif order.PRODUCT_ORDER_PRODUCT:
+            p = order.PRODUCT_ORDER_PRODUCT
+            qty = int(order.PRODUCT_ORDER_QTY) if order.PRODUCT_ORDER_QTY else 1
+            price = float(p.PRODUCT_PRICE) if p.PRODUCT_PRICE else 0.0
+            subtotal = price * qty
+            img_url = p.PRODUCT_IMAGE.url if p.PRODUCT_IMAGE else ''
+            items.append({
+                'name': p.PRODUCT_NAME,
+                'slug': getattr(p, 'slug', ''),
+                'quantity': qty,
+                'price': price,
+                'price_formatted': f"Rs {int(price):,}" if price.is_integer() else f"Rs {price:,.2f}",
+                'subtotal': subtotal,
+                'subtotal_formatted': f"Rs {int(subtotal):,}" if subtotal.is_integer() else f"Rs {subtotal:,.2f}",
+                'image_url': img_url,
+                'contain': f"{p.PRODUCT_CONTAIN} {p.PRODUCT_UNIT}" if p.PRODUCT_CONTAIN else '',
+            })
+        return items
+
+
+# ==============================================================================
 # -- CUSTOM ERROR HANDLERS (404 & 500) -----------------------------------------
 # ==============================================================================
 def custom_404_view(request, exception=None):

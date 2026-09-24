@@ -39,4 +39,7 @@ urlpatterns = [
 
     # -- CHECKOUT ROUTE (LOGIN PROTECTED) ---
     path('checkout/', views.CheckoutPageView(), name='checkout'),
+
+    # -- DEDICATED PUBLIC ORDER TRACKING ROUTE ---
+    path('track-order/', views.TrackOrderPageView.as_view(), name='track_order'),
 ]
