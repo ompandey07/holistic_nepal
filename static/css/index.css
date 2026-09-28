@@ -2288,6 +2288,8 @@ body.is-loading .mobile-toggle {
   padding: 3px;
   gap: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  user-select: none;
 }
 
 .floating-lang-switch {
@@ -2328,6 +2330,9 @@ body.is-loading .mobile-toggle {
   line-height: 1.25;
   white-space: nowrap;
   user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-lang-btn:hover {

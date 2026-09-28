@@ -1,27 +1,108 @@
 /**
  * Holistic Hospital & Clinical Services - Bilingual Translation Engine
- * Shared across /hospital/ and /services/<slug>/
- * Persists user preference via localStorage ('holistic_hospital_lang')
+ * Shared across the entire site (Navbar, Hero, Products, Hospital, Services,
+ * Gallery, News, Cart, Checkout, Auth, User Dashboard, Order Tracking, Footer).
+ * Persists user preference via localStorage ('holistic_lang').
  */
 
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'holistic_hospital_lang';
+  const STORAGE_KEY = 'holistic_lang';
 
   const i18nDict = {
-    // Nav & General
+    // ==========================================
+    // 1. Navigation & Breadcrumbs (Site-Wide)
+    // ==========================================
     "nav_home": { en: "Home page", np: "गृहपृष्ठ" },
     "nav_products": { en: "Our Products", np: "हाम्रा उत्पादनहरू" },
     "nav_news": { en: "News", np: "समाचार" },
     "nav_hospital": { en: "Holistic Hospital", np: "होलिस्टिक हस्पिटल" },
     "nav_gallery": { en: "Gallery", np: "ग्यालरी" },
+    "nav_cart": { en: "Cart", np: "कार्ट" },
+    "nav_account": { en: "Account", np: "खाता" },
+    "nav_login": { en: "Sign In", np: "साइन इन" },
+    "nav_register": { en: "Register", np: "दर्ता" },
+    "nav_logout": { en: "Sign Out", np: "बाहिरिनुहोस्" },
+    "nav_track_order": { en: "Track My Order", np: "अर्डर ट्र्याक गर्नुहोस्" },
     "breadcrumb_home": { en: "Home", np: "गृहपृष्ठ" },
+    "breadcrumb_products": { en: "Our Products", np: "हाम्रा उत्पादनहरू" },
     "breadcrumb_hospital": { en: "Holistic Hospital", np: "होलिस्टिक हस्पिटल" },
     "breadcrumb_services": { en: "Services", np: "सेवाहरू" },
     "breadcrumb_gallery": { en: "Photo Gallery", np: "फोटो ग्यालरी" },
+    "breadcrumb_news": { en: "News & Advisories", np: "समाचार तथा सल्लाह" },
+    "breadcrumb_cart": { en: "Botanical Basket", np: "हर्बल बास्केट" },
+    "breadcrumb_checkout": { en: "Secure Checkout", np: "सुरक्षित चेकआउट" },
+    "breadcrumb_track": { en: "Order Tracking", np: "अर्डर ट्र्याकिङ" },
+    "lang_label": { en: "Language / भाषा:", np: "भाषा / Language:" },
 
-    // Hospital Hero
+    // ==========================================
+    // 2. Home Page: Hero, Philosophy, Categories & Showcase
+    // ==========================================
+    "hero_himalayan": { en: "Himalayan", np: "हिमाली" },
+    "hero_herbs_w": { en: "H", np: "ज" },
+    "hero_herbs_rest": { en: "erbs,", np: "डीबुटी," },
+    "hero_pure_wellness": { en: "Pure Holistic Wellness.", np: "शुद्ध समग्र स्वास्थ्य।" },
+    "hero_desc": {
+      en: "Harvested from the pristine heights of Nepal, our herbs carry generations of natural healing. From pure wildcrafted Himalayan botanicals to your daily wellness ritual, we bring nature’s potent remedies closer to you with authenticity and care.",
+      np: "नेपालका स्वच्छ हिमाली भेगबाट संकलित हाम्रा जडीबुटीहरूमा पुस्तौँदेखिको प्राकृतिक उपचार शक्ति छ। शुद्ध प्राकृतिक जडीबुटीदेखि तपाईंको दैनिक आरोग्य जीवनशैलीसम्म, हामी प्रकृतिका शक्तिशाली उपचारहरू प्रामाणिकताका साथ उपलब्ध गराउँछौं।"
+    },
+    "btn_shop": { en: "Shop", np: "किनमेल" },
+    "btn_shop_all": { en: "Shop All Products", np: "सबै उत्पादनहरू हेर्नुहोस्" },
+    "btn_our_approach": { en: "Our approach", np: "हाम्रो पद्धति" },
+    "trust_quality": { en: "Quality-led herbal formulations", np: "उच्च गुणस्तरीय जडीबुटी उत्पादन" },
+    "trust_haccp": { en: "HACCP-minded sourcing", np: "HACCP मापदण्ड अनुसार संकलन" },
+    "trust_scroll": { en: "Scroll to explore", np: "थप हेर्न तल स्क्रोल गर्नुहोस्" },
+    "terroir_origin": { en: "Wildcrafted Himalayan Origin", np: "प्राकृतिक हिमाली उत्पत्ति" },
+
+    // Wellness / Approach Section
+    "wellness_title_1": { en: "Wellness begins", np: "आरोग्यको सुरुवात" },
+    "wellness_title_2": { en: "with attention.", np: "सचेत हेरचाहबाट हुन्छ।" },
+    "wellness_desc": {
+      en: "We bring Nepal’s herbal wisdom into modern life through carefully considered products, honest education, and rituals that feel good to return to.",
+      np: "हामी नेपालको परम्परागत जडीबुटीय ज्ञानलाई आधुनिक जीवनशैलीमा रूपान्तरण गरी प्रभावकारी उत्पादन, उचित परामर्श र स्वस्थ जीवनशैली प्रदान गर्दछौं।"
+    },
+    "wellness_btn": { en: "Meet our approach", np: "हाम्रो पद्धति बुझ्नुहोस्" },
+
+    // Categories Section
+    "categories_eyebrow": { en: "Curated Collections", np: "विशेष संकलन" },
+    "categories_title": { en: "Explore by Category", np: "विधा अनुसार उत्पादनहरू हेर्नुहोस्" },
+    "categories_subtitle": {
+      en: "Every botanical formula is rooted in indigenous knowledge, harvested sustainably in Nepal, and prepared to the highest purity standards.",
+      np: "प्रत्येक जडीबुटी उत्पादन रैथाने ज्ञानमा आधारित छ, नेपालमा दिगो रूपमा संकलन गरी उच्च शुद्धताका साथ तयार गरिन्छ।"
+    },
+    "categories_view_all": { en: "View Full Catalog", np: "सबै उत्पादनहरू हेर्नुहोस्" },
+    "cat_nutraceutical": { en: "Nutraceuticals", np: "न्युट्रास्युटिकल्स" },
+    "cat_beverages": { en: "Beverages & Herbal Teas", np: "हर्बल चिया तथा पेय" },
+    "cat_personal_care": { en: "Personal Care", np: "सौन्दर्य तथा हेरचाह" },
+
+    // Botanical Specimen / Showcase Section
+    "showcase_eyebrow": { en: "Botanical Specimen Catalog", np: "हर्बल उत्पादन सूची" },
+    "showcase_title": { en: "Client-Favorite Botanical Remedies", np: "ग्राहकहरूले अत्यधिक रुचाएका उत्पादनहरू" },
+    "showcase_subtitle": {
+      en: "Handcrafted with pure Himalayan ingredients. Real experiences from our verified clients across Nepal.",
+      np: "शुद्ध हिमाली जडीबुटीबाट हस्तनिर्मित। नेपालभरका प्रमाणित ग्राहकहरूको वास्तविक अनुभव।"
+    },
+    "filter_all": { en: "All Remedies", np: "सबै उत्पादनहरू" },
+    "add_to_basket": { en: "Add to Basket", np: "कार्टमा थप्नुहोस्" },
+    "inspect_specs": { en: "Inspect Botanical Specs", np: "विस्तृत विवरण हेर्नुहोस्" },
+    "verified_client": { en: "✓ Verified Client", np: "✓ प्रमाणित ग्राहक" },
+    "what_clients_say": { en: "💬 WHAT CLIENTS SAY", np: "💬 ग्राहकहरूको अनुभव" },
+    "herbal_action_label": { en: "HERBAL ACTION · विवरण:", np: "औषधीय प्रभाव · विवरण:" },
+    "apothecary_eyebrow": { en: "Apothecary Collection · Pure Botanicals", np: "औषधि संकलन · शुद्ध जडीबुटी" },
+    "view_all_remedies": { en: "View All Remedies", np: "सबै औषधिहरू हेर्नुहोस्" },
+    "news_subhead": { en: "Stay updated with company announcements, certifications, and botanical releases.", np: "कम्पनीका सूचनाहरू, प्रमाणीकरण र नयाँ जडीबुटीय उत्पादनहरूको जानकारी लिनुहोस्।" },
+    "news_view_details": { en: "View details", np: "विस्तृत हेर्नुहोस्" },
+    "ratings_title": { 
+      en: 'What Clients Say <span class="title-italic-accent">About Each Herbal Item</span>', 
+      np: 'प्रत्येक जडीबुटीय उत्पादनबारे <span class="title-italic-accent">ग्राहकहरूको धारणा</span>' 
+    },
+    "ratings_subtitle": { en: "100% verified transparency. Explore genuine ratings, clinical results, and honest experiences shared by clients across Nepal for each botanical remedy.", np: "१००% प्रमाणित पारदर्शिता। नेपालभरका ग्राहकहरूले साझा गरेका वास्तविक प्रतिक्रिया, अनुभव र मूल्याङ्कन हेर्नुहोस्।" },
+    "slider_title": { en: "Himalayan Remedies Showcase", np: "हिमाली औषधिहरूको प्रस्तुति" },
+
+    // ==========================================
+    // 3. Hospital & Clinical Services (Preserved & Extended)
+    // ==========================================
     "hero_live_status": {
       en: "OPD & Inpatient Admissions Open · 8:00 AM – 7:00 PM",
       np: "ओपीडी तथा आवासीय भर्ना खुला · बिहान ८:०० – साँझ ७:००"
@@ -59,7 +140,6 @@
     "cred_nursing_sub": { en: "Full inpatient recovery care support", np: "पूर्ण आवासीय बिरामी स्याहार सेवा" },
 
     // Services Section
-
     "services_eyebrow": { en: "Comprehensive Natural Healthcare", np: "समग्र प्राकृतिक उपचार सेवाहरू" },
     "services_title": { en: "Our Specialized Clinical Services", np: "हाम्रा विशेषज्ञ क्लिनिकल सेवाहरू" },
     "services_subtitle": {
@@ -169,12 +249,109 @@
     "modal_submit_whatsapp": { en: "Confirm & Send via WhatsApp Concierge", np: "ह्वाट्सएपमार्फत तुरुन्त पठाउनुहोस्" },
     "modal_call_direct": { en: "Or Call Front Desk Now: 01-4115830", np: "वा सिधै फोन गर्नुहोस्: ०१-४११५८३०" },
 
-    // Footer
-    "footer_return_home": { en: "Return to Home", np: "गृहपृष्ठमा फर्कनुहोस्" },
-    "footer_copy": {
-      en: "© 2026 Holistic Hospital & Research Center Pvt. Ltd. All rights reserved.",
-      np: "© २०२६ होलिस्टिक हस्पिटल एण्ड रिसर्च सेन्टर प्रा.लि. सर्वाधिकार सुरक्षित।"
-    }
+    // ==========================================
+    // 4. Products Catalog & Details
+    // ==========================================
+    "catalog_title": { en: "Our Herbal Products", np: "हाम्रा जडीबुटी उत्पादनहरू" },
+    "catalog_subtitle": { en: "Formulated with pure Himalayan herbs for holistic wellness and vitality.", np: "समग्र स्वास्थ्य र स्फूर्तिका लागि शुद्ध हिमाली जडीबुटीबाट निर्मित।" },
+    "search_placeholder": { en: "Search botanicals, teas, or remedies...", np: "जडीबुटी, चिया वा औषधि खोज्नुहोस्..." },
+    "filter_categories": { en: "Categories", np: "उत्पादन विधा" },
+    "sort_label": { en: "Sort by", np: "क्रमबद्ध" },
+    "sort_default": { en: "Default", np: "पूर्वनिर्धारित" },
+    "sort_price_low": { en: "Price: Low to High", np: "मूल्य: सस्तोबाट महँगो" },
+    "sort_price_high": { en: "Price: High to Low", np: "मूल्य: महँगोबाट सस्तो" },
+    "btn_add_to_cart": { en: "Add to Cart", np: "कार्टमा थप्नुहोस्" },
+    "btn_buy_now": { en: "Buy Now", np: "अहिले किन्नुहोस्" },
+    "out_of_stock": { en: "Out of Stock", np: "स्टक सकिएको" },
+    "in_stock": { en: "In Stock", np: "स्टक उपलब्ध" },
+    "prod_desc_title": { en: "Product Description :", np: "नेपाली भाषामा विस्तृत विवरण :" },
+    "prod_ingredients_title": { en: "Active Botanical Ingredients", np: "सक्रिय जडीबुटीय घटकहरू" },
+    "prod_usage_title": { en: "Directions for Use", np: "प्रयोग गर्ने तरिका" },
+
+    // ==========================================
+    // 5. Cart & Checkout
+    // ==========================================
+    "cart_title": { en: "Your Botanical Basket", np: "तपाईंको कार्ट (बास्केट)" },
+    "cart_table_remedy": { en: "Remedy", np: "औषधि / उत्पादन" },
+    "cart_table_price": { en: "Price", np: "मूल्य" },
+    "cart_table_qty": { en: "Quantity", np: "परिमाण" },
+    "cart_table_subtotal": { en: "Subtotal", np: "जम्मा" },
+    "cart_summary_title": { en: "Basket Summary", np: "खर्च विवरण" },
+    "cart_free_dispatch": { en: "Free Himalayan Dispatch", np: "निःशुल्क डेलिभरी" },
+    "cart_items_subtotal": { en: "Items Subtotal", np: "सामानको जम्मा रकम" },
+    "cart_standard_shipping": { en: "Standard Nepal Dispatch", np: "डेलिभरी शुल्क" },
+    "cart_grand_total": { en: "Grand Total", np: "कुल जम्मा" },
+    "cart_btn_checkout": { en: "Proceed to Checkout →", np: "चेकआउटमा जानुहोस् →" },
+    "cart_btn_signin": { en: "Sign In to Proceed →", np: "अघि बढ्न साइन इन गर्नुहोस् →" },
+    "cart_btn_continue": { en: "← Continue Exploring Remedies", np: "← अन्य उत्पादनहरू हेर्नुहोस्" },
+    "checkout_h1": { en: "Complete Your Remedy Order", np: "तपाईंको अर्डर पूरा गर्नुहोस्" },
+    "checkout_step_client": { en: "1. Client Information", np: "१. ग्राहक विवरण" },
+    "checkout_step_delivery": { en: "2. Himalayan Delivery Address", np: "२. डेलिभरी ठेगाना" },
+    "checkout_step_payment": { en: "3. Payment Method", np: "३. भुक्तानी माध्यम" },
+    "checkout_order_summary": { en: "Order Summary", np: "अर्डर सारांश" },
+    "checkout_btn_place_order": { en: "Place Order Now", np: "अर्डर पुष्टि गर्नुहोस्" },
+
+    // ==========================================
+    // 6. News & Gallery
+    // ==========================================
+    "news_title": { en: "News & Botanical Advisories", np: "समाचार तथा जडीबुटी जानकारी" },
+    "news_read_more": { en: "Read Full Advisory →", np: "विस्तृत विवरण पढ्नुहोस् →" },
+    "gallery_title": { en: "Photo Gallery & Clinical Archives", np: "फोटो ग्यालरी तथा क्लिनिकल अभिलेख" },
+
+    // ==========================================
+    // 7. Order Tracking
+    // ==========================================
+    "track_hero_title": { en: "Track Your Botanical Order", np: "तपाईंको अर्डर ट्र्याक गर्नुहोस्" },
+    "track_hero_subtitle": {
+      en: "Enter your order identifier (#ORD-000005) below to view live preparation, packaging, and courier dispatch milestones.",
+      np: "तपाईंको अर्डर नम्बर (#ORD-000005) प्रविष्ट गरी अर्डरको तयारी, प्याकेजिङ तथा डेलिभरी विवरण हेर्नुहोस्।"
+    },
+    "track_order_number_label": { en: "Order Number", np: "अर्डर नम्बर" },
+    "track_order_hint": { en: "Accepts #ORD-000005, ORD-000005, or order ID", np: "#ORD-000005, ORD-000005 वा अर्डर आईडी मान्य छ" },
+    "track_btn_submit": { en: "Track Order Status →", np: "अर्डर स्थिति हेर्नुहोस् →" },
+    "track_not_found_title": { en: "Order Not Found", np: "अर्डर फेला परेन" },
+
+    // ==========================================
+    // 8. Auth (Login, Register, Password Reset)
+    // ==========================================
+    "auth_login_title": { en: "Sign In to Your Account", np: "आफ्नो खातामा लगइन गर्नुहोस्" },
+    "auth_register_title": { en: "Create an Account", np: "नयाँ खाता खोल्नुहोस्" },
+    "auth_fill_details": { en: "Fill in your details below to get started.", np: "सुरु गर्न तल आफ्नो विवरण भर्नुहोस्।" },
+    "auth_fullname": { en: "Full Name", np: "पूरा नाम" },
+    "auth_email": { en: "Email Address", np: "इमेल ठेगाना" },
+    "auth_mobile": { en: "Mobile Number", np: "मोबाइल नम्बर" },
+    "auth_address": { en: "Address", np: "ठेगाना" },
+    "auth_password": { en: "Password", np: "पासवर्ड" },
+    "auth_confirm_password": { en: "Confirm Password", np: "पासवर्ड पुनः प्रविष्ट गर्नुहोस्" },
+    "auth_forgot": { en: "Forgot password?", np: "पासवर्ड बिर्सनुभयो?" },
+    "auth_btn_login": { en: "Sign In", np: "लगइन गर्नुहोस्" },
+    "auth_btn_register": { en: "Create Account", np: "खाता बनाउनुहोस्" },
+    "auth_already_have_account": { en: "Already have an account?", np: "पहिले नै खाता छ?" },
+    "auth_sign_in_link": { en: "Sign in", np: "साइन इन" },
+
+    // ==========================================
+    // 9. Footer (Site-Wide)
+    // ==========================================
+    "footer_tagline": { en: "Wildcrafted Himalayan botanicals, bottled by hand in Nepal.", np: "नेपालमा हातैले संकलित र तयार गरिएका शुद्ध हिमाली जडीबुटीहरू।" },
+    "footer_wildcrafted": { en: "100% Wildcrafted", np: "१००% प्राकृतिक" },
+    "footer_terroir": { en: "Himalayan Terroir", np: "हिमाली पहिचान" },
+    "footer_hand_bottled": { en: "Hand-Bottled", np: "हस्तनिर्मित" },
+    "footer_nepal_time": { en: "Nepal Time", np: "नेपाल समय" },
+    "footer_col_shop": { en: "Shop", np: "किनमेल" },
+    "footer_col_company": { en: "Company", np: "कम्पनी" },
+    "footer_col_contact": { en: "Contact", np: "सम्पर्क" },
+    "footer_nutraceuticals": { en: "Nutraceuticals", np: "न्युट्रास्युटिकल्स" },
+    "footer_beverages": { en: "Beverages", np: "पेय पदार्थ" },
+    "footer_personal_care": { en: "Personal care", np: "सौन्दर्य हेरचाह" },
+    "footer_track_order": { en: "Track My Order", np: "अर्डर ट्र्याक गर्नुहोस्" },
+    "footer_news": { en: "News & Advisories", np: "समाचार तथा जानकारी" },
+    "footer_gallery": { en: "Gallery", np: "ग्यालरी" },
+    "footer_hospital": { en: "Holistic Hospital", np: "होलिस्टिक हस्पिटल" },
+    "footer_location": { en: "Kathmandu, Nepal", np: "काठमाडौं, नेपाल" },
+    "footer_inquiries": { en: "Inquiries & Consultations Welcome", np: "सोधपुछ तथा परामर्श स्वागत छ" },
+    "footer_copyright": { en: "© 2026 Holistic Herbs Pvt. Ltd.", np: "© २०२६ होलिस्टिक हर्ब्स प्रा.लि." },
+    "footer_rights": { en: "© 2026 Holistic Herbs Pvt. Ltd. All rights reserved.", np: "© २०२६ होलिस्टिक हर्ब्स प्रा.लि. सर्वाधिकार सुरक्षित।" },
+    "footer_return_home": { en: "Return to Home", np: "गृहपृष्ठ फर्कनुहोस्" }
   };
 
   /**
@@ -186,87 +363,193 @@
       lang = 'eng';
     }
 
+    // 1. Persistence across multiple storage keys for backwards-compatibility
     try {
-      localStorage.setItem(STORAGE_KEY, lang);
+      localStorage.setItem('holistic_lang', lang);
+      localStorage.setItem('site_lang', lang);
+      localStorage.setItem('holistic_hospital_lang', lang);
     } catch (e) {
       // Ignore private browsing storage errors
     }
 
     document.documentElement.setAttribute('data-lang', lang);
-    document.body.setAttribute('data-lang', lang);
+    if (document.body) {
+      document.body.setAttribute('data-lang', lang);
+    }
+    document.documentElement.lang = (lang === 'nep' ? 'ne' : 'en');
 
-    // 1. Update all dictionary nodes [data-i18n]
+    const isNep = (lang === 'nep');
+
+    // 2. Full DOM swap: Update all dictionary nodes [data-i18n]
     const i18nElements = document.querySelectorAll('[data-i18n]');
-    i18nElements.forEach(el => {
+    i18nElements.forEach(function (el) {
       const key = el.getAttribute('data-i18n');
       if (i18nDict[key]) {
-        const text = (lang === 'nep') ? i18nDict[key].np : i18nDict[key].en;
-        if (text) {
-          el.textContent = text;
+        const text = isNep ? i18nDict[key].np : i18nDict[key].en;
+        if (text !== undefined && text !== null) {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = text;
+          } else if (text.indexOf('<') !== -1) {
+            el.innerHTML = text;
+          } else {
+            el.textContent = text;
+          }
         }
       }
     });
 
-    // 2. Update navbar pill toggle button states
-    const engBtn = document.getElementById('hospital-lang-eng');
-    const nepBtn = document.getElementById('hospital-lang-nep');
+    // 3. Update placeholder nodes [data-i18n-placeholder]
+    const i18nPlaceholders = document.querySelectorAll('[data-i18n-placeholder]');
+    i18nPlaceholders.forEach(function (el) {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (i18nDict[key]) {
+        const text = isNep ? i18nDict[key].np : i18nDict[key].en;
+        if (text !== undefined && text !== null) {
+          el.placeholder = text;
+        }
+      }
+    });
 
-    if (engBtn && nepBtn) {
-      if (lang === 'nep') {
-        nepBtn.classList.add('is-active');
-        nepBtn.setAttribute('aria-pressed', 'true');
-        engBtn.classList.remove('is-active');
-        engBtn.setAttribute('aria-pressed', 'false');
-      } else {
-        engBtn.classList.add('is-active');
-        engBtn.setAttribute('aria-pressed', 'true');
-        nepBtn.classList.remove('is-active');
-        nepBtn.setAttribute('aria-pressed', 'false');
+    // 4. Full DOM swap: Toggle all bilingual span wrappers (.lang-eng / .lang-nep)
+    document.querySelectorAll('.lang-eng').forEach(function (el) {
+      el.style.display = isNep ? 'none' : '';
+    });
+    document.querySelectorAll('.lang-nep').forEach(function (el) {
+      el.style.display = isNep ? '' : 'none';
+    });
+    document.querySelectorAll('[data-lang="en"]').forEach(function (el) {
+      el.style.display = isNep ? 'none' : '';
+    });
+    document.querySelectorAll('[data-lang="np"]').forEach(function (el) {
+      el.style.display = isNep ? '' : 'none';
+    });
+
+    // 5. Toggle quote blocks (.say-quote-eng / .say-quote-nep)
+    document.querySelectorAll('.say-quote-eng').forEach(function (el) {
+      el.style.display = isNep ? 'none' : 'inline';
+    });
+    document.querySelectorAll('.say-quote-nep').forEach(function (el) {
+      el.style.display = isNep ? 'inline' : 'none';
+    });
+
+    // 6. Support Product Detail Page descriptions if present
+    const descEng = document.getElementById('pdp-desc-eng');
+    const descNep = document.getElementById('pdp-desc-nep');
+    const boxTitle = document.getElementById('pdp-box-title');
+    if (descEng && descNep) {
+      descEng.style.display = isNep ? 'none' : 'block';
+      descNep.style.display = isNep ? 'block' : 'none';
+      if (boxTitle) {
+        boxTitle.textContent = isNep ? 'नेपाली भाषामा विस्तृत विवरण :' : 'Product Description :';
       }
     }
 
-    // 3. Inform modality inspector if present
+    // 7. Update active state across ALL language toggle buttons site-wide
+    const toggleButtons = document.querySelectorAll(
+      '.nav-lang-btn, [id$="-lang-eng"], [id$="-lang-nep"], [data-lang="eng"], [data-lang="nep"]'
+    );
+    toggleButtons.forEach(function (btn) {
+      const btnLang = btn.getAttribute('data-lang') || (btn.id && btn.id.indexOf('-nep') !== -1 ? 'nep' : 'eng');
+      const isActive = (btnLang === lang);
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+
+    // 8. Inform modality inspector if present on hospital page
     if (typeof window.updateInspectorOnLangSwitch === 'function') {
-      window.updateInspectorOnLangSwitch(lang);
+      try {
+        window.updateInspectorOnLangSwitch(lang);
+      } catch (e) {
+        console.warn('updateInspectorOnLangSwitch error:', e);
+      }
     }
 
-    // 4. Dispatch custom event for custom components
-    window.dispatchEvent(new CustomEvent('holistic:languageChange', { detail: { lang } }));
+    // 9. Dispatch custom events for any listener components
+    window.dispatchEvent(new CustomEvent('holistic:languageChange', { detail: { lang: lang } }));
+    window.dispatchEvent(new CustomEvent('siteLanguageChange', { detail: { lang: lang } }));
   }
 
-  // Initialize language on DOM ready
-  document.addEventListener('DOMContentLoaded', function () {
-    let savedLang = 'eng';
+  /**
+   * Helper to retrieve currently saved language with fallback
+   */
+  function getSavedLanguage() {
     try {
-      savedLang = localStorage.getItem(STORAGE_KEY) || 'eng';
+      return localStorage.getItem('holistic_lang') ||
+             localStorage.getItem('site_lang') ||
+             localStorage.getItem('holistic_hospital_lang') ||
+             'eng';
     } catch (e) {
-      savedLang = 'eng';
+      return 'eng';
+    }
+  }
+
+  /**
+   * Toggle between English and Nepali
+   */
+  function toggleSiteLanguage() {
+    const currentLang = document.documentElement.getAttribute('data-lang') || getSavedLanguage();
+    const nextLang = (currentLang === 'nep') ? 'eng' : 'nep';
+    setHospitalLanguage(nextLang);
+    return nextLang;
+  }
+
+  /**
+   * Attach global click listeners and initialize language
+   */
+  function initI18n() {
+    function handleToggleClick(e) {
+      // 1. If clicked a specific language button
+      const btn = e.target.closest('.nav-lang-btn, [id$="-lang-eng"], [id$="-lang-nep"], [data-lang="eng"], [data-lang="nep"]');
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentLang = document.documentElement.getAttribute('data-lang') || getSavedLanguage();
+        const btnLang = btn.getAttribute('data-lang') || (btn.id && btn.id.indexOf('-nep') !== -1 ? 'nep' : 'eng');
+        // If clicking the already active button, toggle to the other language
+        if (btn.classList.contains('is-active') && btnLang === currentLang) {
+          toggleSiteLanguage();
+        } else {
+          setHospitalLanguage(btnLang);
+        }
+        return;
+      }
+
+      // 2. If clicked the capsule switch wrapper itself
+      const wrapper = e.target.closest('.nav-lang-switch, [role="group"][aria-label*="Language"]');
+      if (wrapper) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSiteLanguage();
+      }
     }
 
-    // Attach click listeners to language switch buttons
-    const engBtn = document.getElementById('hospital-lang-eng');
-    const nepBtn = document.getElementById('hospital-lang-nep');
+    // Delegated click listener so dynamically injected or drawer buttons work
+    document.addEventListener('click', handleToggleClick, true);
 
-    if (engBtn) {
-      engBtn.addEventListener('click', function () {
-        setHospitalLanguage('eng');
-      });
-    }
+    // Direct listener on all current switches for high responsiveness
+    document.querySelectorAll('.nav-lang-switch, .nav-lang-btn').forEach(function (el) {
+      el.addEventListener('click', handleToggleClick);
+    });
 
-    if (nepBtn) {
-      nepBtn.addEventListener('click', function () {
-        setHospitalLanguage('nep');
-      });
-    }
+    // Initial language synchronization
+    const initialLang = getSavedLanguage();
+    setHospitalLanguage(initialLang);
+  }
 
-    // Apply initial language
-    setHospitalLanguage(savedLang);
-  });
-
-  // Expose globally
+  // Expose immediately so inline scripts and early calls never fail
   window.setHospitalLanguage = setHospitalLanguage;
+  window.setSiteLanguage = setHospitalLanguage;
+  window.toggleSiteLanguage = toggleSiteLanguage;
   window.getHospitalLanguage = function () {
-    return document.documentElement.getAttribute('data-lang') || 'eng';
+    return document.documentElement.getAttribute('data-lang') || getSavedLanguage();
   };
   window.i18nDict = i18nDict;
+
+  // Run on DOM ready or immediately if DOM is already parsed
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initI18n);
+  } else {
+    initI18n();
+  }
 })();
+

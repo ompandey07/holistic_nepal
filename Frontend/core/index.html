@@ -18,7 +18,10 @@
   <link rel="icon" href="{% static 'Images/HOLISTIC HERB REAL LOGO.png' %}" type="image/png">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=mobile_toggle6.3">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?v=mobile_toggle6.4">
+
+  <!-- Bilingual Translation Engine (Head-loaded to prevent FOUC & guarantee instant wiring) -->
+  <script src="{% static 'js/hospital-i18n.js' %}?v=5.0"></script>
 
   <!-- Prevent scroll restoration glitch on refresh/load -->
   <script>
@@ -43,20 +46,21 @@
 
       <!-- Desktop Navigation Links (matching screenshot) -->
       <nav class="nav-links" aria-label="Primary navigation">
-        <a class="active" href="/">Home page</a>
-        <a href="/products/">Our Products</a>
-        <a href="{% url 'news_list' %}">News</a>
-        <a href="{% url 'hospital' %}">Holistic Hospital</a>
-        <a href="{% url 'gallery' %}">Gallery</a>
+        <a class="active" href="/" data-i18n="nav_home">Home page</a>
+        <a href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
       </nav>
 
       <!-- Right Side Actions: Language Switcher & Cart Button -->
       <div class="header-right-actions">
-        <div class="nav-lang-switch" role="group" aria-label="Language selection">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection" style="cursor:pointer;"
+          onclick="window.toggleSiteLanguage ? window.toggleSiteLanguage() : (window.setHospitalLanguage && window.setHospitalLanguage('nep'))">
           <button type="button" class="nav-lang-btn is-active" id="main-lang-eng" data-lang="eng"
-            aria-pressed="true">ENG</button>
+            aria-pressed="true" onclick="event.stopPropagation(); window.setHospitalLanguage && window.setHospitalLanguage('eng')">ENG</button>
           <button type="button" class="nav-lang-btn" id="main-lang-nep" data-lang="nep"
-            aria-pressed="false">नेपाली</button>
+            aria-pressed="false" onclick="event.stopPropagation(); window.setHospitalLanguage && window.setHospitalLanguage('nep')">नेपाली</button>
         </div>
 
         <a class="nav-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart">
@@ -97,20 +101,21 @@
       </a>
 
       <nav class="floating-nav-links" aria-label="Floating navigation">
-        <a class="active" href="/">Home page</a>
-        <a href="/products/">Our Products</a>
-        <a href="{% url 'news_list' %}">News</a>
-        <a href="{% url 'hospital' %}">Holistic Hospital</a>
-        <a href="{% url 'gallery' %}">Gallery</a>
+        <a class="active" href="/" data-i18n="nav_home">Home page</a>
+        <a href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
       </nav>
 
       <!-- Right Side Floating Actions: Language Switcher & Cart Button -->
       <div class="header-right-actions floating-right-actions">
-        <div class="nav-lang-switch floating-lang-switch" role="group" aria-label="Language selection">
+        <div class="nav-lang-switch floating-lang-switch" role="group" aria-label="Language selection" style="cursor:pointer;"
+          onclick="window.toggleSiteLanguage ? window.toggleSiteLanguage() : (window.setHospitalLanguage && window.setHospitalLanguage('nep'))">
           <button type="button" class="nav-lang-btn is-active" id="float-lang-eng" data-lang="eng"
-            aria-pressed="true">ENG</button>
+            aria-pressed="true" onclick="event.stopPropagation(); window.setHospitalLanguage && window.setHospitalLanguage('eng')">ENG</button>
           <button type="button" class="nav-lang-btn" id="float-lang-nep" data-lang="nep"
-            aria-pressed="false">नेपाली</button>
+            aria-pressed="false" onclick="event.stopPropagation(); window.setHospitalLanguage && window.setHospitalLanguage('nep')">नेपाली</button>
         </div>
 
         <a class="nav-cart-btn floating-cart-btn" href="{% url 'cart' %}" aria-label="View shopping cart">
@@ -151,17 +156,20 @@
       <button class="drawer-close" aria-label="Close menu">&times;</button>
     </div>
     <nav class="drawer-menu">
-      <a class="active" href="/">Home page</a>
-      <a href="/products/">Our Products</a>
-      <a href="{% url 'news_list' %}">News</a>
-      <a href="{% url 'hospital' %}">Holistic Hospital</a>
-      <a href="{% url 'gallery' %}">Gallery</a>
+      <a class="active" href="/" data-i18n="nav_home">Home page</a>
+      <a href="/products/" data-i18n="nav_products">Our Products</a>
+      <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+      <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
     </nav>
     <div class="drawer-bottom-row">
-      <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;">Language / भाषा:</span>
-      <div class="nav-lang-switch" role="group" aria-label="Language selection">
-        <button type="button" class="nav-lang-btn is-active" data-lang="eng" aria-pressed="true">ENG</button>
-        <button type="button" class="nav-lang-btn" data-lang="nep" aria-pressed="false">नेपाली</button>
+      <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;" data-i18n="lang_label">Language / भाषा:</span>
+      <div class="nav-lang-switch" role="group" aria-label="Language selection" style="cursor:pointer;"
+        onclick="window.toggleSiteLanguage ? window.toggleSiteLanguage() : (window.setHospitalLanguage && window.setHospitalLanguage('nep'))">
+        <button type="button" class="nav-lang-btn is-active" data-lang="eng" aria-pressed="true"
+          onclick="event.stopPropagation(); window.setHospitalLanguage && window.setHospitalLanguage('eng')">ENG</button>
+        <button type="button" class="nav-lang-btn" data-lang="nep" aria-pressed="false"
+          onclick="event.stopPropagation(); window.setHospitalLanguage && window.setHospitalLanguage('nep')">नेपाली</button>
       </div>
     </div>
   </aside>
@@ -186,15 +194,15 @@
             <span class="headline-line">
               <span class="nature-anchor">
                 <img src="{% static 'Images/Leaves.png' %}" class="leaf-graphic" alt="" aria-hidden="true">
-                <span class="nature-text">Himalayan</span>
+                <span class="nature-text" data-i18n="hero_himalayan">Himalayan</span>
               </span>
-              <em class="wisdom-italic"><span class="wisdom-w">H</span>erbs,</em>
+              <em class="wisdom-italic"><span class="wisdom-w" data-i18n="hero_herbs_w">H</span><span data-i18n="hero_herbs_rest">erbs,</span></em>
             </span>
-            <span class="headline-line">Pure Holistic Wellness.</span>
+            <span class="headline-line" data-i18n="hero_pure_wellness">Pure Holistic Wellness.</span>
           </h1>
 
           <!-- Subtitle Paragraph -->
-          <p class="hero-desc">
+          <p class="hero-desc" data-i18n="hero_desc">
             Harvested from the pristine heights of Nepal, our herbs carry generations of natural healing. From pure
             wildcrafted Himalayan botanicals to your daily wellness ritual, we bring nature’s potent remedies closer to
             you with authenticity and care.
@@ -204,7 +212,7 @@
           <div class="hero-buttons">
             {% if categories %}
             <a class="btn-primary" id="hero-cta-btn" href="{% url 'our_products' %}?category={{ categories.0.slug }}" aria-label="Shop {{ categories.0.CATEGORY_NAME }}">
-              <span class="btn-static-text">Shop</span>
+              <span class="btn-static-text" data-i18n="btn_shop">Shop</span>
               <span class="btn-rotator" aria-live="polite">
                 {% for cat in categories %}
                 <span class="btn-rotator-item {% if forloop.first %}is-active{% endif %}" data-href="{% url 'our_products' %}?category={{ cat.slug }}">{{ cat.CATEGORY_NAME }}</span>
@@ -218,7 +226,7 @@
             </a>
             {% else %}
             <a class="btn-primary" id="hero-cta-btn" href="{% url 'our_products' %}?category=all" aria-label="Shop All Products">
-              <span class="btn-static-text">Shop All Products</span>
+              <span class="btn-static-text" data-i18n="btn_shop_all">Shop All Products</span>
               <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -227,7 +235,7 @@
             </a>
             {% endif %}
             <a class="btn-approach" href="{% url 'hospital' %}" aria-label="Explore Holistic Hospital & Research Center">
-              <span>Our approach</span>
+              <span data-i18n="btn_our_approach">Our approach</span>
               <span class="arrow">↗</span>
             </a>
           </div>
@@ -240,9 +248,9 @@
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </span>
-            <span>Quality-led herbal formulations</span>
+            <span data-i18n="trust_quality">Quality-led herbal formulations</span>
             <span class="trust-divider">—</span>
-            <span>HACCP-minded sourcing</span>
+            <span data-i18n="trust_haccp">HACCP-minded sourcing</span>
           </div>
         </div>
       </div>
@@ -254,7 +262,7 @@
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <polyline points="19 12 12 19 5 12"></polyline>
         </svg>
-        <span>Scroll to explore</span>
+        <span data-i18n="trust_scroll">Scroll to explore</span>
       </div>
 
     </section>
@@ -295,7 +303,7 @@
               <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
             </svg>
           </span>
-          <span class="terroir-pill-text">Wildcrafted Himalayan Origin</span>
+          <span class="terroir-pill-text" data-i18n="terroir_origin">Wildcrafted Himalayan Origin</span>
           <span class="terroir-pill-arrow">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -322,20 +330,20 @@
         <!-- Left Column: Headline -->
         <div class="wellness-title-col">
           <h2 class="wellness-title">
-            <span class="title-line">Wellness begins</span>
-            <span class="title-line title-italic">with attention.</span>
+            <span class="title-line" data-i18n="wellness_title_1">Wellness begins</span>
+            <span class="title-line title-italic" data-i18n="wellness_title_2">with attention.</span>
           </h2>
         </div>
 
         <!-- Right Column: Paragraph & Call to Action Link -->
         <div class="wellness-content-col">
-          <p class="wellness-desc">
+          <p class="wellness-desc" data-i18n="wellness_desc">
             We bring Nepal’s herbal wisdom into modern life through carefully considered products, honest education, and
             rituals that feel good to return to.
           </p>
           <div class="wellness-action">
             <a class="btn-approach-link" href="{% url 'hospital' %}" aria-label="Explore Holistic Hospital & Research Center">
-              <span>Meet our approach</span>
+              <span data-i18n="wellness_btn">Meet our approach</span>
               <span class="arrow-orange">↗</span>
             </a>
           </div>
@@ -394,9 +402,9 @@
         <!-- Section Header with Animated Growing Vine Underline -->
         <div class="categories-header">
           <div class="categories-header-left">
-            <span class="categories-eyebrow">Curated Collections</span>
+            <span class="categories-eyebrow" data-i18n="categories_eyebrow">Curated Collections</span>
             <div class="categories-title-wrapper">
-              <h2 class="categories-title">Explore by Category</h2>
+              <h2 class="categories-title" data-i18n="categories_title">Explore by Category</h2>
               <!-- Animated Growing Vine & Leaf Trail Underline -->
               <div class="heading-vine-wrap" aria-hidden="true">
                 <svg class="heading-vine-svg" viewBox="0 0 340 30" fill="none">
@@ -419,7 +427,7 @@
               </div>
             </div>
           </div>
-          <p class="categories-subtitle">
+          <p class="categories-subtitle" data-i18n="categories_subtitle">
             Discover pure, purposeful herbal formulations handcrafted from high-altitude Himalayan botanicals.
           </p>
         </div>
@@ -554,15 +562,15 @@
         <!-- Section Header: Restrained Botanical Heading -->
         <div class="featured-products-header">
           <div class="featured-products-header-left">
-            <span class="featured-products-eyebrow">Apothecary Collection · Pure Botanicals</span>
-            <h2 class="featured-products-title">Products</h2>
-            <p class="featured-products-subtitle">
+            <span class="featured-products-eyebrow" data-i18n="apothecary_eyebrow">Apothecary Collection · Pure Botanicals</span>
+            <h2 class="featured-products-title" data-i18n="nav_products">Products</h2>
+            <p class="featured-products-subtitle" data-i18n="catalog_subtitle">
               Pure Himalayan herbal supplements, restorative teas, and traditional Ayurvedic personal care.
             </p>
           </div>
           <div class="featured-products-header-right">
             <a class="view-all-products-link" href="/products/?category=all">
-              <span>View All Remedies</span>
+              <span data-i18n="view_all_remedies">View All Remedies</span>
               <svg class="view-all-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -666,8 +674,8 @@
       <div class="apothecary-news-container">
         <!-- Section Header: Left-aligned, simple serif, no eyebrow, no centered layout -->
         <div class="apothecary-news-header">
-          <h2 class="apothecary-news-title">News</h2>
-          <p class="apothecary-news-subhead">Stay updated with company announcements, certifications, and botanical
+          <h2 class="apothecary-news-title" data-i18n="nav_news">News</h2>
+          <p class="apothecary-news-subhead" data-i18n="news_subhead">Stay updated with company announcements, certifications, and botanical
             releases.</p>
         </div>
 
@@ -729,12 +737,12 @@
         <div class="ratings-white-header">
           <div class="ratings-white-badge">
             <span class="badge-star">⭐</span>
-            <span class="badge-text">CLIENT RATINGS &amp; REVIEWS · ग्राहक मूल्याङ्कन</span>
+            <span class="badge-text" data-i18n="what_clients_say">CLIENT RATINGS &amp; REVIEWS · ग्राहक मूल्याङ्कन</span>
           </div>
-          <h2 class="ratings-white-title">
+          <h2 class="ratings-white-title" data-i18n="ratings_title">
             What Clients Say <span class="title-italic-accent">About Each Herbal Item</span>
           </h2>
-          <p class="ratings-white-subtitle">
+          <p class="ratings-white-subtitle" data-i18n="ratings_subtitle">
             100% verified transparency. Explore genuine ratings, clinical results, and honest experiences shared by
             clients across Nepal for each botanical remedy.
           </p>
@@ -743,7 +751,7 @@
         <!-- SLIDESHOW / CAROUSEL CONTROLS BAR -->
         <div class="ratings-slider-header-bar">
           <div class="slider-title-group">
-            <h3 class="slider-title">Himalayan Remedies Showcase</h3>
+            <h3 class="slider-title" data-i18n="slider_title">Himalayan Remedies Showcase</h3>
             <span class="slider-hint">Continuous stream from right to left · Hover over any item to stop and
               inspect</span>
           </div>
@@ -812,7 +820,7 @@
 
               <!-- Item Description Block (backend description) -->
               <div class="slide-description-block">
-                <span class="slide-desc-label">HERBAL ACTION · विवरण:</span>
+                <span class="slide-desc-label" data-i18n="herbal_action_label">HERBAL ACTION · विवरण:</span>
                 <p class="slide-desc-text">
                   {{ prod.short_desc|default:prod.english_desc|default:prod.nepali_desc|striptags|truncatewords:24 }}
                 </p>
@@ -823,7 +831,7 @@
               {% if review %}
               <div class="slide-what-clients-say">
                 <div class="clients-say-label-row">
-                  <span class="say-tag">💬 WHAT CLIENTS SAY</span>
+                  <span class="say-tag" data-i18n="what_clients_say">💬 WHAT CLIENTS SAY</span>
                   <span class="say-rating-stars">{{ review.rating_stars }} {{ review.PRODUCT_RATING_VALUE|floatformat:1 }}</span>
                 </div>
                 <blockquote class="say-quote-text">
@@ -837,7 +845,7 @@
                     <span class="say-author-location">📍 {{ review.reviewer_location }}</span>
                   </div>
                   {% if review.IS_VERIFIED %}
-                  <span class="say-verified-chip">✓ Verified Client</span>
+                  <span class="say-verified-chip" data-i18n="verified_client">✓ Verified Client</span>
                   {% endif %}
                 </div>
               </div>
@@ -851,7 +859,7 @@
               <!-- View Item Action Link -->
               <div class="slide-card-footer-action">
                 <a href="/product/{{ prod.slug }}/" class="slide-view-link">
-                  <span>Inspect Botanical Specs</span>
+                  <span data-i18n="inspect_specs">Inspect Botanical Specs</span>
                   <span class="link-arrow">→</span>
                 </a>
               </div>
@@ -915,56 +923,56 @@
             </div>
           </div>
 
-          <p class="footer-brand-line">Wildcrafted Himalayan botanicals, bottled by hand in Nepal.</p>
+          <p class="footer-brand-line" data-i18n="footer_tagline">Wildcrafted Himalayan botanicals, bottled by hand in Nepal.</p>
 
           <!-- Terroir Quality Micro-Badges -->
           <div class="footer-terroir-chips">
-            <span class="terroir-chip">100% Wildcrafted</span>
-            <span class="terroir-chip">Himalayan Terroir</span>
-            <span class="terroir-chip">Hand-Bottled</span>
+            <span class="terroir-chip" data-i18n="footer_wildcrafted">100% Wildcrafted</span>
+            <span class="terroir-chip" data-i18n="footer_terroir">Himalayan Terroir</span>
+            <span class="terroir-chip" data-i18n="footer_hand_bottled">Hand-Bottled</span>
           </div>
 
           <!-- Live Nepal Time Provenance Status -->
           <div class="footer-atelier-status" aria-label="Nepal Time">
             <span class="atelier-pulse-dot" aria-hidden="true"></span>
-            <span class="atelier-status-text">Nepal Time • <time id="footer-kathmandu-clock">--:-- NPT</time></span>
+            <span class="atelier-status-text"><span data-i18n="footer_nepal_time">Nepal Time</span> • <time id="footer-kathmandu-clock">--:-- NPT</time></span>
           </div>
         </div>
 
         <!-- Column 2: Shop -->
         <div class="footer-nav-col">
-          <h4 class="footer-col-header">Shop</h4>
+          <h4 class="footer-col-header" data-i18n="footer_col_shop">Shop</h4>
           <ul class="footer-link-list">
-            <li><a class="footer-link" href="/products/?category=nutraceutical">Nutraceuticals</a></li>
-            <li><a class="footer-link" href="/products/?category=beverages">Beverages</a></li>
-            <li><a class="footer-link" href="/products/?category=personal-care">Personal care</a></li>
+            <li><a class="footer-link" href="/products/?category=nutraceutical" data-i18n="footer_nutraceuticals">Nutraceuticals</a></li>
+            <li><a class="footer-link" href="/products/?category=beverages" data-i18n="footer_beverages">Beverages</a></li>
+            <li><a class="footer-link" href="/products/?category=personal-care" data-i18n="footer_personal_care">Personal care</a></li>
             <li><a class="footer-link" href="{% url 'track_order' %}"><span class="lang-eng">Track My Order</span><span class="lang-nep">अर्डर ट्र्याक गर्नुहोस्</span></a></li>
           </ul>
         </div>
 
         <!-- Column 3: Company -->
         <div class="footer-nav-col">
-          <h4 class="footer-col-header">Company</h4>
+          <h4 class="footer-col-header" data-i18n="footer_col_company">Company</h4>
           <ul class="footer-link-list">
-            <li><a class="footer-link" href="{% url 'news_list' %}">News &amp; Advisories</a></li>
-            <li><a class="footer-link" href="{% url 'gallery' %}">Gallery</a></li>
-            <li><a class="footer-link" href="{% url 'hospital' %}">Holistic Hospital</a></li>
+            <li><a class="footer-link" href="{% url 'news_list' %}" data-i18n="footer_news">News &amp; Advisories</a></li>
+            <li><a class="footer-link" href="{% url 'gallery' %}" data-i18n="footer_gallery">Gallery</a></li>
+            <li><a class="footer-link" href="{% url 'hospital' %}" data-i18n="footer_hospital">Holistic Hospital</a></li>
           </ul>
         </div>
 
         <!-- Column 4: Contact & Coordinates -->
         <div class="footer-contact-block">
-          <h4 class="footer-col-header">Contact</h4>
-          <p class="footer-contact-item">Kathmandu, Nepal</p>
+          <h4 class="footer-col-header" data-i18n="footer_col_contact">Contact</h4>
+          <p class="footer-contact-item" data-i18n="footer_location">Kathmandu, Nepal</p>
           <span class="footer-geo-coordinates" aria-label="Atelier Coordinates">27.7172° N, 85.3240° E</span>
           <a class="footer-email-link" href="mailto:info@holisticherbsnepal.com">info@holisticherbsnepal.com</a>
-          <span class="footer-dispatch-note">Inquiries &amp; Consultations Welcome</span>
+          <span class="footer-dispatch-note" data-i18n="footer_inquiries">Inquiries &amp; Consultations Welcome</span>
         </div>
       </div>
 
       <!-- Bottom Bar: Hairline Divider + Copyright + Ascend Elevator + 3 Outline Social Icons -->
       <div class="footer-bottom-bar">
-        <p class="footer-copyright">&copy; 2026 Holistic Herbs Pvt. Ltd.</p>
+        <p class="footer-copyright" data-i18n="footer_copyright">&copy; 2026 Holistic Herbs Pvt. Ltd.</p>
 
         <!-- Scroll to Hero Section Upper Arrow Button -->
         <button class="footer-ascend-btn" id="footer-ascend-btn" type="button" aria-label="Scroll to Hero section"
@@ -1013,7 +1021,7 @@
   </footer>
 
   <!-- JavaScript -->
-  <script src="{% static 'js/main.js' %}?v=nonstop_ticker5.8"></script>
+  <script src="{% static 'js/main.js' %}?v=i18n_v5.0"></script>
 </body>
 
 </html>

@@ -730,6 +730,10 @@
         <span class="checkout-logo-text">HOLISTIC NEPAL</span>
       </a>
       <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="nav-lang-switch" role="group" aria-label="Language selection" style="display:inline-flex; border:1px solid #1f6f5c;">
+          <button type="button" class="nav-lang-btn is-active" id="checkout-lang-eng" data-lang="eng" aria-pressed="true" style="border:none; padding:4px 8px; font-size:12px; cursor:pointer;">ENG</button>
+          <button type="button" class="nav-lang-btn" id="checkout-lang-nep" data-lang="nep" aria-pressed="false" style="border:none; padding:4px 8px; font-size:12px; cursor:pointer;">नेपाली</button>
+        </div>
         <a href="{% url 'cart' %}" class="cart-nav-link">&larr; Return to Botanical Basket</a>
         {% include 'pages/user/nav_account_icon.html' %}
       </div>
@@ -738,9 +742,9 @@
 
   <main class="checkout-main">
     <div class="checkout-breadcrumb">
-      <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp; <a href="{% url 'cart' %}">Basket</a> &nbsp;/&nbsp; <span>Secure Checkout</span>
+      <a href="{% url 'home' %}" data-i18n="breadcrumb_home">Home</a> &nbsp;/&nbsp; <a href="{% url 'cart' %}" data-i18n="breadcrumb_cart">Basket</a> &nbsp;/&nbsp; <span data-i18n="breadcrumb_checkout">Secure Checkout</span>
     </div>
-    <h1 class="checkout-h1">Complete Your Remedy Order</h1>
+    <h1 class="checkout-h1" data-i18n="checkout_h1">Complete Your Remedy Order</h1>
 
     <div class="checkout-grid">
       <!-- Left: Customer Details & Shipping -->
@@ -1153,6 +1157,6 @@
       });
     });
   </script>
-
+  <script src="{% static 'js/hospital-i18n.js' %}?v=5.0"></script>
 </body>
 </html>

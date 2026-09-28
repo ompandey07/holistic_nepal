@@ -477,6 +477,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 8. Site-wide Language Switcher (ENG / नेपाली)
   const setSiteLanguage = (lang) => {
+    if (typeof window.setHospitalLanguage === "function") {
+      window.setHospitalLanguage(lang);
+      return;
+    }
+
     document.documentElement.setAttribute("data-lang", lang);
     document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
       if (btn.getAttribute("data-lang") === lang) {
@@ -503,6 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     try {
+      localStorage.setItem("holistic_lang", lang);
       localStorage.setItem("site_lang", lang);
     } catch (e) {}
 
@@ -517,7 +523,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Initialize with saved preference or default to 'eng'
-  const savedSiteLang = localStorage.getItem("site_lang") || "eng";
+  const savedSiteLang = localStorage.getItem("holistic_lang") || localStorage.getItem("site_lang") || "eng";
   setSiteLanguage(savedSiteLang);
 
   // 9. Client Item Ratings & Continuous Non-Stop Ticker Showcase

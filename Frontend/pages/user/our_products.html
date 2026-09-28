@@ -787,11 +787,11 @@
 
       <!-- Desktop Navigation Links -->
       <nav class="nav-links" aria-label="Primary navigation">
-        <a href="/">Home page</a>
-        <a class="active" href="/products/">Our Products</a>
-        <a href="{% url 'news_list' %}">News</a>
-        <a href="{% url 'hospital' %}">Holistic Hospital</a>
-        <a href="{% url 'gallery' %}">Gallery</a>
+        <a href="/" data-i18n="nav_home">Home page</a>
+        <a class="active" href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
       </nav>
 
       <!-- Right Side Actions: Language Switcher & Cart Button -->
@@ -838,11 +838,11 @@
       <button class="drawer-close" aria-label="Close menu">&times;</button>
     </div>
     <nav class="drawer-menu">
-      <a href="/">Home page</a>
-      <a class="active" href="/products/">Our Products</a>
-      <a href="{% url 'news_list' %}">News</a>
-      <a href="{% url 'hospital' %}">Holistic Hospital</a>
-      <a href="{% url 'gallery' %}">Gallery</a>
+      <a href="/" data-i18n="nav_home">Home page</a>
+      <a class="active" href="/products/" data-i18n="nav_products">Our Products</a>
+      <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+      <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
     </nav>
   </aside>
 
@@ -870,10 +870,10 @@
           <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
           <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
         </svg>
-        <span>Authentic Himalayan Atelier</span>
+        <span data-i18n="terroir_origin">Authentic Himalayan Atelier</span>
       </div>
-      <h1 class="catalog-hero-title">Our Products Catalog</h1>
-      <p class="catalog-hero-subtitle">
+      <h1 class="catalog-hero-title" data-i18n="catalog_title">Our Products Catalog</h1>
+      <p class="catalog-hero-subtitle" data-i18n="catalog_subtitle">
         Explore pure wildcrafted remedies from Nepal's pristine terrain, carefully categorized into targeted holistic formulations.
       </p>
     </div>
@@ -890,7 +890,7 @@
           <rect x="14" y="14" width="7" height="7" rx="1"></rect>
           <rect x="3" y="14" width="7" height="7" rx="1"></rect>
         </svg>
-        <span>All Categories</span>
+        <span data-i18n="filter_all">All Categories</span>
         <span class="filter-pill-count">{{ total_products_count }}</span>
       </a>
 
@@ -1134,13 +1134,14 @@
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
-          <span>Return to Home</span>
+          <span data-i18n="footer_return_home">Return to Home</span>
         </a>
       </div>
     </div>
   </footer>
 
   <!-- Include Core JavaScript (handles cart sync, badge updates, animations, lang switch) -->
+  <script src="{% static 'js/hospital-i18n.js' %}?v=5.0"></script>
   <script src="{% static 'js/main.js' %}"></script>
 
   <!-- Category Filter & Cart Toast Scripts -->

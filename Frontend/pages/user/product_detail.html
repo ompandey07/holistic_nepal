@@ -34,11 +34,11 @@
       </a>
 
       <nav class="nav-links" aria-label="Primary navigation">
-        <a href="/">Home page</a>
-        <a href="/products/">Our Products</a>
-        <a href="{% url 'news_list' %}">News</a>
-        <a href="{% url 'hospital' %}">Holistic Hospital</a>
-        <a href="{% url 'gallery' %}">Gallery</a>
+        <a href="/" data-i18n="nav_home">Home page</a>
+        <a href="/products/" data-i18n="nav_products">Our Products</a>
+        <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+        <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+        <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
       </nav>
 
       <!-- Right Side Actions: Language Switcher & Cart Button -->
@@ -84,11 +84,11 @@
       <button class="drawer-close" aria-label="Close menu">&times;</button>
     </div>
     <nav class="drawer-menu">
-      <a href="/">Home page</a>
-      <a href="/products/">Our Products</a>
-      <a href="{% url 'news_list' %}">News</a>
-      <a href="{% url 'hospital' %}">Holistic Hospital</a>
-      <a href="{% url 'gallery' %}">Gallery</a>
+      <a href="/" data-i18n="nav_home">Home page</a>
+      <a href="/products/" data-i18n="nav_products">Our Products</a>
+      <a href="{% url 'news_list' %}" data-i18n="nav_news">News</a>
+      <a href="{% url 'hospital' %}" data-i18n="nav_hospital">Holistic Hospital</a>
+      <a href="{% url 'gallery' %}" data-i18n="nav_gallery">Gallery</a>
     </nav>
     <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between;">
       <span style="font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 500;">Language / भाषा:</span>
@@ -592,6 +592,7 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="{% static 'js/hospital-i18n.js' %}?v=5.0"></script>
   <script src="{% static 'js/main.js' %}"></script>
   <script>
     // Product Detail Page Specific Interactivity
@@ -619,6 +620,11 @@
 
       // 2. Language Switcher (ENG / नेपाली)
       function setLanguage(lang) {
+        if (typeof window.setHospitalLanguage === "function") {
+          window.setHospitalLanguage(lang);
+          return;
+        }
+
         const isEng = lang === "eng";
         document.querySelectorAll(".nav-lang-btn").forEach((btn) => {
           if (btn.getAttribute("data-lang") === lang) {
@@ -647,6 +653,7 @@
         }
 
         try {
+          localStorage.setItem("holistic_lang", lang);
           localStorage.setItem("site_lang", lang);
         } catch (e) {}
       }
@@ -658,8 +665,8 @@
         });
       });
 
-      // Default to ENG as requested
-      const initialLang = localStorage.getItem("site_lang") || "eng";
+      // Default to saved preference or ENG
+      const initialLang = localStorage.getItem("holistic_lang") || localStorage.getItem("site_lang") || "eng";
       setLanguage(initialLang);
 
       // Helper function to get CSRF token
