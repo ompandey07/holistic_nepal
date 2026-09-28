@@ -498,9 +498,15 @@
    */
   function initI18n() {
     function handleToggleClick(e) {
-      // 1. If clicked a specific language button
-      const btn = e.target.closest('.nav-lang-btn, [id$="-lang-eng"], [id$="-lang-nep"], [data-lang="eng"], [data-lang="nep"]');
-      if (btn) {
+      // ONLY handle clicks that originate inside a .nav-lang-switch container
+      const switchContainer = e.target.closest('.nav-lang-switch');
+      if (!switchContainer) {
+        return; // Allow all other clicks (navigation links, cards, etc.) to proceed normally!
+      }
+
+      // 1. If clicked a specific language button inside the switch
+      const btn = e.target.closest('button.nav-lang-btn, button[id$="-lang-eng"], button[id$="-lang-nep"]');
+      if (btn && switchContainer.contains(btn)) {
         e.preventDefault();
         e.stopPropagation();
         const currentLang = document.documentElement.getAttribute('data-lang') || getSavedLanguage();
@@ -514,22 +520,14 @@
         return;
       }
 
-      // 2. If clicked the capsule switch wrapper itself
-      const wrapper = e.target.closest('.nav-lang-switch, [role="group"][aria-label*="Language"]');
-      if (wrapper) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSiteLanguage();
-      }
+      // 2. If clicked the capsule switch container itself (outside of buttons)
+      e.preventDefault();
+      e.stopPropagation();
+      toggleSiteLanguage();
     }
 
-    // Delegated click listener so dynamically injected or drawer buttons work
-    document.addEventListener('click', handleToggleClick, true);
-
-    // Direct listener on all current switches for high responsiveness
-    document.querySelectorAll('.nav-lang-switch, .nav-lang-btn').forEach(function (el) {
-      el.addEventListener('click', handleToggleClick);
-    });
+    // Delegated click listener (bubbling phase - NEVER capture phase)
+    document.addEventListener('click', handleToggleClick, false);
 
     // Initial language synchronization
     const initialLang = getSavedLanguage();
